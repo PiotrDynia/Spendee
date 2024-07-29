@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import kotlin.math.exp
 
-class ExpenseRepositoryImpl @Inject constructor(
+class ExpenseRepositoryImpl(
     private val expenseDao: ExpenseDao
 ) : ExpenseRepository {
     override fun getAllExpenses(): Flow<List<Expense>> {

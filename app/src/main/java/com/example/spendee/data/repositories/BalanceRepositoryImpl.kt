@@ -5,7 +5,7 @@ import com.example.spendee.data.entities.Balance
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class BalanceRepositoryImpl @Inject constructor(
+class BalanceRepositoryImpl(
     private val balanceDao: BalanceDao
 ) : BalanceRepository {
     override fun getBalance(): Flow<Balance> {

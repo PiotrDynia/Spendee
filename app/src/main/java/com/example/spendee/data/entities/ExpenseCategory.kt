@@ -1,19 +1,21 @@
 package com.example.spendee.data.entities
 
+import com.example.spendee.R
+
 
 sealed class ExpenseCategory(
     val id: Int,
     val name: String,
-    val iconResource: String
+    val iconResource: Int
 ) {
-    data object Entertainment : ExpenseCategory(1, "Entertainment", "ic_entertainment")
-    data object Payments : ExpenseCategory(2, "Payments", "ic_payments")
-    data object Transport : ExpenseCategory(3, "Transport", "ic_transport")
-    data object Personal: ExpenseCategory(4, "Personal", "ic_personal")
-    data object House: ExpenseCategory(5, "House", "ic_house")
-    data object Everyday : ExpenseCategory(6, "Everyday", "ic_everyday")
-    data object Health : ExpenseCategory(7, "Health", "ic_health")
-    data object Uncategorized : ExpenseCategory(8, "Uncategorized", "ic_uncategorized")
+    data object Entertainment : ExpenseCategory(1, "Entertainment", R.drawable.ic_entertainment)
+    data object Payments : ExpenseCategory(2, "Payments", R.drawable.ic_payments)
+    data object Transport : ExpenseCategory(3, "Transport", R.drawable.ic_transport)
+    data object Personal: ExpenseCategory(4, "Personal", R.drawable.ic_personal)
+    data object House: ExpenseCategory(5, "House", R.drawable.ic_house)
+    data object Everyday : ExpenseCategory(6, "Everyday", R.drawable.ic_everyday)
+    data object Health : ExpenseCategory(7, "Health", R.drawable.ic_health)
+    data object Uncategorized : ExpenseCategory(8, "Uncategorized", R.drawable.ic_uncategorized)
 
     companion object {
         fun fromId(id: Int): ExpenseCategory? {

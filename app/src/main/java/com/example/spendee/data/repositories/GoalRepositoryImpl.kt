@@ -5,7 +5,7 @@ import com.example.spendee.data.entities.Goal
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GoalRepositoryImpl @Inject constructor(
+class GoalRepositoryImpl(
     private val goalDao: GoalDao
 ) : GoalRepository {
     override fun getAllGoals(): Flow<List<Goal>> {
