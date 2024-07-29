@@ -1,6 +1,4 @@
-package com.example.spendee.data
-
-import androidx.compose.material.icons.Icons
+package com.example.spendee.data.entities
 
 
 sealed class ExpenseCategory(
