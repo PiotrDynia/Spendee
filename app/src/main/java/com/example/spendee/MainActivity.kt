@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.spendee.ui.current_balance.CurrentBalanceScreen
+import com.example.spendee.ui.expenses.ExpensesScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -23,7 +24,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             SpendeeTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { _ ->
-                    CurrentBalanceScreen()
+                    ExpensesScreen()
                 }
             }
         }
