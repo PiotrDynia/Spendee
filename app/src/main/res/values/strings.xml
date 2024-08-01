@@ -6,4 +6,7 @@
     <string name="show_more">show more</string>
     <string name="your_expenses">Your expenses</string>
     <string name="add_expense">Add expense</string>
+    <string name="you_can_spend">You can spend</string>
+    <string name="spent">Spent</string>
+    <string name="set_budget">Update budget</string>
 </resources>

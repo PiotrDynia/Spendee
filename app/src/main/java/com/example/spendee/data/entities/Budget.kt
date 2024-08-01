@@ -6,7 +6,7 @@ import java.util.Date
 
 @Entity
 data class Budget(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey val id: Int = 1,
     val totalAmount: Double,
     val startDate: Date,
     val endDate: Date

@@ -28,6 +28,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -105,7 +106,7 @@ fun CurrentBalanceScreen(modifier: Modifier = Modifier) {
                 .padding(12.dp)
                 .aspectRatio(1f)
                 .drawBehind {
-                    val strokeWidth = 4.dp.toPx()
+                    val strokeWidth = 6.dp.toPx()
                     val halfStrokeWidth = strokeWidth / 2
                     val rect = Rect(
                         halfStrokeWidth,
@@ -147,7 +148,7 @@ fun CurrentBalanceScreen(modifier: Modifier = Modifier) {
                 .fillMaxWidth()
                 .size(animatedSize)
                 .clip(RoundedCornerShape(16.dp))
-                .background(Color.LightGray)
+                .background(MaterialTheme.colorScheme.primaryContainer)
         ) {
             AnimatedVisibilityComposable(
                 modifier = Modifier
@@ -209,7 +210,7 @@ fun CurrentBalanceScreen(modifier: Modifier = Modifier) {
                     item {
                         Text(
                             text = stringResource(R.string.show_more),
-                            color = Color(0xFF4228E9),
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
                             fontWeight = FontWeight.SemiBold,
                             modifier = Modifier.clickable { }
                         )
@@ -241,6 +242,76 @@ fun getExampleExpenses(): List<Expense> {
             description = "Electricity Bill",
             date = Date(),
             categoryId = 2
+        ),
+        Expense(
+            id = 2,
+            amount = 15.0,
+            description = "Bus Ticket",
+            date = Date(),
+            categoryId = 3
+        ),
+        Expense(
+            id = 2,
+            amount = 15.0,
+            description = "Bus Ticket",
+            date = Date(),
+            categoryId = 3
+        ),
+        Expense(
+            id = 2,
+            amount = 15.0,
+            description = "Bus Ticket",
+            date = Date(),
+            categoryId = 3
+        ),
+        Expense(
+            id = 2,
+            amount = 15.0,
+            description = "Bus Ticket",
+            date = Date(),
+            categoryId = 3
+        ),
+        Expense(
+            id = 2,
+            amount = 15.0,
+            description = "Bus Ticket",
+            date = Date(),
+            categoryId = 3
+        ),
+        Expense(
+            id = 2,
+            amount = 15.0,
+            description = "Bus Ticket",
+            date = Date(),
+            categoryId = 3
+        ),
+        Expense(
+            id = 2,
+            amount = 15.0,
+            description = "Bus Ticket",
+            date = Date(),
+            categoryId = 3
+        ),
+        Expense(
+            id = 2,
+            amount = 15.0,
+            description = "Bus Ticket",
+            date = Date(),
+            categoryId = 3
+        ),
+        Expense(
+            id = 2,
+            amount = 15.0,
+            description = "Bus Ticket",
+            date = Date(),
+            categoryId = 3
+        ),
+        Expense(
+            id = 2,
+            amount = 15.0,
+            description = "Bus Ticket",
+            date = Date(),
+            categoryId = 3
         ),
         Expense(
             id = 2,
