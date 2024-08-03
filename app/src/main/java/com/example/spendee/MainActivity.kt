@@ -15,8 +15,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.spendee.ui.budget.BudgetScreen
+import com.example.spendee.ui.budget.NoBudgetScreen
 import com.example.spendee.ui.current_balance.CurrentBalanceScreen
+import com.example.spendee.ui.expenses.AddEditExpenseScreen
 import com.example.spendee.ui.expenses.ExpensesScreen
+import com.example.spendee.ui.goals.GoalsScreen
+import com.example.spendee.ui.goals.NoGoalsScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -29,7 +33,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)) { _ ->
-                    BudgetScreen()
+                    NoGoalsScreen()
                 }
             }
         }

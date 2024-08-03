@@ -9,4 +9,22 @@
     <string name="you_can_spend">You can spend</string>
     <string name="spent">Spent</string>
     <string name="set_budget">Update budget</string>
+    <string name="add_a_new_goal">Add a new goal</string>
+    <string name="your_financial_goals">Your financial goals</string>
+    <string name="save">Save</string>
+    <string name="amount">Amount</string>
+    <string name="description">Description</string>
+    <string name="entertainment">Entertainment</string>
+    <string name="payments">Payments</string>
+    <string name="transport">Transport</string>
+    <string name="personal">Personal</string>
+    <string name="house">House</string>
+    <string name="everyday">Everyday</string>
+    <string name="health">Health</string>
+    <string name="uncategorized">Uncategorized</string>
+    <string name="your_expense">Your expense</string>
+    <string name="select_a_category">Select a category</string>
+    <string name="you_have_no_budget_set">You have no budget set</string>
+    <string name="you_have_no_goals_set">You have no goals set</string>
+    <string name="add_a_financial_goal">Add a financial goal</string>
 </resources>

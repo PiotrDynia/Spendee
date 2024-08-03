@@ -1,9 +1,6 @@
 package com.example.spendee.ui.expenses
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,11 +24,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,7 +41,6 @@ import com.example.spendee.data.entities.ExpenseCategory
 import com.example.spendee.ui.current_balance.getExampleExpenses
 import com.example.spendee.util.AnimatedVisibilityComposable
 import com.example.spendee.util.formatDate
-import kotlinx.coroutines.delay
 
 @Composable
 fun ExpensesScreen(modifier: Modifier = Modifier) {
@@ -109,7 +100,7 @@ fun ExpensesScreen(modifier: Modifier = Modifier) {
                                         .weight(100f)
                                 ) {
                                     Text(
-                                        text = ExpenseCategory.fromId(item.categoryId)!!.name,
+                                        text = stringResource(ExpenseCategory.fromId(item.categoryId)!!.name),
                                         fontSize = 12.sp,
                                         fontStyle = FontStyle.Italic
                                     )
@@ -128,7 +119,6 @@ fun ExpensesScreen(modifier: Modifier = Modifier) {
             }
         }
     }
-
 }
 
 @Preview
