@@ -1,19 +1,23 @@
 package com.example.spendee.data.entities
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import com.example.spendee.R
+
 
 sealed class ExpenseCategory(
     val id: Int,
-    val name: String,
-    val iconResource: String
+    @StringRes val name: Int,
+    @DrawableRes val iconResource: Int
 ) {
-    data object Entertainment : ExpenseCategory(1, "Entertainment", "ic_entertainment")
-    data object Payments : ExpenseCategory(2, "Payments", "ic_payments")
-    data object Transport : ExpenseCategory(3, "Transport", "ic_transport")
-    data object Personal: ExpenseCategory(4, "Personal", "ic_personal")
-    data object House: ExpenseCategory(5, "House", "ic_house")
-    data object Everyday : ExpenseCategory(6, "Everyday", "ic_everyday")
-    data object Health : ExpenseCategory(7, "Health", "ic_health")
-    data object Uncategorized : ExpenseCategory(8, "Uncategorized", "ic_uncategorized")
+    data object Entertainment : ExpenseCategory(1, R.string.entertainment, R.drawable.ic_entertainment)
+    data object Payments : ExpenseCategory(2, R.string.payments, R.drawable.ic_payments)
+    data object Transport : ExpenseCategory(3, R.string.transport, R.drawable.ic_transport)
+    data object Personal: ExpenseCategory(4, R.string.personal, R.drawable.ic_personal)
+    data object House: ExpenseCategory(5, R.string.house, R.drawable.ic_house)
+    data object Everyday : ExpenseCategory(6, R.string.everyday, R.drawable.ic_everyday)
+    data object Health : ExpenseCategory(7, R.string.health, R.drawable.ic_health)
+    data object Uncategorized : ExpenseCategory(8, R.string.uncategorized, R.drawable.ic_uncategorized)
 
     companion object {
         fun fromId(id: Int): ExpenseCategory? {

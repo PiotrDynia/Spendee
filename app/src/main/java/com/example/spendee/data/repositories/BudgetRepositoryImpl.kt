@@ -5,7 +5,7 @@ import com.example.spendee.data.entities.Budget
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class BudgetRepositoryImpl @Inject constructor(
+class BudgetRepositoryImpl(
     private val budgetDao: BudgetDao
 ) : BudgetRepository {
     override fun getAllBudgets(): Flow<List<Budget>> {
