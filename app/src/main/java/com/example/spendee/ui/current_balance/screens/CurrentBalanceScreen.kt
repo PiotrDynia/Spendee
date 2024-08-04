@@ -45,7 +45,6 @@ import com.example.spendee.R
 import com.example.spendee.data.entities.Expense
 import com.example.spendee.ui.current_balance.components.CurrentBalanceTexts
 import com.example.spendee.ui.current_balance.components.LatestExpensesColumn
-import com.example.spendee.util.AnimatedVisibilityComposable
 import kotlinx.coroutines.delay
 import java.util.Date
 
@@ -79,7 +78,7 @@ fun CurrentBalanceScreen(modifier: Modifier = Modifier) {
             delay(2000)
         }
     }
-    Column (
+    Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
@@ -114,27 +113,20 @@ fun CurrentBalanceScreen(modifier: Modifier = Modifier) {
         ) {
             CurrentBalanceTexts()
         }
-        AnimatedVisibilityComposable {
-            Button(
-                onClick = { }
-            ) {
-                Text(text = stringResource(R.string.set_balance))
-            }
+        Button(
+            onClick = { }
+        ) {
+            Text(text = stringResource(R.string.set_balance))
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Box (
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .size(animatedSize)
                 .clip(RoundedCornerShape(16.dp))
                 .background(MaterialTheme.colorScheme.primaryContainer)
         ) {
-            AnimatedVisibilityComposable(
-                modifier = Modifier
-                    .padding(16.dp)
-            ) {
-                LatestExpensesColumn()
-            }
+            LatestExpensesColumn(modifier = modifier.padding(16.dp))
         }
     }
 }

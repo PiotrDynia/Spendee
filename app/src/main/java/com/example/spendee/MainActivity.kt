@@ -12,8 +12,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.spendee.ui.budget.screens.AddEditBudgetScreen
+import com.example.spendee.ui.budget.screens.BudgetScreen
 import com.example.spendee.ui.current_balance.screens.CurrentBalanceScreen
+import com.example.spendee.ui.expenses.screens.AddEditExpenseScreen
 import com.example.spendee.ui.expenses.screens.ExpensesScreen
+import com.example.spendee.util.AnimatedVisibilityComposable
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -26,7 +30,9 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)) { _ ->
-                    ExpensesScreen()
+                    AnimatedVisibilityComposable {
+                        CurrentBalanceScreen()
+                    }
                 }
             }
         }

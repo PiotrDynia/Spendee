@@ -11,17 +11,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.spendee.R
-import com.example.spendee.util.AnimatedVisibilityComposable
 
 @Composable
 fun CurrentBalanceTexts(modifier: Modifier = Modifier) {
-    AnimatedVisibilityComposable {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(text = stringResource(R.string.current_balance), fontSize = 14.sp)
-            Text(text = "2137.69$", fontSize = 26.sp, fontWeight = FontWeight.Bold)
-        }
+    Column(
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = stringResource(R.string.current_balance),
+            fontSize = 18.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+        Text(text = "2137.69$", fontSize = 26.sp, fontWeight = FontWeight.Bold)
     }
 }

@@ -45,67 +45,65 @@ fun AddEditBudgetScreen(modifier: Modifier = Modifier) {
     var isEndDatePickerOpen by remember {
         mutableStateOf(false)
     }
-    AnimatedVisibilityComposable {
-        Scaffold(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            floatingActionButton = {
-                FloatingActionButton(onClick = {
+    Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(12.dp),
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
 
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.Check,
-                        contentDescription = stringResource(R.string.save)
-                    )
+            }) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = stringResource(R.string.save)
+                )
+            }
+        }
+    ) { _ ->
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(32.dp))
+            Text(
+                text = stringResource(R.string.your_budget),
+                style = MaterialTheme.typography.headlineMedium.copy(
+                    fontWeight = FontWeight.Bold
+                )
+            )
+            TextField(
+                value = "",
+                onValueChange = {
+                },
+                placeholder = { Text(stringResource(R.string.enter_budget_amount)) },
+                modifier = Modifier.fillMaxWidth()
+            )
+            DatePickerInput(
+                text = R.string.select_a_start_date,
+                onClick = { isStartDatePickerOpen = !isStartDatePickerOpen }
+            )
+            DatePickerInput(
+                onClick = { isEndDatePickerOpen = !isEndDatePickerOpen },
+                text = R.string.select_an_end_date
+            )
+            if (isStartDatePickerOpen) {
+                DatePickerDialog(
+                    onDismissRequest = { isStartDatePickerOpen = !isStartDatePickerOpen },
+                    confirmButton = { }
+                ) {
+                    DatePicker(state = startDatePickerState)
                 }
             }
-        ) { _ ->
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(modifier = Modifier.height(32.dp))
-                Text(
-                    text = stringResource(R.string.your_budget),
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.Bold
-                    )
-                )
-                TextField(
-                    value = "",
-                    onValueChange = {
-                    },
-                    placeholder = { Text(stringResource(R.string.enter_budget_amount)) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                DatePickerInput(
-                    text = R.string.select_a_start_date,
-                    onClick = { isStartDatePickerOpen = !isStartDatePickerOpen }
-                )
-                DatePickerInput(
-                    onClick = { isEndDatePickerOpen = !isEndDatePickerOpen },
-                    text = R.string.select_an_end_date
-                )
-                if (isStartDatePickerOpen) {
-                    DatePickerDialog(
-                        onDismissRequest = { isStartDatePickerOpen = !isStartDatePickerOpen },
-                        confirmButton = { }
-                    ) {
-                        DatePicker(state = startDatePickerState)
-                    }
+            if (isEndDatePickerOpen) {
+                DatePickerDialog(
+                    onDismissRequest = { isEndDatePickerOpen = !isEndDatePickerOpen },
+                    confirmButton = { }
+                ) {
+                    DatePicker(state = endDatePickerState)
                 }
-                if (isEndDatePickerOpen) {
-                    DatePickerDialog(
-                        onDismissRequest = { isEndDatePickerOpen = !isEndDatePickerOpen },
-                        confirmButton = { }
-                    ) {
-                        DatePicker(state = endDatePickerState)
-                    }
-                }
-                SwitchButtonRow(text = R.string.notify_me_when_i_exceed_my_budget)
-                SwitchButtonRow(text = R.string.notify_me_when_i_exceed_80_of_my_budget)
             }
+            SwitchButtonRow(text = R.string.notify_me_when_i_exceed_my_budget)
+            SwitchButtonRow(text = R.string.notify_me_when_i_reach_80_of_my_budget)
         }
     }
 }

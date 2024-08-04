@@ -20,7 +20,7 @@ fun LatestExpensesColumn(modifier: Modifier = Modifier) {
     LazyColumn(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
+        modifier = modifier
     ) {
         item {
             Text(

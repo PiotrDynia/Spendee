@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.sp
 import com.example.spendee.R
 import com.example.spendee.data.entities.Goal
 import com.example.spendee.ui.goals.components.GoalCard
-import com.example.spendee.util.AnimatedVisibilityComposable
 import java.util.Date
 
 @Composable
@@ -35,43 +34,41 @@ fun GoalsScreen(modifier: Modifier = Modifier) {
     val exampleGoals = generateExampleGoals()
     val currentBalance = 1000.0
 
-    AnimatedVisibilityComposable {
-        Scaffold(
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = {},
-                    shape = CircleShape,
-                    containerColor = MaterialTheme.colorScheme.secondary
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = stringResource(R.string.add_a_new_goal)
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {},
+                shape = CircleShape,
+                containerColor = MaterialTheme.colorScheme.secondary
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(R.string.add_a_new_goal)
+                )
+            }
+        }
+    ) { _ ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(16.dp))
+                .background(MaterialTheme.colorScheme.primaryContainer)
+        ) {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(16.dp)
+            ) {
+                item {
+                    Text(
+                        text = stringResource(R.string.your_financial_goals),
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(16.dp)
                     )
                 }
-            }
-        ) { _ ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(MaterialTheme.colorScheme.primaryContainer)
-            ) {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    item {
-                        Text(
-                            text = stringResource(R.string.your_financial_goals),
-                            fontSize = 26.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
-                    items(exampleGoals) { goal ->
-                        GoalCard(goal = goal, currentBalance = currentBalance)
-                    }
+                items(exampleGoals) { goal ->
+                    GoalCard(goal = goal, currentBalance = currentBalance)
                 }
             }
         }

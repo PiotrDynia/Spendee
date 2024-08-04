@@ -2,6 +2,7 @@ package com.example.spendee.ui.budget.components
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -25,7 +26,7 @@ fun CategoryCard(
 ) {
     Surface(
         shape = MaterialTheme.shapes.medium,
-        modifier = modifier
+        modifier = modifier.clickable {  }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

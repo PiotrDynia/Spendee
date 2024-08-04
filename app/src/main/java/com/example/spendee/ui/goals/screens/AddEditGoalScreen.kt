@@ -30,7 +30,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.spendee.R
-import com.example.spendee.util.AnimatedVisibilityComposable
 import com.example.spendee.util.DatePickerInput
 import com.example.spendee.util.SwitchButtonRow
 
@@ -41,66 +40,64 @@ fun AddEditGoalScreen(modifier: Modifier = Modifier) {
     var isDeadlineDateOpen by remember {
         mutableStateOf(false)
     }
-    AnimatedVisibilityComposable {
-        Scaffold(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            floatingActionButton = {
-                FloatingActionButton(onClick = {
+    Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(12.dp),
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
 
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.Check,
-                        contentDescription = stringResource(R.string.save)
-                    )
+            }) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = stringResource(R.string.save)
+                )
+            }
+        }
+    ) { _ ->
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(32.dp))
+            Text(
+                text = stringResource(R.string.your_goal),
+                style = MaterialTheme.typography.headlineMedium.copy(
+                    fontWeight = FontWeight.Bold
+                )
+            )
+            TextField(
+                value = "",
+                onValueChange = {
+
+                },
+                placeholder = {
+                    Text(text = stringResource(R.string.description))
+                },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = false,
+                maxLines = 2
+            )
+            TextField(
+                value = "",
+                onValueChange = {
+                },
+                placeholder = { Text(text = stringResource(R.string.target_amount)) },
+                modifier = Modifier.fillMaxWidth()
+            )
+            DatePickerInput(
+                text = R.string.set_a_deadline,
+                onClick = { isDeadlineDateOpen = !isDeadlineDateOpen }
+            )
+            if (isDeadlineDateOpen) {
+                DatePickerDialog(
+                    onDismissRequest = { isDeadlineDateOpen = !isDeadlineDateOpen },
+                    confirmButton = { }
+                ) {
+                    DatePicker(state = deadlineDateState)
                 }
             }
-        ) { _ ->
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(modifier = Modifier.height(32.dp))
-                Text(
-                    text = stringResource(R.string.your_goal),
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.Bold
-                    )
-                )
-                TextField(
-                    value = "",
-                    onValueChange = {
-
-                    },
-                    placeholder = {
-                        Text(text = stringResource(R.string.description))
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = false,
-                    maxLines = 2
-                )
-                TextField(
-                    value = "",
-                    onValueChange = {
-                    },
-                    placeholder = { Text(text = stringResource(R.string.target_amount)) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                DatePickerInput(
-                    text = R.string.set_a_deadline,
-                    onClick = { isDeadlineDateOpen = !isDeadlineDateOpen }
-                )
-                if (isDeadlineDateOpen) {
-                    DatePickerDialog(
-                        onDismissRequest = { isDeadlineDateOpen = !isDeadlineDateOpen },
-                        confirmButton = { }
-                    ) {
-                        DatePicker(state = deadlineDateState)
-                    }
-                }
-                SwitchButtonRow(text = R.string.notify_me_when_i_reach_my_goal)
-            }
+            SwitchButtonRow(text = R.string.notify_me_when_i_reach_my_goal)
         }
     }
 }

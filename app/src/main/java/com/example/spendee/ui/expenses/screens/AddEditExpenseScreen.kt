@@ -28,68 +28,65 @@ import androidx.compose.ui.unit.dp
 import com.example.spendee.R
 import com.example.spendee.data.entities.ExpenseCategory
 import com.example.spendee.ui.budget.components.CategoryCard
-import com.example.spendee.util.AnimatedVisibilityComposable
 
 @Composable
 fun AddEditExpenseScreen(modifier: Modifier = Modifier) {
-    AnimatedVisibilityComposable {
-        Scaffold(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            floatingActionButton = {
-                FloatingActionButton(onClick = {
+    Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(12.dp),
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
 
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.Check,
-                        contentDescription = stringResource(R.string.save)
-                    )
-                }
+            }) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = stringResource(R.string.save)
+                )
             }
-        ) { _ ->
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(modifier = Modifier.height(32.dp))
-                Text(
-                    text = stringResource(R.string.your_expense),
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.Bold
-                    )
+        }
+    ) { _ ->
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(32.dp))
+            Text(
+                text = stringResource(R.string.your_expense),
+                style = MaterialTheme.typography.headlineMedium.copy(
+                    fontWeight = FontWeight.Bold
                 )
-                TextField(
-                    value = "",
-                    onValueChange = {
-                    },
-                    placeholder = { Text(stringResource(R.string.amount)) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                TextField(
-                    value = "",
-                    onValueChange = {
+            )
+            TextField(
+                value = "",
+                onValueChange = {
+                },
+                placeholder = { Text(stringResource(R.string.amount)) },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            TextField(
+                value = "",
+                onValueChange = {
 
-                    },
-                    placeholder = {
-                        Text(text = stringResource(R.string.description))
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = false,
-                    maxLines = 2
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(text = stringResource(R.string.select_a_category), fontWeight = FontWeight.Bold)
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    contentPadding = PaddingValues(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    items(ExpenseCategory.getAllCategories()) { category ->
-                        CategoryCard(drawable = category.iconResource, text = category.name)
-                    }
+                },
+                placeholder = {
+                    Text(text = stringResource(R.string.description))
+                },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = false,
+                maxLines = 2
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = stringResource(R.string.select_a_category), fontWeight = FontWeight.Bold)
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                items(ExpenseCategory.getAllCategories()) { category ->
+                    CategoryCard(drawable = category.iconResource, text = category.name)
                 }
             }
         }

@@ -24,7 +24,6 @@ import com.example.spendee.ui.budget.components.BudgetCircle
 import com.example.spendee.ui.budget.components.BudgetInfoCard
 import com.example.spendee.ui.budget.components.BudgetMapKey
 import com.example.spendee.ui.budget.components.UpdateBudgetButton
-import com.example.spendee.util.AnimatedVisibilityComposable
 import kotlinx.coroutines.delay
 
 @Composable
@@ -52,19 +51,16 @@ fun BudgetScreen(modifier: Modifier = Modifier) {
             .padding(16.dp)
     ) {
         Spacer(modifier = Modifier.height(72.dp))
-        BudgetCircle(percentageSpent = percentageSpent.toFloat(), animatedProgress = animatedProgress)
-        AnimatedVisibilityComposable {
-            BudgetMapKey()
-        }
+        BudgetCircle(
+            percentageSpent = percentageSpent.toFloat(),
+            animatedProgress = animatedProgress
+        )
+        BudgetMapKey()
         Spacer(modifier = Modifier.height(16.dp))
-        AnimatedVisibilityComposable {
-            UpdateBudgetButton()
-        }
-        AnimatedVisibilityComposable {
-            Column {
-                BudgetInfoCard(text = R.string.spent, color = Color.Red)
-                BudgetInfoCard(text = R.string.you_can_spend, color = Color(0xFF04AF70))
-            }
+        UpdateBudgetButton()
+        Column {
+            BudgetInfoCard(text = R.string.spent, color = Color.Red)
+            BudgetInfoCard(text = R.string.you_can_spend, color = Color(0xFF04AF70))
         }
     }
 }

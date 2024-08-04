@@ -20,7 +20,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.spendee.R
 import com.example.spendee.ui.expenses.components.ExpensesColumn
-import com.example.spendee.util.AnimatedVisibilityComposable
 
 @Composable
 fun ExpensesScreen(modifier: Modifier = Modifier) {
@@ -37,12 +36,7 @@ fun ExpensesScreen(modifier: Modifier = Modifier) {
                 .clip(RoundedCornerShape(16.dp))
                 .background(MaterialTheme.colorScheme.primaryContainer)
         ) {
-            AnimatedVisibilityComposable(
-                modifier = Modifier
-                    .padding(16.dp)
-            ) {
-                ExpensesColumn()
-            }
+            ExpensesColumn(modifier = modifier.padding(16.dp))
         }
     }
 }

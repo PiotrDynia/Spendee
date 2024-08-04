@@ -32,7 +32,7 @@
     <string name="select_a_start_date">Select a start date</string>
     <string name="select_an_end_date">Select an end date</string>
     <string name="notify_me_when_i_exceed_my_budget">Notify me when I exceed my budget</string>
-    <string name="notify_me_when_i_exceed_80_of_my_budget">Notify me when I exceed 80% of my budget</string>
+    <string name="notify_me_when_i_reach_80_of_my_budget">Notify me when I reach 80% of my budget</string>
     <string name="your_goal">Your goal</string>
     <string name="target_amount">Target amount</string>
     <string name="set_a_deadline">Set a deadline</string>
