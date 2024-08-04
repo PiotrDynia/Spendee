@@ -9,6 +9,5 @@ data class Goal(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val description: String,
     val targetAmount: Double,
-    val deadline: Date,
-    val imagePath: String? = null
+    val deadline: Date
 )

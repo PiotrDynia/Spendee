@@ -27,4 +27,14 @@
     <string name="you_have_no_budget_set">You have no budget set</string>
     <string name="you_have_no_goals_set">You have no goals set</string>
     <string name="add_a_financial_goal">Add a financial goal</string>
+    <string name="your_budget">Your budget</string>
+    <string name="enter_budget_amount">Enter budget amount</string>
+    <string name="select_a_start_date">Select a start date</string>
+    <string name="select_an_end_date">Select an end date</string>
+    <string name="notify_me_when_i_exceed_my_budget">Notify me when I exceed my budget</string>
+    <string name="notify_me_when_i_exceed_80_of_my_budget">Notify me when I exceed 80% of my budget</string>
+    <string name="your_goal">Your goal</string>
+    <string name="target_amount">Target amount</string>
+    <string name="set_a_deadline">Set a deadline</string>
+    <string name="notify_me_when_i_reach_my_goal">Notify me when I reach my goal</string>
 </resources>

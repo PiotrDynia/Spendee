@@ -1,4 +1,4 @@
-package com.example.spendee.ui.budget
+package com.example.spendee.ui.budget.components
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

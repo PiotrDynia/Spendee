@@ -1,4 +1,4 @@
-package com.example.spendee.ui.goals
+package com.example.spendee.ui.goals.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.spendee.R
 import com.example.spendee.data.entities.Goal
+import com.example.spendee.ui.goals.components.GoalCard
 import com.example.spendee.util.AnimatedVisibilityComposable
 import java.util.Date
 
@@ -79,8 +80,8 @@ fun GoalsScreen(modifier: Modifier = Modifier) {
 
 fun generateExampleGoals(): List<Goal> {
     return listOf(
-        Goal(description = "Buy a new car", targetAmount = 15000.0, deadline = Date(), imagePath = null),
-        Goal(description = "Vacation to Hawaii", targetAmount = 5000.0, deadline = Date(), imagePath = null),
-        Goal(description = "Emergency Fund", targetAmount = 10000.0, deadline = Date(), imagePath = null)
+        Goal(description = "Buy a new car", targetAmount = 15000.0, deadline = Date()),
+        Goal(description = "Vacation to Hawaii", targetAmount = 5000.0, deadline = Date()),
+        Goal(description = "Emergency Fund", targetAmount = 10000.0, deadline = Date())
     )
 }

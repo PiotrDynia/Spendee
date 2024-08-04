@@ -1,6 +1,5 @@
-package com.example.spendee.ui.goals
+package com.example.spendee.ui.goals.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,11 +15,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.spendee.R
 import com.example.spendee.data.entities.Goal
 import com.example.spendee.util.formatDate
 
@@ -47,9 +44,6 @@ fun GoalCard(goal: Goal, currentBalance: Double, modifier: Modifier = Modifier) 
                 Text(text = "Deadline: ${formatDate(goal.deadline)}")
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = "Balance: $currentBalance / ${goal.targetAmount}$", fontWeight = FontWeight.Bold)
-            }
-            Column {
-                Image(painter = painterResource(R.drawable.travel), contentDescription = null)
             }
         }
     }

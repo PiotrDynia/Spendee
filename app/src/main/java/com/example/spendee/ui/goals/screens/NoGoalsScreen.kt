@@ -1,4 +1,4 @@
-package com.example.spendee.ui.goals
+package com.example.spendee.ui.goals.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
