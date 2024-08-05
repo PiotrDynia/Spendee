@@ -41,19 +41,25 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.spendee.R
 import com.example.spendee.data.entities.Expense
-import com.example.spendee.ui.current_balance.CurrentBalanceViewModel
+import com.example.spendee.ui.current_balance.CurrentBalanceEvent
+import com.example.spendee.ui.current_balance.CurrentBalanceState
 import com.example.spendee.ui.current_balance.components.CurrentBalanceTexts
 import com.example.spendee.ui.current_balance.components.LatestExpensesColumn
+import com.example.spendee.util.UiEvent
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.util.Date
 
 @Composable
 fun CurrentBalanceScreen(
-    modifier: Modifier = Modifier,
-    viewModel: CurrentBalanceViewModel = hiltViewModel(),
+    state: CurrentBalanceState,
+    onEvent: (CurrentBalanceEvent) -> Unit,
+    onNavigate: (String) -> Unit,
+    uiEvent: Flow<UiEvent>,
+    modifier: Modifier = Modifier
     ) {
     val infiniteTransition = rememberInfiniteTransition(label = "infinite transition")
     val animatedCircleColor by infiniteTransition.animateColor(
@@ -140,7 +146,12 @@ fun CurrentBalanceScreen(
 @Preview(showBackground = true)
 @Composable
 private fun CurrentBalanceScreenPreview() {
-    CurrentBalanceScreen()
+    CurrentBalanceScreen(
+        state = CurrentBalanceState(),
+        onEvent = {},
+        onNavigate = {},
+        uiEvent = flow{}
+    )
 }
 
 fun getExampleExpenses(): List<Expense> {

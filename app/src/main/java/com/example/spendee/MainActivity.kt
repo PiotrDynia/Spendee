@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -19,6 +21,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.spendee.ui.budget.screens.AddEditBudgetScreen
 import com.example.spendee.ui.budget.screens.BudgetScreen
+import com.example.spendee.ui.current_balance.CurrentBalanceViewModel
 import com.example.spendee.ui.current_balance.screens.CurrentBalanceScreen
 import com.example.spendee.ui.expenses.screens.AddEditExpenseScreen
 import com.example.spendee.ui.expenses.screens.ExpensesScreen
@@ -49,7 +52,13 @@ class MainActivity : ComponentActivity() {
                             // TODO highlight selected tab
                             NavHost(navController = navController, startDestination = Routes.CURRENT_BALANCE) {
                                 composable(Routes.CURRENT_BALANCE) {
-                                    CurrentBalanceScreen()
+                                    val viewModel = hiltViewModel<CurrentBalanceViewModel>()
+                                    CurrentBalanceScreen(
+                                        state = viewModel.viewState.collectAsState().value,
+                                        onEvent = viewModel::onEvent,
+                                        onNavigate = { route -> navController.navigate(route) },
+                                        uiEvent = viewModel.uiEvent
+                                    )
                                 }
                                 composable(Routes.EXPENSES) {
                                     ExpensesScreen()
