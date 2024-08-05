@@ -24,7 +24,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -42,24 +41,20 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.spendee.R
 import com.example.spendee.data.entities.Expense
-import com.example.spendee.ui.current_balance.CurrentBalanceEvent
-import com.example.spendee.ui.current_balance.CurrentBalanceState
+import com.example.spendee.ui.current_balance.CurrentBalanceViewModel
 import com.example.spendee.ui.current_balance.components.CurrentBalanceTexts
 import com.example.spendee.ui.current_balance.components.LatestExpensesColumn
-import com.example.spendee.util.UiEvent
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import java.util.Date
 
 @Composable
 fun CurrentBalanceScreen(
-    state: CurrentBalanceState,
-    onEvent: (CurrentBalanceEvent) -> Unit,
-    onNavigate: (String) -> Unit,
-    uiEvent: Flow<UiEvent>,
-    modifier: Modifier = Modifier) {
+    modifier: Modifier = Modifier,
+    viewModel: CurrentBalanceViewModel = hiltViewModel(),
+    ) {
     val infiniteTransition = rememberInfiniteTransition(label = "infinite transition")
     val animatedCircleColor by infiniteTransition.animateColor(
         initialValue = Color(0xFF60DDAD),

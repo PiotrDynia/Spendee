@@ -18,35 +18,39 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.spendee.R
+import com.example.spendee.util.Routes
 
 @Composable
-fun BottomNavigationBar() {
+fun BottomNavigationBar(onNavigate: (String) -> Unit, modifier: Modifier = Modifier) {
     BottomAppBar {
         val items = listOf(
-            BottomNavItem(stringResource(R.string.home), painterResource(R.drawable.ic_home)),
-            BottomNavItem(stringResource(R.string.expenses), painterResource(R.drawable.ic_money)),
-            BottomNavItem(stringResource(R.string.budget), painterResource(R.drawable.ic_budget)),
-            BottomNavItem(stringResource(R.string.goals), painterResource(R.drawable.ic_goals))
+            BottomNavItem(stringResource(R.string.home), painterResource(R.drawable.ic_home), Routes.CURRENT_BALANCE),
+            BottomNavItem(stringResource(R.string.expenses), painterResource(R.drawable.ic_money), Routes.EXPENSES),
+            BottomNavItem(stringResource(R.string.budget), painterResource(R.drawable.ic_budget), Routes.BUDGET),
+            BottomNavItem(stringResource(R.string.goals), painterResource(R.drawable.ic_goals), Routes.GOALS)
         )
-        Row(modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth(),
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween) {
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             items.forEach { item ->
-                BottomNavigationItem(item = item)
+                BottomNavigationItem(item = item, onNavigate = onNavigate)
             }
         }
     }
 }
 
-data class BottomNavItem(val label: String, val icon: Painter)
+data class BottomNavItem(val label: String, val icon: Painter, val route: String)
 
 @Composable
-fun BottomNavigationItem(item: BottomNavItem) {
+fun BottomNavigationItem(item: BottomNavItem, onNavigate: (String) -> Unit, modifier: Modifier = Modifier) {
     Column(
         modifier = Modifier
-            .clickable {  },
+            .clickable { onNavigate(item.route) }
+            .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {

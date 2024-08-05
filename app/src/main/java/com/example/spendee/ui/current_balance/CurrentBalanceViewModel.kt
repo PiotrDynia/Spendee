@@ -2,7 +2,6 @@ package com.example.spendee.ui.current_balance
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.spendee.data.entities.Balance
 import com.example.spendee.data.repositories.BalanceRepository
 import com.example.spendee.data.repositories.ExpenseRepository
 import com.example.spendee.util.Routes
@@ -23,13 +22,7 @@ class CurrentBalanceViewModel @Inject constructor(
     private val expensesRepository: ExpenseRepository
 ) : ViewModel() {
     private val _viewBalanceState = MutableStateFlow(
-        CurrentBalanceState(
-            balance = Balance(id = 1, amount = 0.0),
-            currentAmount = 0.0,
-            originalAmount = 0.0,
-            isDialogOpen = false,
-            latestExpenses = emptyList()
-        )
+        CurrentBalanceState()
     )
     val viewState = _viewBalanceState.asStateFlow()
 
