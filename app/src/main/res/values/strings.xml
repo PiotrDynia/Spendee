@@ -37,4 +37,8 @@
     <string name="target_amount">Target amount</string>
     <string name="set_a_deadline">Set a deadline</string>
     <string name="notify_me_when_i_reach_my_goal">Notify me when I reach my goal</string>
+    <string name="expenses">Expenses</string>
+    <string name="budget">Budget</string>
+    <string name="goals">Goals</string>
+    <string name="home">Home</string>
 </resources>

@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 interface BalanceRepository {
     fun getBalance() : Flow<Balance>
     suspend fun upsertBalance(balance: Balance)
+    suspend fun updateBalance(amount: Double)
 }

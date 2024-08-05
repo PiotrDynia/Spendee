@@ -1,7 +1,7 @@
 package com.example.spendee.ui.expenses.components
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
@@ -20,14 +20,14 @@ fun ExpensesColumn(modifier: Modifier = Modifier) {
     LazyColumn(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
+        contentPadding = PaddingValues(8.dp),
         modifier = modifier
     ) {
         item {
             Text(
                 text = stringResource(R.string.your_expenses),
                 fontSize = 26.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(16.dp)
+                fontWeight = FontWeight.Bold
             )
         }
         items(getExampleExpenses()) { item ->
