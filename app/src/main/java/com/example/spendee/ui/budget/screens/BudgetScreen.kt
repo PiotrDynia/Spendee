@@ -50,13 +50,12 @@ fun BudgetScreen(modifier: Modifier = Modifier) {
         modifier = Modifier
             .padding(16.dp)
     ) {
-        Spacer(modifier = Modifier.height(72.dp))
         BudgetCircle(
             percentageSpent = percentageSpent.toFloat(),
             animatedProgress = animatedProgress
         )
         BudgetMapKey()
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         UpdateBudgetButton()
         Column {
             BudgetInfoCard(text = R.string.spent, color = Color.Red)

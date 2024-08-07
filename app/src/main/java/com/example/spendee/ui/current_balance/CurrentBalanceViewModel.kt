@@ -37,8 +37,8 @@ class CurrentBalanceViewModel @Inject constructor(
             ) { expenses, balance ->
                 CurrentBalanceState(
                     balance = balance,
-                    currentAmount = balance.amount,
-                    originalAmount = balance.amount,
+                    currentAmount = balance.amount.toString(),
+                    originalAmount = balance.amount.toString(),
                     isDialogOpen = _viewBalanceState.value.isDialogOpen,
                     latestExpenses = expenses
                 )
@@ -64,7 +64,7 @@ class CurrentBalanceViewModel @Inject constructor(
 
             is CurrentBalanceEvent.OnAmountChange -> {
                 _viewBalanceState.value = _viewBalanceState.value.copy(
-                    currentAmount = event.amount.toDouble()
+                    currentAmount = event.amount
                 )
             }
 
@@ -76,7 +76,7 @@ class CurrentBalanceViewModel @Inject constructor(
 
             CurrentBalanceEvent.OnConfirmSetBalanceClick -> {
                 viewModelScope.launch {
-                    balanceRepository.updateBalance(_viewBalanceState.value.currentAmount)
+                    balanceRepository.updateBalance(_viewBalanceState.value.currentAmount.toDouble())
                     _viewBalanceState.value = _viewBalanceState.value.copy(
                         originalAmount = _viewBalanceState.value.currentAmount,
                         isDialogOpen = false)

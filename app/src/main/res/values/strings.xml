@@ -41,4 +41,7 @@
     <string name="budget">Budget</string>
     <string name="goals">Goals</string>
     <string name="home">Home</string>
+    <string name="balance">Balance</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
 </resources>

@@ -19,9 +19,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -57,6 +59,7 @@ import java.util.Date
 fun CurrentBalanceScreen(
     state: CurrentBalanceState,
     onEvent: (CurrentBalanceEvent) -> Unit,
+    onShowMoreClick: () -> Unit,
     onNavigate: (String) -> Unit,
     uiEvent: Flow<UiEvent>,
     modifier: Modifier = Modifier
@@ -87,6 +90,14 @@ fun CurrentBalanceScreen(
             animationProgress = 1f
             boxSize = 320.dp
             delay(2000)
+        }
+    }
+    LaunchedEffect(key1 = true) {
+        uiEvent.collect { event ->
+            when(event) {
+                is UiEvent.Navigate -> onNavigate(event.route)
+                else -> Unit
+            }
         }
     }
     Column(
@@ -122,13 +133,39 @@ fun CurrentBalanceScreen(
                     )
                 }
         ) {
-            CurrentBalanceTexts()
+            // TODO format here and when editing in dialog
+            CurrentBalanceTexts(currentBalance = state.currentAmount)
         }
         Spacer(modifier = Modifier.height(16.dp))
         Button(
-            onClick = { }
+            onClick = {
+                onEvent(CurrentBalanceEvent.OnSetBalanceClick)
+            }
         ) {
             Text(text = stringResource(R.string.set_balance))
+        }
+        if (state.isDialogOpen) {
+            AlertDialog(
+                onDismissRequest = { onEvent(CurrentBalanceEvent.OnCancelSetBalanceClick) },
+                confirmButton = {
+                    Button(onClick = { onEvent(CurrentBalanceEvent.OnConfirmSetBalanceClick) }) {
+                        Text(text = stringResource(R.string.ok))
+                } },
+                dismissButton = {
+                    Button(onClick = { onEvent(CurrentBalanceEvent.OnCancelSetBalanceClick) }) {
+                        Text(text = stringResource(R.string.cancel))
+                    } },
+                title = {
+                    Text(text = stringResource(R.string.set_balance))
+                },
+                text = {
+                    TextField(
+                        value = state.currentAmount,
+                        onValueChange = { onEvent(CurrentBalanceEvent.OnAmountChange(it))},
+                        label = { Text(text = stringResource(R.string.balance)) }
+                    )
+                }
+            )
         }
         Spacer(modifier = Modifier.height(16.dp))
         Box(
@@ -138,7 +175,14 @@ fun CurrentBalanceScreen(
                 .clip(RoundedCornerShape(16.dp))
                 .background(MaterialTheme.colorScheme.primaryContainer)
         ) {
-            LatestExpensesColumn(modifier = modifier.padding(16.dp))
+            LatestExpensesColumn(
+                latestExpenses = state.latestExpenses,
+                // TODO somehow make it less confusing
+                onShowMoreClick = {
+                    onShowMoreClick()
+                    onEvent(CurrentBalanceEvent.OnShowMoreClick) },
+                modifier = modifier.padding(16.dp)
+            )
         }
     }
 }
@@ -150,6 +194,7 @@ private fun CurrentBalanceScreenPreview() {
         state = CurrentBalanceState(),
         onEvent = {},
         onNavigate = {},
+        onShowMoreClick = {},
         uiEvent = flow{}
     )
 }

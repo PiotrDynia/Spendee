@@ -13,10 +13,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.spendee.R
+import com.example.spendee.data.entities.Expense
 import com.example.spendee.ui.current_balance.screens.getExampleExpenses
 
 @Composable
-fun LatestExpensesColumn(modifier: Modifier = Modifier) {
+fun LatestExpensesColumn(latestExpenses: List<Expense>, onShowMoreClick: () -> Unit, modifier: Modifier = Modifier) {
     LazyColumn(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -29,6 +30,7 @@ fun LatestExpensesColumn(modifier: Modifier = Modifier) {
                 fontWeight = FontWeight.Bold
             )
         }
+        // TODO change to state.latestExpenses
         items(getExampleExpenses().take(3)) { item ->
             LatestExpensesCard(expense = item)
         }
@@ -37,7 +39,9 @@ fun LatestExpensesColumn(modifier: Modifier = Modifier) {
                 text = stringResource(R.string.show_more),
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.clickable { }
+                modifier = Modifier.clickable {
+                    onShowMoreClick()
+                }
             )
         }
     }

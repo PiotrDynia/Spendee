@@ -13,22 +13,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.spendee.R
-import com.example.spendee.util.Routes
 
 @Composable
-fun BottomNavigationBar(onNavigate: (String) -> Unit, modifier: Modifier = Modifier) {
+fun BottomNavigationBar(
+    items: List<BottomNavItem>,
+    selectedItem: String,
+    onNavigate: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     BottomAppBar {
-        val items = listOf(
-            BottomNavItem(stringResource(R.string.home), painterResource(R.drawable.ic_home), Routes.CURRENT_BALANCE),
-            BottomNavItem(stringResource(R.string.expenses), painterResource(R.drawable.ic_money), Routes.EXPENSES),
-            BottomNavItem(stringResource(R.string.budget), painterResource(R.drawable.ic_budget), Routes.BUDGET),
-            BottomNavItem(stringResource(R.string.goals), painterResource(R.drawable.ic_goals), Routes.GOALS)
-        )
         Row(
             modifier = Modifier
                 .padding(16.dp)
@@ -37,7 +33,13 @@ fun BottomNavigationBar(onNavigate: (String) -> Unit, modifier: Modifier = Modif
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             items.forEach { item ->
-                BottomNavigationItem(item = item, onNavigate = onNavigate)
+                BottomNavigationItem(
+                    item = item,
+                    isSelected = selectedItem == item.route,
+                    onNavigate = {
+                        onNavigate(it)
+                    }
+                )
             }
         }
     }
@@ -46,15 +48,21 @@ fun BottomNavigationBar(onNavigate: (String) -> Unit, modifier: Modifier = Modif
 data class BottomNavItem(val label: String, val icon: Painter, val route: String)
 
 @Composable
-fun BottomNavigationItem(item: BottomNavItem, onNavigate: (String) -> Unit, modifier: Modifier = Modifier) {
+fun BottomNavigationItem(
+    item: BottomNavItem,
+    isSelected: Boolean,
+    onNavigate: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val textColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.Gray
+    val iconTint = if (isSelected) MaterialTheme.colorScheme.primary else Color.Gray
     Column(
         modifier = Modifier
-            .clickable { onNavigate(item.route) }
-            .padding(8.dp),
+            .clickable { onNavigate(item.route) },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Icon(painter = item.icon, contentDescription = item.label)
-        Text(text = item.label, style = MaterialTheme.typography.labelSmall)
+        Icon(painter = item.icon, contentDescription = item.label, tint = iconTint)
+        Text(text = item.label, color = textColor, style = MaterialTheme.typography.labelSmall)
     }
 }

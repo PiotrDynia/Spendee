@@ -11,7 +11,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
@@ -27,6 +33,7 @@ import com.example.spendee.ui.expenses.screens.AddEditExpenseScreen
 import com.example.spendee.ui.expenses.screens.ExpensesScreen
 import com.example.spendee.ui.goals.screens.AddEditGoalScreen
 import com.example.spendee.ui.goals.screens.GoalsScreen
+import com.example.spendee.ui.navigation.BottomNavItem
 import com.example.spendee.ui.navigation.BottomNavigationBar
 import com.example.spendee.util.AnimatedVisibilityComposable
 import com.example.spendee.util.Routes
@@ -40,23 +47,56 @@ class MainActivity : ComponentActivity() {
         setContent {
             SpendeeTheme {
                 val navController = rememberNavController()
+                val items = listOf(
+                    BottomNavItem(
+                        stringResource(R.string.home),
+                        painterResource(R.drawable.ic_home),
+                        Routes.CURRENT_BALANCE
+                    ),
+                    BottomNavItem(
+                        stringResource(R.string.expenses),
+                        painterResource(R.drawable.ic_money),
+                        Routes.EXPENSES
+                    ),
+                    BottomNavItem(
+                        stringResource(R.string.budget),
+                        painterResource(R.drawable.ic_budget),
+                        Routes.BUDGET
+                    ),
+                    BottomNavItem(
+                        stringResource(R.string.goals),
+                        painterResource(R.drawable.ic_goals),
+                        Routes.GOALS
+                    )
+                )
+
+                var selectedItem by remember { mutableStateOf(items.first().route) }
                 Scaffold(modifier = Modifier.fillMaxSize(),
-                    bottomBar = { BottomNavigationBar(
-                        onNavigate = {
-                            route -> navController.navigate(route)
-                        }
-                    ) })
+                    bottomBar = {
+                        BottomNavigationBar(
+                            items = items,
+                            selectedItem = selectedItem,
+                            onNavigate = { route ->
+                                selectedItem = route
+                                navController.navigate(route)
+                            }
+                        )
+                    })
                 { padding ->
                     Box(modifier = Modifier.padding(padding)) {
                         AnimatedVisibilityComposable {
-                            // TODO highlight selected tab
-                            NavHost(navController = navController, startDestination = Routes.CURRENT_BALANCE) {
+                            NavHost(
+                                navController = navController,
+                                startDestination = Routes.CURRENT_BALANCE
+                            ) {
                                 composable(Routes.CURRENT_BALANCE) {
                                     val viewModel = hiltViewModel<CurrentBalanceViewModel>()
                                     CurrentBalanceScreen(
                                         state = viewModel.viewState.collectAsState().value,
                                         onEvent = viewModel::onEvent,
                                         onNavigate = { route -> navController.navigate(route) },
+                                        onShowMoreClick = { selectedItem = Routes.EXPENSES
+                                            navController.navigate(Routes.EXPENSES) },
                                         uiEvent = viewModel.uiEvent
                                     )
                                 }
