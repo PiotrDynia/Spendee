@@ -29,6 +29,7 @@ import com.example.spendee.ui.budget.screens.AddEditBudgetScreen
 import com.example.spendee.ui.budget.screens.BudgetScreen
 import com.example.spendee.ui.current_balance.CurrentBalanceViewModel
 import com.example.spendee.ui.current_balance.screens.CurrentBalanceScreen
+import com.example.spendee.ui.expenses.AddEditExpenseViewModel
 import com.example.spendee.ui.expenses.screens.AddEditExpenseScreen
 import com.example.spendee.ui.expenses.screens.ExpensesScreen
 import com.example.spendee.ui.goals.screens.AddEditGoalScreen
@@ -118,7 +119,14 @@ class MainActivity : ComponentActivity() {
                                         }
                                     )
                                 ) {
-                                    AddEditExpenseScreen()
+                                    val viewModel = hiltViewModel<AddEditExpenseViewModel>()
+                                    AddEditExpenseScreen(
+                                        onEvent = viewModel::onEvent,
+                                        uiEvent = viewModel.uiEvent,
+                                        state = viewModel.state.collectAsState().value,
+                                        onNavigate = { route -> navController.navigate(route)},
+                                        onPopBackStack = { navController.popBackStack() }
+                                    )
                                 }
                                 composable(
                                     route = Routes.ADD_EDIT_BUDGET + "?budgetId={budgetId}",

@@ -1,4 +1,4 @@
-package com.example.spendee.ui.budget.components
+package com.example.spendee.ui.expenses.components
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -22,8 +22,12 @@ import androidx.compose.ui.unit.dp
 fun CategoryCard(
     @DrawableRes drawable: Int,
     @StringRes text: Int,
+    categoryId: Int,
     modifier: Modifier = Modifier
 ) {
+    // TODO pass state from viewModel
+    val backgroundColor = if (true) MaterialTheme.colorScheme.primary else Color.Transparent
+
     Surface(
         shape = MaterialTheme.shapes.medium,
         modifier = modifier.clickable {  }

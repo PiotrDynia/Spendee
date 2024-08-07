@@ -20,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -27,10 +28,29 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.spendee.R
 import com.example.spendee.data.entities.ExpenseCategory
-import com.example.spendee.ui.budget.components.CategoryCard
+import com.example.spendee.ui.expenses.AddEditExpenseEvent
+import com.example.spendee.ui.expenses.AddEditExpenseState
+import com.example.spendee.ui.expenses.components.CategoryCard
+import com.example.spendee.util.UiEvent
+import kotlinx.coroutines.flow.Flow
 
 @Composable
-fun AddEditExpenseScreen(modifier: Modifier = Modifier) {
+fun AddEditExpenseScreen(
+    onEvent: (AddEditExpenseEvent) -> Unit,
+    state: AddEditExpenseState,
+    uiEvent: Flow<UiEvent>,
+    onNavigate: (String) -> Unit,
+    onPopBackStack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    LaunchedEffect(key1 = true) {
+        uiEvent.collect { event ->
+            when(event) {
+                is UiEvent.PopBackStack -> onPopBackStack()
+                is UiEvent.Navigate -> onNavigate(event.route)
+            }
+        }
+    }
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -86,7 +106,7 @@ fun AddEditExpenseScreen(modifier: Modifier = Modifier) {
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 items(ExpenseCategory.getAllCategories()) { category ->
-                    CategoryCard(drawable = category.iconResource, text = category.name)
+                    CategoryCard(drawable = category.iconResource, categoryId = category.id, text = category.name)
                 }
             }
         }

@@ -17,7 +17,7 @@ import com.example.spendee.data.entities.Expense
 import com.example.spendee.ui.current_balance.screens.getExampleExpenses
 
 @Composable
-fun LatestExpensesColumn(latestExpenses: List<Expense>, onShowMoreClick: () -> Unit, modifier: Modifier = Modifier) {
+fun LatestExpensesColumn(onExpenseClick: (Expense) -> Unit, latestExpenses: List<Expense>, onShowMoreClick: () -> Unit, modifier: Modifier = Modifier) {
     LazyColumn(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -32,7 +32,7 @@ fun LatestExpensesColumn(latestExpenses: List<Expense>, onShowMoreClick: () -> U
         }
         // TODO change to state.latestExpenses
         items(getExampleExpenses().take(3)) { item ->
-            LatestExpensesCard(expense = item)
+            LatestExpensesCard(onExpenseClick = onExpenseClick , expense = item)
         }
         item {
             Text(

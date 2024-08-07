@@ -189,6 +189,7 @@ fun CurrentBalanceScreen(
                 onShowMoreClick = {
                     onShowMoreClick()
                     onEvent(CurrentBalanceEvent.OnShowMoreClick) },
+                onExpenseClick = {expense -> onEvent(CurrentBalanceEvent.OnExpenseClick(expense))},
                 modifier = modifier.padding(16.dp)
             )
         }

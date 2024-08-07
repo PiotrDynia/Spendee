@@ -27,10 +27,10 @@ import com.example.spendee.data.entities.ExpenseCategory
 import com.example.spendee.util.formatDate
 
 @Composable
-fun LatestExpensesCard(expense: Expense, modifier: Modifier = Modifier) {
+fun LatestExpensesCard(onExpenseClick: (Expense) -> Unit, expense: Expense, modifier: Modifier = Modifier) {
     Card(
         shape = RoundedCornerShape(25.dp),
-        onClick = { },
+        onClick = { onExpenseClick(expense) },
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
