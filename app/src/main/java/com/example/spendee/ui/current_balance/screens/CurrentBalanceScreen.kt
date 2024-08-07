@@ -133,7 +133,6 @@ fun CurrentBalanceScreen(
                     )
                 }
         ) {
-            // TODO format here and when editing in dialog
             CurrentBalanceTexts(currentBalance = state.currentAmount)
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -148,11 +147,17 @@ fun CurrentBalanceScreen(
             AlertDialog(
                 onDismissRequest = { onEvent(CurrentBalanceEvent.OnCancelSetBalanceClick) },
                 confirmButton = {
-                    Button(onClick = { onEvent(CurrentBalanceEvent.OnConfirmSetBalanceClick) }) {
+                    Button(onClick = {
+                        if (state.currentAmount.isNotEmpty()) {
+                            onEvent(CurrentBalanceEvent.OnConfirmSetBalanceClick)
+                        }
+                         }) {
                         Text(text = stringResource(R.string.ok))
                 } },
                 dismissButton = {
-                    Button(onClick = { onEvent(CurrentBalanceEvent.OnCancelSetBalanceClick) }) {
+                    Button(onClick = {
+                        onEvent(CurrentBalanceEvent.OnCancelSetBalanceClick)
+                         }) {
                         Text(text = stringResource(R.string.cancel))
                     } },
                 title = {
@@ -161,7 +166,10 @@ fun CurrentBalanceScreen(
                 text = {
                     TextField(
                         value = state.currentAmount,
-                        onValueChange = { onEvent(CurrentBalanceEvent.OnAmountChange(it))},
+                        onValueChange = { newValue ->
+                            if (isValidNumberInput(newValue)) {
+                                onEvent(CurrentBalanceEvent.OnAmountChange(newValue))
+                            }},
                         label = { Text(text = stringResource(R.string.balance)) }
                     )
                 }
@@ -335,4 +343,9 @@ fun getExampleExpenses(): List<Expense> {
             categoryId = 3
         ),
     )
+}
+
+fun isValidNumberInput(input: String): Boolean {
+    val regex = "^\\d{0,8}(\\.\\d{0,2})?$".toRegex()
+    return input.isEmpty() || regex.matches(input)
 }

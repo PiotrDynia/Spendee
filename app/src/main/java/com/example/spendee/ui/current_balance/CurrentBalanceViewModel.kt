@@ -78,7 +78,7 @@ class CurrentBalanceViewModel @Inject constructor(
                 viewModelScope.launch {
                     balanceRepository.updateBalance(_viewBalanceState.value.currentAmount.toDouble())
                     _viewBalanceState.value = _viewBalanceState.value.copy(
-                        originalAmount = _viewBalanceState.value.currentAmount,
+                        originalAmount = _viewBalanceState.value.currentAmount.toDouble().toString(),
                         isDialogOpen = false)
                 }
             }
