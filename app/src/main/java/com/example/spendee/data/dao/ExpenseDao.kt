@@ -13,7 +13,7 @@ interface ExpenseDao {
     fun getAllExpenses(): Flow<List<Expense>>
 
     @Query("SELECT * FROM expense WHERE id = :id")
-    fun getExpenseById(id: Int) : Expense?
+    suspend fun getExpenseById(id: Int) : Expense?
 
     @Upsert
     suspend fun upsertExpense(expense: Expense)

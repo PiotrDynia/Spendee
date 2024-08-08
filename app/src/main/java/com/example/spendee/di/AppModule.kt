@@ -28,7 +28,9 @@ object AppModule {
             app,
             SpendeeDatabase::class.java,
             "spendee_db"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     @Provides

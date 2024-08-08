@@ -136,11 +136,11 @@ class MainActivity : ComponentActivity() {
                                     )
                                 }
                                 composable(
-                                    route = Routes.ADD_EDIT_BUDGET + "?budgetId={budgetId}",
+                                    route = Routes.ADD_EDIT_BUDGET + "?isCreated={isCreated}",
                                     arguments = listOf(
-                                        navArgument(name = "budgetId") {
-                                            type = NavType.IntType
-                                            defaultValue = 1
+                                        navArgument(name = "isCreated") {
+                                            type = NavType.BoolType
+                                            defaultValue = false
                                         }
                                     )
                                 ) {

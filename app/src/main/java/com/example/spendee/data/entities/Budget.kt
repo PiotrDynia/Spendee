@@ -9,5 +9,7 @@ data class Budget(
     @PrimaryKey val id: Int = 1,
     val totalAmount: Double,
     val startDate: Date,
-    val endDate: Date
+    val endDate: Date,
+    val isExceedNotificationEnabled: Boolean,
+    val isReach80PercentNotificationEnabled: Boolean
 )

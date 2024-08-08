@@ -11,7 +11,7 @@ class ExpenseRepositoryImpl(
         return expenseDao.getAllExpenses()
     }
 
-    override fun getExpenseById(id: Int): Expense? {
+    override suspend fun getExpenseById(id: Int): Expense? {
         return expenseDao.getExpenseById(id)
     }
 

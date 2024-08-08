@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BudgetDao {
-    @Query("SELECT * FROM budget")
-    fun getAllBudgets(): Flow<List<Budget>>
+    @Query("SELECT * FROM budget WHERE id = 1")
+    fun getBudget(): Flow<Budget>
 
     @Upsert
     suspend fun upsertBudget(budget: Budget)
