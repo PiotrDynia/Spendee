@@ -77,8 +77,8 @@ fun GoalsScreen(modifier: Modifier = Modifier) {
 
 fun generateExampleGoals(): List<Goal> {
     return listOf(
-        Goal(description = "Buy a new car", targetAmount = 15000.0, deadline = Date()),
-        Goal(description = "Vacation to Hawaii", targetAmount = 5000.0, deadline = Date()),
-        Goal(description = "Emergency Fund", targetAmount = 10000.0, deadline = Date())
+        Goal(description = "Buy a new car", targetAmount = 15000.0, currentAmount = 100.0, isReachedNotificationEnabled = false, deadline = Date()),
+        Goal(description = "Vacation to Hawaii", targetAmount = 5000.0, currentAmount = 100.0, isReachedNotificationEnabled = false, deadline = Date()),
+        Goal(description = "Emergency Fund", targetAmount = 10000.0, currentAmount = 100.0, isReachedNotificationEnabled = false, deadline = Date())
     )
 }

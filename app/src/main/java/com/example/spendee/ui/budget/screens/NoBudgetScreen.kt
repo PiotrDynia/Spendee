@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -15,9 +16,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.spendee.R
+import com.example.spendee.ui.budget.BudgetEvent
+import com.example.spendee.util.UiEvent
+import kotlinx.coroutines.flow.Flow
 
 @Composable
-fun NoBudgetScreen(modifier: Modifier = Modifier) {
+fun NoBudgetScreen(onEvent: (BudgetEvent) -> Unit,
+                   uiEvent: Flow<UiEvent>,
+                   onNavigate: (String) -> Unit,
+                   modifier: Modifier = Modifier) {
+    LaunchedEffect(key1 = true) {
+        uiEvent.collect { event ->
+            when(event) {
+                is UiEvent.Navigate -> onNavigate(event.route)
+                else -> Unit
+            }
+        }
+    }
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
@@ -34,7 +49,9 @@ fun NoBudgetScreen(modifier: Modifier = Modifier) {
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
-            Button(onClick = {  }) {
+            Button(onClick = {
+                onEvent(BudgetEvent.OnSetBudgetClick)
+            }) {
                 Text(text = stringResource(R.string.set_budget))
             }
         }

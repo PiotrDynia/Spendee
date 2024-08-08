@@ -25,8 +25,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.spendee.ui.budget.AddEditBudgetViewModel
+import com.example.spendee.ui.budget.BudgetViewModel
 import com.example.spendee.ui.budget.screens.AddEditBudgetScreen
 import com.example.spendee.ui.budget.screens.BudgetScreen
+import com.example.spendee.ui.budget.screens.NoBudgetScreen
 import com.example.spendee.ui.current_balance.CurrentBalanceViewModel
 import com.example.spendee.ui.current_balance.screens.CurrentBalanceScreen
 import com.example.spendee.ui.expenses.AddEditExpenseViewModel
@@ -112,7 +115,22 @@ class MainActivity : ComponentActivity() {
                                     )
                                 }
                                 composable(Routes.BUDGET) {
-                                    BudgetScreen()
+                                    val viewModel = hiltViewModel<BudgetViewModel>()
+                                    val state = viewModel.state.collectAsState().value
+                                    if (state.budget == null) {
+                                        NoBudgetScreen(
+                                            onEvent = viewModel::onEvent,
+                                            onNavigate = { navController.navigate(it)},
+                                            uiEvent = viewModel.uiEvent
+                                        )
+                                    } else {
+                                        BudgetScreen(
+                                            state = state,
+                                            onEvent = viewModel::onEvent,
+                                            onNavigate = { navController.navigate(it)},
+                                            uiEvent = viewModel.uiEvent
+                                        )
+                                    }
                                 }
                                 composable(Routes.GOALS) {
                                     GoalsScreen()
@@ -144,7 +162,10 @@ class MainActivity : ComponentActivity() {
                                         }
                                     )
                                 ) {
-                                    AddEditBudgetScreen()
+                                    val viewModel = hiltViewModel<AddEditBudgetViewModel>()
+                                    AddEditBudgetScreen(
+
+                                    )
                                 }
                                 composable(
                                     route = Routes.ADD_EDIT_GOAL + "?goalId={goalId}",

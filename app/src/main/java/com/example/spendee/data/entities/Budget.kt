@@ -8,6 +8,7 @@ import java.util.Date
 data class Budget(
     @PrimaryKey val id: Int = 1,
     val totalAmount: Double,
+    val currentAmount: Double,
     val startDate: Date,
     val endDate: Date,
     val isExceedNotificationEnabled: Boolean,

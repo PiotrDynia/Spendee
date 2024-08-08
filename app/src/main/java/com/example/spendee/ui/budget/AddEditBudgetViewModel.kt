@@ -60,6 +60,7 @@ class AddEditBudgetViewModel @Inject constructor(
                     repository.upsertBudget(
                         Budget(
                             totalAmount = _state.value.amount.toDouble(),
+                            currentAmount = _state.value.amount.toDouble(),
                             startDate = Date(_state.value.startDate),
                             endDate = Date(_state.value.endDate),
                             isExceedNotificationEnabled = _state.value.isExceedButtonPressed,

@@ -17,17 +17,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.spendee.R
+import com.example.spendee.ui.budget.BudgetEvent
+import com.example.spendee.ui.budget.BudgetState
 import com.example.spendee.ui.budget.components.BudgetCircle
 import com.example.spendee.ui.budget.components.BudgetInfoCard
 import com.example.spendee.ui.budget.components.BudgetMapKey
 import com.example.spendee.ui.budget.components.UpdateBudgetButton
+import com.example.spendee.util.UiEvent
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 
 @Composable
-fun BudgetScreen(modifier: Modifier = Modifier) {
+fun BudgetScreen(
+    state: BudgetState,
+    onEvent: (BudgetEvent) -> Unit,
+    uiEvent: Flow<UiEvent>,
+    onNavigate: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     var animationProgress by remember { mutableFloatStateOf(0f) }
     val animatedProgress by animateFloatAsState(
         targetValue = animationProgress,
@@ -41,8 +50,16 @@ fun BudgetScreen(modifier: Modifier = Modifier) {
             delay(2000)
         }
     }
-    val totalBudget = 10000.0
-    val amountSpent = 10000.0 - 2137.69
+    LaunchedEffect(key1 = true) {
+        uiEvent.collect { event ->
+            when(event) {
+                is UiEvent.Navigate -> onNavigate(event.route)
+                else -> Unit
+            }
+        }
+    }
+    val totalBudget = state.totalAmount.toDouble()
+    val amountSpent = state.currentAmount.toDouble()
     val percentageSpent = amountSpent / totalBudget
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -56,16 +73,12 @@ fun BudgetScreen(modifier: Modifier = Modifier) {
         )
         BudgetMapKey()
         Spacer(modifier = Modifier.height(12.dp))
-        UpdateBudgetButton()
+        UpdateBudgetButton(
+            onClick = { onEvent(BudgetEvent.OnSetBudgetClick) }
+        )
         Column {
             BudgetInfoCard(text = R.string.spent, color = Color.Red)
             BudgetInfoCard(text = R.string.you_can_spend, color = Color(0xFF04AF70))
         }
     }
-}
-
-@Preview
-@Composable
-private fun BudgetScreenPreview() {
-    BudgetScreen()
 }
