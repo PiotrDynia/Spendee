@@ -7,6 +7,7 @@ import com.example.spendee.data.entities.Expense
 import com.example.spendee.data.repositories.ExpenseRepository
 import com.example.spendee.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,7 +30,7 @@ class AddEditExpenseViewModel @Inject constructor(
     init {
         val expenseId = savedStateHandle.get<Int>("expenseId")!!
         if (expenseId != 0) {
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 repository.getExpenseById(expenseId)?.let { expense ->
                     _state.value = _state.value.copy(
                         amount = expense.amount.toString(),
@@ -60,7 +61,7 @@ class AddEditExpenseViewModel @Inject constructor(
                 )
             }
             AddEditExpenseEvent.OnSaveExpenseClick -> {
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     repository.upsertExpense(
                         Expense(
                             id = _state.value.expense?.id ?: 0,

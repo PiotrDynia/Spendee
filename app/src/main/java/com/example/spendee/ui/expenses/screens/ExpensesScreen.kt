@@ -12,18 +12,47 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.spendee.R
+import com.example.spendee.data.entities.Expense
+import com.example.spendee.ui.current_balance.screens.getExampleExpenses
+import com.example.spendee.ui.expenses.ExpensesEvent
 import com.example.spendee.ui.expenses.components.ExpensesColumn
+import com.example.spendee.util.UiEvent
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 @Composable
-fun ExpensesScreen(modifier: Modifier = Modifier) {
+fun ExpensesScreen(
+    expenses: List<Expense>,
+    onEvent: (ExpensesEvent) -> Unit,
+    uiEvent: Flow<UiEvent>,
+    onNavigate: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    LaunchedEffect(key1 = true) {
+        uiEvent.collect { event ->
+            when(event) {
+                is UiEvent.Navigate -> {
+                    onNavigate(event.route)
+                }
+                else -> Unit
+            }
+        }
+    }
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = {}, shape = CircleShape) {
+            FloatingActionButton(
+                onClick = {
+                    onEvent(ExpensesEvent.OnAddExpenseClick)
+                },
+                shape = CircleShape,
+                containerColor = MaterialTheme.colorScheme.secondary
+            ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.add_expense))
             }
         }
@@ -33,7 +62,7 @@ fun ExpensesScreen(modifier: Modifier = Modifier) {
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.primaryContainer)
         ) {
-            ExpensesColumn(modifier = modifier.padding(16.dp))
+            ExpensesColumn(expenses = expenses, onClick = { expense -> onEvent(ExpensesEvent.OnExpenseClick(expense))}, modifier = modifier.padding(16.dp))
         }
     }
 }
@@ -41,5 +70,10 @@ fun ExpensesScreen(modifier: Modifier = Modifier) {
 @Preview
 @Composable
 private fun ExpensesScreenPreview() {
-    ExpensesScreen()
+    ExpensesScreen(
+        expenses = getExampleExpenses(),
+        onEvent = {},
+        uiEvent = flow {},
+        onNavigate = {}
+    )
 }

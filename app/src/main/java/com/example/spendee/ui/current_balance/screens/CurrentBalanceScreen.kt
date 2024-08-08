@@ -50,6 +50,7 @@ import com.example.spendee.ui.current_balance.CurrentBalanceState
 import com.example.spendee.ui.current_balance.components.CurrentBalanceTexts
 import com.example.spendee.ui.current_balance.components.LatestExpensesColumn
 import com.example.spendee.util.UiEvent
+import com.example.spendee.util.isValidNumberInput
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -344,9 +345,4 @@ fun getExampleExpenses(): List<Expense> {
             categoryId = 3
         ),
     )
-}
-
-fun isValidNumberInput(input: String): Boolean {
-    val regex = "^\\d{0,8}(\\.\\d{0,2})?$".toRegex()
-    return input.isEmpty() || regex.matches(input)
 }

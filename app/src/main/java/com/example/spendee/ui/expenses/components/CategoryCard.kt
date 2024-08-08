@@ -2,6 +2,7 @@ package com.example.spendee.ui.expenses.components
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
@@ -22,15 +23,17 @@ import androidx.compose.ui.unit.dp
 fun CategoryCard(
     @DrawableRes drawable: Int,
     @StringRes text: Int,
-    categoryId: Int,
+    onClick: () -> Unit,
+    isSelected: Boolean,
     modifier: Modifier = Modifier
 ) {
-    // TODO pass state from viewModel
-    val backgroundColor = if (true) MaterialTheme.colorScheme.primary else Color.Transparent
+    val backgroundColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent
 
     Surface(
         shape = MaterialTheme.shapes.medium,
-        modifier = modifier.clickable {  }
+        modifier = modifier
+            .clickable { onClick() }
+            .background(backgroundColor)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

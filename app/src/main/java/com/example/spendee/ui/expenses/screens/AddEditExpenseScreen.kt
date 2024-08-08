@@ -32,6 +32,7 @@ import com.example.spendee.ui.expenses.AddEditExpenseEvent
 import com.example.spendee.ui.expenses.AddEditExpenseState
 import com.example.spendee.ui.expenses.components.CategoryCard
 import com.example.spendee.util.UiEvent
+import com.example.spendee.util.isValidNumberInput
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -56,9 +57,12 @@ fun AddEditExpenseScreen(
             .fillMaxSize()
             .padding(12.dp),
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-
-            }) {
+            FloatingActionButton(
+                onClick = {
+                    onEvent(AddEditExpenseEvent.OnSaveExpenseClick)
+                },
+                containerColor = MaterialTheme.colorScheme.secondary
+            ) {
                 Icon(
                     imageVector = Icons.Default.Check,
                     contentDescription = stringResource(R.string.save)
@@ -78,17 +82,22 @@ fun AddEditExpenseScreen(
                 )
             )
             TextField(
-                value = "",
-                onValueChange = {
+                value = state.amount,
+                onValueChange = { amount ->
+                    if (isValidNumberInput(amount)) {
+                        onEvent(AddEditExpenseEvent.OnAmountChange(amount))
+                    }
                 },
                 placeholder = { Text(stringResource(R.string.amount)) },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(8.dp))
             TextField(
-                value = "",
-                onValueChange = {
-
+                value = state.description,
+                onValueChange = {description ->
+                    if (description.isNotBlank()) {
+                        onEvent(AddEditExpenseEvent.OnDescriptionChange(description))
+                    }
                 },
                 placeholder = {
                     Text(text = stringResource(R.string.description))
@@ -106,7 +115,12 @@ fun AddEditExpenseScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 items(ExpenseCategory.getAllCategories()) { category ->
-                    CategoryCard(drawable = category.iconResource, categoryId = category.id, text = category.name)
+                    CategoryCard(
+                        drawable = category.iconResource,
+                        isSelected = category.id == state.categoryId,
+                        onClick = { onEvent(AddEditExpenseEvent.OnCategoryChange(category.id)) },
+                        text = category.name
+                    )
                 }
             }
         }

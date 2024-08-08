@@ -44,4 +44,5 @@
     <string name="balance">Balance</string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
+    <string name="no_expenses_yet">No expenses yet</string>
 </resources>
