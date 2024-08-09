@@ -76,6 +76,12 @@ class CurrentBalanceViewModel @Inject constructor(
 
             CurrentBalanceEvent.OnConfirmSetBalanceClick -> {
                 viewModelScope.launch {
+                    if (_viewBalanceState.value.currentAmount.isBlank()) {
+                        sendUiEvent(UiEvent.ShowSnackbar(
+                            message = "Amount can't be empty!"
+                        ))
+                        return@launch
+                    }
                     balanceRepository.updateBalance(_viewBalanceState.value.currentAmount.toDouble())
                     _viewBalanceState.value = _viewBalanceState.value.copy(
                         originalAmount = _viewBalanceState.value.currentAmount.toDouble().toString(),

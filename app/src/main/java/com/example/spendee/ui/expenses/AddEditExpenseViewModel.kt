@@ -4,8 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spendee.data.entities.Balance
+import com.example.spendee.data.entities.Budget
 import com.example.spendee.data.entities.Expense
 import com.example.spendee.data.repositories.BalanceRepository
+import com.example.spendee.data.repositories.BudgetRepository
 import com.example.spendee.data.repositories.ExpenseRepository
 import com.example.spendee.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +24,7 @@ import javax.inject.Inject
 class AddEditExpenseViewModel @Inject constructor(
     private val repository: ExpenseRepository,
     private val balanceRepository: BalanceRepository,
+    private val budgetRepository: BudgetRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val _uiEvent = Channel<UiEvent>()
@@ -31,11 +34,15 @@ class AddEditExpenseViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     private var balance: Balance? = null
+    private var budget: Budget? = null
 
     init {
         viewModelScope.launch {
             balanceRepository.getBalance().collect { balance ->
                 this@AddEditExpenseViewModel.balance = balance
+            }
+            budgetRepository.getBudget().collect{ budget ->
+                this@AddEditExpenseViewModel.budget = budget
             }
         }
         val expenseId = savedStateHandle.get<Int>("expenseId")!!
@@ -73,6 +80,19 @@ class AddEditExpenseViewModel @Inject constructor(
             }
             AddEditExpenseEvent.OnSaveExpenseClick -> {
                 viewModelScope.launch(Dispatchers.IO) {
+                    if (_state.value.amount.isBlank()) {
+                        sendUiEvent(UiEvent.ShowSnackbar(message = "Amount can't be empty!"))
+                        return@launch
+                    }
+                    if (_state.value.description.isBlank()) {
+                        sendUiEvent(UiEvent.ShowSnackbar(message = "Description can't be empty!"))
+                        return@launch
+                    }
+                    if (_state.value.categoryId == 0) {
+                        _state.value = _state.value.copy(
+                            categoryId = 8
+                        )
+                    }
                     repository.upsertExpense(
                         Expense(
                             id = _state.value.expense?.id ?: 0,

@@ -17,11 +17,15 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -49,6 +53,7 @@ fun AddEditBudgetScreen(
 ) {
     val startDatePickerState = rememberDatePickerState()
     val endDatePickerState = rememberDatePickerState()
+    val snackbarState = remember { SnackbarHostState() }
     val startDate = startDatePickerState.selectedDateMillis?.let {
         millisToString(it)
     } ?: ""
@@ -60,6 +65,7 @@ fun AddEditBudgetScreen(
             when (event) {
                 is UiEvent.PopBackStack -> onPopBackStack()
                 is UiEvent.Navigate -> onNavigate(event.route)
+                is UiEvent.ShowSnackbar -> snackbarState.showSnackbar(event.message)
             }
         }
     }
@@ -67,6 +73,7 @@ fun AddEditBudgetScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(12.dp),
+        snackbarHost = { SnackbarHost(snackbarState) },
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 onEvent(AddEditBudgetEvent.OnSaveBudgetClick)

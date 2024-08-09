@@ -11,11 +11,11 @@ import com.example.spendee.util.stringToDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -54,8 +54,31 @@ class AddEditBudgetViewModel @Inject constructor(
             }
             AddEditBudgetEvent.OnSaveBudgetClick -> {
                 viewModelScope.launch(Dispatchers.IO) {
+                    if (_state.value.amount.isBlank()) {
+                        sendUiEvent(UiEvent.ShowSnackbar("Amount can't be empty!"))
+                        return@launch
+                    }
+                    if (_state.value.startDate.isBlank()) {
+                        sendUiEvent(UiEvent.ShowSnackbar("Please select a start date!"))
+                        return@launch
+                    }
+                    if (_state.value.endDate.isBlank()) {
+                        sendUiEvent(UiEvent.ShowSnackbar("Please select an end date!"))
+                        return@launch
+                    }
+                    val startDate = stringToDate(_state.value.startDate)
+                    val endDate = stringToDate(_state.value.endDate)
+                    if (startDate!!.before(Date())) {
+                        sendUiEvent(UiEvent.ShowSnackbar("Start date should be after today's date!"))
+                        return@launch
+                    }
+                    if (endDate!!.before(startDate)) {
+                        sendUiEvent(UiEvent.ShowSnackbar("End date should be after start date!"))
+                        return@launch
+                    }
                     repository.upsertBudget(
                         Budget(
+                            id = _state.value.budget?.id ?: 0,
                             totalAmount = _state.value.amount.toDoubleOrNull() ?: 0.0,
                             currentAmount = _state.value.amount.toDoubleOrNull() ?: 0.0,
                             startDate = stringToDate(_state.value.startDate)!!,
@@ -64,7 +87,6 @@ class AddEditBudgetViewModel @Inject constructor(
                             isReach80PercentNotificationEnabled = _state.value.isReach80PercentButtonPressed
                         )
                     )
-                    delay(2000)
                     sendUiEvent(UiEvent.PopBackStack)
                 }
                 _state.value = _state.value.copy(
