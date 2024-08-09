@@ -19,7 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.spendee.data.entities.Goal
-import com.example.spendee.util.formatDate
+import com.example.spendee.util.dateToString
 
 @Composable
 fun GoalCard(goal: Goal, currentBalance: Double, modifier: Modifier = Modifier) {
@@ -41,7 +41,7 @@ fun GoalCard(goal: Goal, currentBalance: Double, modifier: Modifier = Modifier) 
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = "Target: ${goal.targetAmount}$")
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = "Deadline: ${formatDate(goal.deadline)}")
+                Text(text = "Deadline: ${dateToString(goal.deadline)}")
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = "Balance: $currentBalance / ${goal.targetAmount}$", fontWeight = FontWeight.Bold)
             }

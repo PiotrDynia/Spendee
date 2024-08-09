@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.spendee.data.entities.Expense
 import com.example.spendee.data.entities.ExpenseCategory
-import com.example.spendee.util.formatDate
+import com.example.spendee.util.dateToString
 
 @Composable
 fun LatestExpensesCard(onExpenseClick: (Expense) -> Unit, expense: Expense, modifier: Modifier = Modifier) {
@@ -58,7 +58,7 @@ fun LatestExpensesCard(onExpenseClick: (Expense) -> Unit, expense: Expense, modi
                     fontStyle = FontStyle.Italic
                 )
                 Text(
-                    text = "${expense.description} at ${formatDate(expense.date)}",
+                    text = "${expense.description} at ${dateToString(expense.date)}",
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )

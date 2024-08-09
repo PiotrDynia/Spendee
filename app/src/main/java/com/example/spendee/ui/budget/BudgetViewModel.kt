@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.spendee.data.repositories.BudgetRepository
 import com.example.spendee.util.Routes
 import com.example.spendee.util.UiEvent
-import com.example.spendee.util.formatDate
+import com.example.spendee.util.dateToString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,10 +33,10 @@ class BudgetViewModel @Inject constructor(
             }
             if (_state.value.budget != null) {
                 _state.value = _state.value.copy(
-                    totalAmount = _state.value.budget!!.totalAmount.toString(),
-                    currentAmount = _state.value.budget!!.currentAmount.toString(),
-                    startDate = formatDate(_state.value.budget!!.startDate),
-                    endDate = formatDate(_state.value.budget!!.endDate)
+                    totalAmount = _state.value.budget?.totalAmount.toString(),
+                    currentAmount = _state.value.budget?.currentAmount.toString(),
+                    startDate = dateToString(_state.value.budget!!.startDate),
+                    endDate = dateToString(_state.value.budget!!.endDate)
                 )
             }
         }

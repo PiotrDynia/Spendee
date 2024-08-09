@@ -21,9 +21,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.spendee.ui.budget.BudgetState
+import com.example.spendee.util.calculateDailySpending
+
+enum class BudgetInfoCardType {
+    SPENT, YOU_CAN_SPEND
+}
 
 @Composable
-fun BudgetInfoCard(@StringRes text: Int, color: Color, modifier: Modifier = Modifier) {
+fun BudgetInfoCard(
+    @StringRes text: Int,
+    color: Color,
+    state: BudgetState,
+    cardType: BudgetInfoCardType,
+    modifier: Modifier = Modifier
+) {
     ElevatedCard(
         onClick = { },
         modifier = Modifier
@@ -58,13 +70,19 @@ fun BudgetInfoCard(@StringRes text: Int, color: Color, modifier: Modifier = Modi
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "8000$",
+                    text = if (cardType == BudgetInfoCardType.SPENT) {
+                        ((state.budget!!.totalAmount) - (state.budget.currentAmount)).toString()
+                    } else state.budget!!.currentAmount.toString(),
                     fontWeight = FontWeight.ExtraBold,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Spacer(modifier = Modifier.weight(2f))
                 Text(
-                    text = "From 10000.00$",
+                    text = if (cardType == BudgetInfoCardType.SPENT) {
+                        "From ${state.budget.totalAmount}$"
+                    } else {
+                        calculateDailySpending(state.budget.startDate.toString(), state.budget.endDate.toString(), state.budget.currentAmount).toString()
+                    },
                     fontStyle = FontStyle.Italic,
                     color = MaterialTheme.colorScheme.onSecondaryContainer
                 )

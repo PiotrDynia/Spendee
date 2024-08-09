@@ -76,18 +76,19 @@ class AddEditExpenseViewModel @Inject constructor(
                     repository.upsertExpense(
                         Expense(
                             id = _state.value.expense?.id ?: 0,
-                            amount = _state.value.amount.toDouble(),
+                            amount = _state.value.amount.toDoubleOrNull() ?: 0.0,
                             description = _state.value.description,
                             categoryId = _state.value.categoryId,
                             date = Date()
                         )
                     )
                     if (isNewExpense()) {
-                        val difference = balance!!.amount - _state.value.amount.toDouble()
+                        val difference = balance!!.amount - (_state.value.amount.toDoubleOrNull() ?: 0.0)
                         balanceRepository.updateBalance(difference)
                     }
                     if (isEditedExpense()) {
-                        val difference = balance!!.amount - (_state.value.amount.toDouble() - _state.value.originalAmount.toDouble())
+                        val difference =
+                            balance!!.amount - ((_state.value.amount.toDoubleOrNull() ?: 0.0) - (_state.value.originalAmount.toDoubleOrNull() ?: 0.0))
                         balanceRepository.updateBalance(difference)
                     }
                     sendUiEvent(UiEvent.PopBackStack)

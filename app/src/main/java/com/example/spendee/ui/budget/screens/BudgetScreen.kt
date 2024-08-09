@@ -23,6 +23,7 @@ import com.example.spendee.ui.budget.BudgetEvent
 import com.example.spendee.ui.budget.BudgetState
 import com.example.spendee.ui.budget.components.BudgetCircle
 import com.example.spendee.ui.budget.components.BudgetInfoCard
+import com.example.spendee.ui.budget.components.BudgetInfoCardType
 import com.example.spendee.ui.budget.components.BudgetMapKey
 import com.example.spendee.ui.budget.components.UpdateBudgetButton
 import com.example.spendee.util.UiEvent
@@ -45,11 +46,10 @@ fun BudgetScreen(
     )
 
     LaunchedEffect(Unit) {
-        while (true) {
-            animationProgress = 1f
-            delay(2000)
-        }
+        animationProgress = 1f
+        delay(2000)
     }
+
     LaunchedEffect(key1 = true) {
         uiEvent.collect { event ->
             when(event) {
@@ -58,9 +58,9 @@ fun BudgetScreen(
             }
         }
     }
-    val totalBudget = state.totalAmount.toDouble()
-    val amountSpent = state.currentAmount.toDouble()
-    val percentageSpent = amountSpent / totalBudget
+    val totalBudget = state.budget!!.totalAmount
+    val amountSpent = state.budget.currentAmount
+    val percentageSpent = if (totalBudget != 0.0) amountSpent / totalBudget else 0.0
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -69,7 +69,8 @@ fun BudgetScreen(
     ) {
         BudgetCircle(
             percentageSpent = percentageSpent.toFloat(),
-            animatedProgress = animatedProgress
+            animatedProgress = animatedProgress,
+            state = state
         )
         BudgetMapKey()
         Spacer(modifier = Modifier.height(12.dp))
@@ -77,8 +78,18 @@ fun BudgetScreen(
             onClick = { onEvent(BudgetEvent.OnSetBudgetClick) }
         )
         Column {
-            BudgetInfoCard(text = R.string.spent, color = Color.Red)
-            BudgetInfoCard(text = R.string.you_can_spend, color = Color(0xFF04AF70))
+            BudgetInfoCard(
+                text = R.string.spent,
+                color = Color.Red,
+                state = state,
+                cardType = BudgetInfoCardType.SPENT
+            )
+            BudgetInfoCard(
+                text = R.string.you_can_spend,
+                color = Color(0xFF04AF70),
+                state = state,
+                cardType = BudgetInfoCardType.YOU_CAN_SPEND
+            )
         }
     }
 }

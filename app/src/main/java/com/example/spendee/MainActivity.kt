@@ -116,7 +116,8 @@ class MainActivity : ComponentActivity() {
                                 }
                                 composable(Routes.BUDGET) {
                                     val viewModel = hiltViewModel<BudgetViewModel>()
-                                    val state = viewModel.state.collectAsState().value
+                                    val state by viewModel.state.collectAsState()
+                                    println("STATE: $state")
                                     if (state.budget == null) {
                                         NoBudgetScreen(
                                             onEvent = viewModel::onEvent,
@@ -164,7 +165,11 @@ class MainActivity : ComponentActivity() {
                                 ) {
                                     val viewModel = hiltViewModel<AddEditBudgetViewModel>()
                                     AddEditBudgetScreen(
-
+                                        onEvent = viewModel::onEvent,
+                                        uiEvent = viewModel.uiEvent,
+                                        state = viewModel.state.collectAsState().value,
+                                        onNavigate = { route -> navController.navigate(route)},
+                                        onPopBackStack = { navController.popBackStack() }
                                     )
                                 }
                                 composable(

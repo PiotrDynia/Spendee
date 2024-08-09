@@ -86,7 +86,8 @@ fun AddEditGoalScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier.fillMaxWidth()
             )
             DatePickerInput(
-                text = R.string.set_a_deadline,
+                placeholder = R.string.set_a_deadline,
+                value = "",
                 onClick = { isDeadlineDateOpen = !isDeadlineDateOpen }
             )
             if (isDeadlineDateOpen) {
@@ -97,7 +98,7 @@ fun AddEditGoalScreen(modifier: Modifier = Modifier) {
                     DatePicker(state = deadlineDateState)
                 }
             }
-            SwitchButtonRow(text = R.string.notify_me_when_i_reach_my_goal)
+            SwitchButtonRow(text = R.string.notify_me_when_i_reach_my_goal, onCheckedChange = {}, switchState = false)
         }
     }
 }
