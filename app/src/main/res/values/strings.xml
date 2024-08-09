@@ -8,7 +8,7 @@
     <string name="add_expense">Add expense</string>
     <string name="you_can_spend">You can spend</string>
     <string name="spent">Spent</string>
-    <string name="set_budget">Update budget</string>
+    <string name="set_budget">Set budget</string>
     <string name="add_a_new_goal">Add a new goal</string>
     <string name="your_financial_goals">Your financial goals</string>
     <string name="save">Save</string>
@@ -45,4 +45,5 @@
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
     <string name="no_expenses_yet">No expenses yet</string>
+    <string name="update_budget">Update budget</string>
 </resources>

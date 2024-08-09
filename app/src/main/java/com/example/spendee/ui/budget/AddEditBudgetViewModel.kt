@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.spendee.data.entities.Budget
 import com.example.spendee.data.repositories.BudgetRepository
 import com.example.spendee.util.UiEvent
+import com.example.spendee.util.dateToString
 import com.example.spendee.util.stringToDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -35,8 +36,8 @@ class AddEditBudgetViewModel @Inject constructor(
                 repository.getBudget().collect { budget ->
                     _state.value = _state.value.copy(
                         amount = budget.totalAmount.toString(),
-                        startDate = budget.startDate.toString(),
-                        endDate = budget.endDate.toString(),
+                        startDate = dateToString(budget.startDate) ,
+                        endDate = dateToString(budget.endDate),
                         budget = budget
                     )
                 }

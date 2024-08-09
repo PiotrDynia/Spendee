@@ -116,9 +116,8 @@ class MainActivity : ComponentActivity() {
                                 }
                                 composable(Routes.BUDGET) {
                                     val viewModel = hiltViewModel<BudgetViewModel>()
-                                    val state by viewModel.state.collectAsState()
-                                    println("STATE: $state")
-                                    if (state.budget == null) {
+                                    val budget = viewModel.budget
+                                    if (budget == null) {
                                         NoBudgetScreen(
                                             onEvent = viewModel::onEvent,
                                             onNavigate = { navController.navigate(it)},
@@ -126,7 +125,7 @@ class MainActivity : ComponentActivity() {
                                         )
                                     } else {
                                         BudgetScreen(
-                                            state = state,
+                                            budget = budget,
                                             onEvent = viewModel::onEvent,
                                             onNavigate = { navController.navigate(it)},
                                             uiEvent = viewModel.uiEvent

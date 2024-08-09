@@ -27,14 +27,7 @@ fun stringToDate(dateString: String): Date? {
     }
 }
 
-fun differenceInDays(dateString1: String, dateString2: String): Long? {
-    val date1 = stringToDate(dateString1)
-    val date2 = stringToDate(dateString2)
-
-    return if (date1 != null && date2 != null) {
-        val diffInMillis = date2.time - date1.time
-        TimeUnit.MILLISECONDS.toDays(diffInMillis)
-    } else {
-        null
-    }
+fun differenceInDays(date1: Date, date2: Date): Long {
+    val diffInMillis = date2.time - date1.time
+    return TimeUnit.MILLISECONDS.toDays(diffInMillis)
 }

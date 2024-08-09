@@ -19,8 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.spendee.R
+import com.example.spendee.data.entities.Budget
 import com.example.spendee.ui.budget.BudgetEvent
-import com.example.spendee.ui.budget.BudgetState
 import com.example.spendee.ui.budget.components.BudgetCircle
 import com.example.spendee.ui.budget.components.BudgetInfoCard
 import com.example.spendee.ui.budget.components.BudgetInfoCardType
@@ -32,7 +32,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun BudgetScreen(
-    state: BudgetState,
+    budget: Budget,
     onEvent: (BudgetEvent) -> Unit,
     uiEvent: Flow<UiEvent>,
     onNavigate: (String) -> Unit,
@@ -58,8 +58,8 @@ fun BudgetScreen(
             }
         }
     }
-    val totalBudget = state.budget!!.totalAmount
-    val amountSpent = state.budget.currentAmount
+    val totalBudget = budget.totalAmount
+    val amountSpent = budget.totalAmount - budget.currentAmount
     val percentageSpent = if (totalBudget != 0.0) amountSpent / totalBudget else 0.0
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -70,7 +70,7 @@ fun BudgetScreen(
         BudgetCircle(
             percentageSpent = percentageSpent.toFloat(),
             animatedProgress = animatedProgress,
-            state = state
+            budget = budget
         )
         BudgetMapKey()
         Spacer(modifier = Modifier.height(12.dp))
@@ -81,13 +81,13 @@ fun BudgetScreen(
             BudgetInfoCard(
                 text = R.string.spent,
                 color = Color.Red,
-                state = state,
+                budget = budget,
                 cardType = BudgetInfoCardType.SPENT
             )
             BudgetInfoCard(
                 text = R.string.you_can_spend,
                 color = Color(0xFF04AF70),
-                state = state,
+                budget = budget,
                 cardType = BudgetInfoCardType.YOU_CAN_SPEND
             )
         }

@@ -12,6 +12,6 @@ fun UpdateBudgetButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Button(
         onClick = { onClick() }
     ) {
-        Text(text = stringResource(R.string.set_budget))
+        Text(text = stringResource(R.string.update_budget))
     }
 }

@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.spendee.ui.budget.BudgetState
+import com.example.spendee.data.entities.Budget
 import com.example.spendee.util.calculateDailySpending
 
 enum class BudgetInfoCardType {
@@ -32,7 +32,7 @@ enum class BudgetInfoCardType {
 fun BudgetInfoCard(
     @StringRes text: Int,
     color: Color,
-    state: BudgetState,
+    budget: Budget,
     cardType: BudgetInfoCardType,
     modifier: Modifier = Modifier
 ) {
@@ -71,17 +71,21 @@ fun BudgetInfoCard(
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = if (cardType == BudgetInfoCardType.SPENT) {
-                        ((state.budget!!.totalAmount) - (state.budget.currentAmount)).toString()
-                    } else state.budget!!.currentAmount.toString(),
+                        ((budget.totalAmount) - (budget.currentAmount)).toString() + "$"
+                    } else budget.currentAmount.toString() + "$",
                     fontWeight = FontWeight.ExtraBold,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Spacer(modifier = Modifier.weight(2f))
                 Text(
                     text = if (cardType == BudgetInfoCardType.SPENT) {
-                        "From ${state.budget.totalAmount}$"
+                        "From ${budget.totalAmount}$"
                     } else {
-                        calculateDailySpending(state.budget.startDate.toString(), state.budget.endDate.toString(), state.budget.currentAmount).toString()
+                        calculateDailySpending(
+                            budget.startDate,
+                            budget.endDate,
+                            budget.currentAmount
+                        ).toString() + "$/day"
                     },
                     fontStyle = FontStyle.Italic,
                     color = MaterialTheme.colorScheme.onSecondaryContainer

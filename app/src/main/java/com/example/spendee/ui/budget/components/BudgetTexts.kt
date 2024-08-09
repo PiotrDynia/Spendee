@@ -14,11 +14,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.spendee.R
+import com.example.spendee.data.entities.Budget
 import com.example.spendee.ui.budget.BudgetState
+import com.example.spendee.util.dateToString
 import com.example.spendee.util.differenceInDays
 
 @Composable
-fun BudgetTexts(state: BudgetState, modifier: Modifier = Modifier) {
+fun BudgetTexts(budget: Budget, modifier: Modifier = Modifier) {
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -30,24 +32,24 @@ fun BudgetTexts(state: BudgetState, modifier: Modifier = Modifier) {
             style = MaterialTheme.typography.bodyLarge
         )
         Text(
-            text = "${state.budget!!.currentAmount}$",
+            text = "${budget.currentAmount}$",
             fontWeight = FontWeight.ExtraBold,
             color = Color(0xFF04AF70),
             style = MaterialTheme.typography.headlineMedium
         )
         Text(
-            text = "From ${state.budget.totalAmount}",
+            text = "From ${budget.totalAmount}$",
             fontStyle = FontStyle.Italic,
             fontSize = 16.sp,
             style = MaterialTheme.typography.bodyMedium
         )
         Text(
-            text = differenceInDays(state.budget.startDate.toString(), state.budget.endDate.toString()).toString() + " days left",
+            text = differenceInDays(budget.startDate, budget.endDate).toString() + " days left",
             fontSize = 16.sp,
             style = MaterialTheme.typography.bodySmall
         )
         Text(
-            text = "${state.budget.startDate}-${state.budget.endDate}",
+            text = "${dateToString(budget.startDate)} - ${dateToString(budget.endDate)}",
             fontStyle = FontStyle.Italic,
             fontSize = 16.sp,
             style = MaterialTheme.typography.bodySmall

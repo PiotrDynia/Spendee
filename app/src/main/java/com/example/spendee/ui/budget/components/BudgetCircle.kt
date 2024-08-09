@@ -14,13 +14,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
+import com.example.spendee.data.entities.Budget
 import com.example.spendee.ui.budget.BudgetState
 
 @Composable
-fun BudgetCircle(percentageSpent: Float,
-                 animatedProgress: Float,
-                 state: BudgetState,
-                 modifier: Modifier = Modifier) {
+fun BudgetCircle(
+    percentageSpent: Float,
+    animatedProgress: Float,
+    budget: Budget,
+    modifier: Modifier = Modifier
+) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
@@ -37,26 +40,53 @@ fun BudgetCircle(percentageSpent: Float,
                     size.width - halfStrokeWidth,
                     size.height - halfStrokeWidth
                 )
-                drawArc(
-                    color = Color.Red,
-                    startAngle = -90f + gapAngle / 2,
-                    sweepAngle = (percentageSpent * 360f * animatedProgress - gapAngle),
-                    useCenter = false,
-                    topLeft = rect.topLeft,
-                    size = Size(rect.width, rect.height),
-                    style = Stroke(strokeWidth, cap = StrokeCap.Butt)
-                )
-                drawArc(
-                    color = Color(0xFF04AF70),
-                    startAngle = (-90f + percentageSpent * 360f * animatedProgress + gapAngle / 2),
-                    sweepAngle = ((1f - percentageSpent) * 360f * animatedProgress - gapAngle),
-                    useCenter = false,
-                    topLeft = rect.topLeft,
-                    size = Size(rect.width, rect.height),
-                    style = Stroke(strokeWidth, cap = StrokeCap.Butt)
-                )
+
+                when (percentageSpent) {
+                    0f -> {
+                        drawArc(
+                            color = Color(0xFF04AF70),
+                            startAngle = -90f + gapAngle / 2,
+                            sweepAngle = 360f * animatedProgress,
+                            useCenter = false,
+                            topLeft = rect.topLeft,
+                            size = Size(rect.width, rect.height),
+                            style = Stroke(strokeWidth, cap = StrokeCap.Butt)
+                        )
+                    }
+                    1f -> {
+                        drawArc(
+                            color = Color.Red,
+                            startAngle = -90f + gapAngle / 2,
+                            sweepAngle = 360f * animatedProgress,
+                            useCenter = false,
+                            topLeft = rect.topLeft,
+                            size = Size(rect.width, rect.height),
+                            style = Stroke(strokeWidth, cap = StrokeCap.Butt)
+                        )
+                    }
+                    else -> {
+                        drawArc(
+                            color = Color(0xFF04AF70),
+                            startAngle = -90f + gapAngle / 2,
+                            sweepAngle = percentageSpent * 360f * animatedProgress - gapAngle,
+                            useCenter = false,
+                            topLeft = rect.topLeft,
+                            size = Size(rect.width, rect.height),
+                            style = Stroke(strokeWidth, cap = StrokeCap.Butt)
+                        )
+                        drawArc(
+                            color = Color.Red,
+                            startAngle = -90f + percentageSpent * 360f * animatedProgress + gapAngle / 2,
+                            sweepAngle = (1f - percentageSpent) * 360f * animatedProgress - gapAngle,
+                            useCenter = false,
+                            topLeft = rect.topLeft,
+                            size = Size(rect.width, rect.height),
+                            style = Stroke(strokeWidth, cap = StrokeCap.Butt)
+                        )
+                    }
+                }
             }
     ) {
-        BudgetTexts(state = state)
+        BudgetTexts(budget = budget)
     }
 }
