@@ -44,6 +44,7 @@ import com.example.spendee.ui.goals.screens.NoGoalsScreen
 import com.example.spendee.ui.navigation.BottomNavItem
 import com.example.spendee.ui.navigation.BottomNavigationBar
 import com.example.spendee.util.AnimatedVisibilityComposable
+import com.example.spendee.util.LoadingScreen
 import com.example.spendee.util.Routes
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -120,39 +121,54 @@ class MainActivity : ComponentActivity() {
                                 composable(Routes.BUDGET) {
                                     val viewModel = hiltViewModel<BudgetViewModel>()
                                     val budget = viewModel.budget
-                                    if (budget == null) {
-                                        NoBudgetScreen(
-                                            onEvent = viewModel::onEvent,
-                                            onNavigate = { navController.navigate(it)},
-                                            uiEvent = viewModel.uiEvent
-                                        )
-                                    } else {
-                                        BudgetScreen(
-                                            budget = budget,
-                                            onEvent = viewModel::onEvent,
-                                            onNavigate = { navController.navigate(it)},
-                                            uiEvent = viewModel.uiEvent
-                                        )
+                                    val isLoading = viewModel.isLoading.collectAsState().value
+                                    when {
+                                        isLoading -> {
+                                            LoadingScreen()
+                                        }
+                                        budget == null -> {
+                                            NoBudgetScreen(
+                                                onEvent = viewModel::onEvent,
+                                                onNavigate = { navController.navigate(it)},
+                                                uiEvent = viewModel.uiEvent
+                                            )
+                                        }
+                                        else -> {
+                                            BudgetScreen(
+                                                budget = budget,
+                                                onEvent = viewModel::onEvent,
+                                                onNavigate = { navController.navigate(it)},
+                                                uiEvent = viewModel.uiEvent
+                                            )
+                                        }
                                     }
                                 }
                                 composable(Routes.GOALS) {
                                     val viewModel = hiltViewModel<GoalsViewModel>()
                                     val goals = viewModel.goals.collectAsState(initial = emptyList()).value
                                     val balance = viewModel.balance
-                                    if (goals.isEmpty()) {
-                                        NoGoalsScreen(
-                                            onEvent = viewModel::onEvent,
-                                            onNavigate = { navController.navigate(it)},
-                                            uiEvent = viewModel.uiEvent
-                                        )
-                                    } else {
-                                        GoalsScreen(
-                                            goals = goals,
-                                            balance = balance!!,
-                                            onEvent = viewModel::onEvent,
-                                            onNavigate = { navController.navigate(it)},
-                                            uiEvent = viewModel.uiEvent
-                                        )
+                                    val isLoading = viewModel.isLoading.collectAsState().value
+
+                                    when {
+                                        isLoading -> {
+                                            LoadingScreen()
+                                        }
+                                        goals.isEmpty() -> {
+                                            NoGoalsScreen(
+                                                onEvent = viewModel::onEvent,
+                                                onNavigate = { navController.navigate(it) },
+                                                uiEvent = viewModel.uiEvent
+                                            )
+                                        }
+                                        else -> {
+                                            GoalsScreen(
+                                                goals = goals,
+                                                balance = balance!!,
+                                                onEvent = viewModel::onEvent,
+                                                onNavigate = { navController.navigate(it) },
+                                                uiEvent = viewModel.uiEvent
+                                            )
+                                        }
                                     }
                                 }
                                 composable(

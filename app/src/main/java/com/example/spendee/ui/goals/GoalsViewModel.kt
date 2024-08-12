@@ -9,9 +9,10 @@ import com.example.spendee.util.Routes
 import com.example.spendee.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,13 +23,21 @@ class GoalsViewModel @Inject constructor(
 
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
+
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading = _isLoading.asStateFlow()
+
     val goals = goalRepository.getAllGoals()
     var balance: Balance? = null
 
     init {
-        runBlocking {
+        viewModelScope.launch {
             balanceRepository.getBalance().collect { balance ->
                 this@GoalsViewModel.balance = balance
+            }
+
+            goals.collect {
+                _isLoading.value = false
             }
         }
     }
