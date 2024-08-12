@@ -12,6 +12,9 @@ interface BudgetDao {
     @Query("SELECT * FROM budget WHERE id = 1")
     fun getBudget(): Flow<Budget>
 
+    @Query("UPDATE budget SET currentAmount = :amount WHERE id = 1")
+    suspend fun updateBudget(amount: Double)
+
     @Upsert
     suspend fun upsertBudget(budget: Budget)
 

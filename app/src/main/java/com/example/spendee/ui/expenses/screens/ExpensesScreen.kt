@@ -19,7 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.spendee.R
 import com.example.spendee.data.entities.Expense
-import com.example.spendee.ui.current_balance.screens.getExampleExpenses
 import com.example.spendee.ui.expenses.ExpensesEvent
 import com.example.spendee.ui.expenses.components.ExpensesColumn
 import com.example.spendee.util.UiEvent
@@ -71,7 +70,7 @@ fun ExpensesScreen(
 @Composable
 private fun ExpensesScreenPreview() {
     ExpensesScreen(
-        expenses = getExampleExpenses(),
+        expenses = emptyList(),
         onEvent = {},
         uiEvent = flow {},
         onNavigate = {}

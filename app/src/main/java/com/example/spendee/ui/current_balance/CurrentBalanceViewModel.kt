@@ -38,7 +38,6 @@ class CurrentBalanceViewModel @Inject constructor(
                 CurrentBalanceState(
                     balance = balance,
                     currentAmount = balance.amount.toString(),
-                    originalAmount = balance.amount.toString(),
                     isDialogOpen = _viewBalanceState.value.isDialogOpen,
                     latestExpenses = expenses
                 )
@@ -70,7 +69,7 @@ class CurrentBalanceViewModel @Inject constructor(
 
             CurrentBalanceEvent.OnCancelSetBalanceClick -> {
                 _viewBalanceState.value = _viewBalanceState.value.copy(
-                    currentAmount = _viewBalanceState.value.originalAmount,
+                    currentAmount = _viewBalanceState.value.balance.amount.toString(),
                     isDialogOpen = false)
             }
 
@@ -82,10 +81,14 @@ class CurrentBalanceViewModel @Inject constructor(
                         ))
                         return@launch
                     }
-                    balanceRepository.updateBalance(_viewBalanceState.value.currentAmount.toDouble())
-                    _viewBalanceState.value = _viewBalanceState.value.copy(
-                        originalAmount = _viewBalanceState.value.currentAmount.toDouble().toString(),
-                        isDialogOpen = false)
+                    balanceRepository.updateBalance(_viewBalanceState.value.currentAmount.toDoubleOrNull() ?: 0.0)
+                    balanceRepository.getBalance().collect { updatedBalance ->
+                        _viewBalanceState.value = _viewBalanceState.value.copy(
+                            balance = updatedBalance,
+                            isDialogOpen = false,
+                            currentAmount = updatedBalance.amount.toString()
+                        )
+                    }
                 }
             }
         }

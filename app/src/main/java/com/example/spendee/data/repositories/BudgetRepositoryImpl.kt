@@ -11,6 +11,10 @@ class BudgetRepositoryImpl(
         return budgetDao.getBudget()
     }
 
+    override suspend fun updateBudget(amount: Double) {
+        return budgetDao.updateBudget(amount)
+    }
+
     override suspend fun upsertBudget(budget: Budget) {
         budgetDao.upsertBudget(budget)
     }

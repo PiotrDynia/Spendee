@@ -13,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,7 +27,7 @@ class BudgetViewModel @Inject constructor(
         private set
 
     init {
-        viewModelScope.launch {
+        runBlocking {
             repository.getBudget().collect { budget ->
                 this@BudgetViewModel.budget = budget
             }

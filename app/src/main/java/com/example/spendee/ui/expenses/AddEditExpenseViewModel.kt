@@ -36,6 +36,8 @@ class AddEditExpenseViewModel @Inject constructor(
     private var balance: Balance? = null
     private var budget: Budget? = null
 
+    private var isNewExpense: Boolean = true
+
     init {
         viewModelScope.launch {
             balanceRepository.getBalance().collect { balance ->
@@ -47,6 +49,7 @@ class AddEditExpenseViewModel @Inject constructor(
         }
         val expenseId = savedStateHandle.get<Int>("expenseId")!!
         if (expenseId != 0) {
+            isNewExpense = false
             viewModelScope.launch(Dispatchers.IO) {
                 repository.getExpenseById(expenseId)?.let { expense ->
                     _state.value = _state.value.copy(
@@ -102,14 +105,19 @@ class AddEditExpenseViewModel @Inject constructor(
                             date = Date()
                         )
                     )
-                    if (isNewExpense()) {
+                    if (isNewExpense) {
                         val difference = balance!!.amount - (_state.value.amount.toDoubleOrNull() ?: 0.0)
                         balanceRepository.updateBalance(difference)
-                    }
-                    if (isEditedExpense()) {
+                        if (isBudgetSet()) {
+                            budgetRepository.updateBudget(budget!!.currentAmount - difference)
+                        }
+                    } else {
                         val difference =
                             balance!!.amount - ((_state.value.amount.toDoubleOrNull() ?: 0.0) - (_state.value.originalAmount.toDoubleOrNull() ?: 0.0))
                         balanceRepository.updateBalance(difference)
+                        if (isBudgetSet()) {
+                            budgetRepository.updateBudget(budget!!.currentAmount - difference)
+                        }
                     }
                     sendUiEvent(UiEvent.PopBackStack)
                 }
@@ -117,8 +125,9 @@ class AddEditExpenseViewModel @Inject constructor(
         }
     }
 
-    private fun isNewExpense(): Boolean = _state.value.originalAmount.isBlank()
-    private fun isEditedExpense() : Boolean = _state.value.originalAmount.isNotBlank() && _state.value.originalAmount != _state.value.amount
+    private fun isBudgetSet(): Boolean {
+        return budget != null && (budget!!.startDate.before(Date()) && budget!!.endDate.after(Date()))
+    }
 
     private fun sendUiEvent(event: UiEvent) {
         viewModelScope.launch {
