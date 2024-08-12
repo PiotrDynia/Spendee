@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.spendee.R
 import com.example.spendee.data.entities.Budget
-import com.example.spendee.ui.budget.BudgetState
 import com.example.spendee.util.dateToString
 import com.example.spendee.util.differenceInDays
 

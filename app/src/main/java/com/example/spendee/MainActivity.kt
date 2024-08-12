@@ -36,8 +36,11 @@ import com.example.spendee.ui.expenses.AddEditExpenseViewModel
 import com.example.spendee.ui.expenses.ExpensesViewModel
 import com.example.spendee.ui.expenses.screens.AddEditExpenseScreen
 import com.example.spendee.ui.expenses.screens.ExpensesScreen
+import com.example.spendee.ui.goals.AddEditGoalViewModel
+import com.example.spendee.ui.goals.GoalsViewModel
 import com.example.spendee.ui.goals.screens.AddEditGoalScreen
 import com.example.spendee.ui.goals.screens.GoalsScreen
+import com.example.spendee.ui.goals.screens.NoGoalsScreen
 import com.example.spendee.ui.navigation.BottomNavItem
 import com.example.spendee.ui.navigation.BottomNavigationBar
 import com.example.spendee.util.AnimatedVisibilityComposable
@@ -133,7 +136,24 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                                 composable(Routes.GOALS) {
-                                    GoalsScreen()
+                                    val viewModel = hiltViewModel<GoalsViewModel>()
+                                    val goals = viewModel.goals.collectAsState(initial = emptyList()).value
+                                    val balance = viewModel.balance
+                                    if (goals.isEmpty()) {
+                                        NoGoalsScreen(
+                                            onEvent = viewModel::onEvent,
+                                            onNavigate = { navController.navigate(it)},
+                                            uiEvent = viewModel.uiEvent
+                                        )
+                                    } else {
+                                        GoalsScreen(
+                                            goals = goals,
+                                            balance = balance!!,
+                                            onEvent = viewModel::onEvent,
+                                            onNavigate = { navController.navigate(it)},
+                                            uiEvent = viewModel.uiEvent
+                                        )
+                                    }
                                 }
                                 composable(
                                     route = Routes.ADD_EDIT_EXPENSE + "?expenseId={expenseId}",
@@ -180,7 +200,14 @@ class MainActivity : ComponentActivity() {
                                         }
                                     )
                                 ) {
-                                    AddEditGoalScreen()
+                                    val viewModel = hiltViewModel<AddEditGoalViewModel>()
+                                    AddEditGoalScreen(
+                                        onEvent = viewModel::onEvent,
+                                        uiEvent = viewModel.uiEvent,
+                                        state = viewModel.state.collectAsState().value,
+                                        onNavigate = { route -> navController.navigate(route)},
+                                        onPopBackStack = { navController.popBackStack() }
+                                    )
                                 }
                             }
                         }

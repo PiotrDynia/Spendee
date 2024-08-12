@@ -38,6 +38,8 @@ class AddEditBudgetViewModel @Inject constructor(
                         amount = budget.totalAmount.toString(),
                         startDate = dateToString(budget.startDate) ,
                         endDate = dateToString(budget.endDate),
+                        isExceedButtonPressed = budget.isExceedNotificationEnabled,
+                        isReach80PercentButtonPressed = budget.isReach80PercentNotificationEnabled,
                         budget = budget
                     )
                 }

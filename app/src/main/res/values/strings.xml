@@ -46,4 +46,7 @@
     <string name="ok">OK</string>
     <string name="no_expenses_yet">No expenses yet</string>
     <string name="update_budget">Update budget</string>
+    <string name="goal_image">Goal Image</string>
+    <string name="deadline">Deadline</string>
+    <string name="target">Target: %1$s$</string>
 </resources>

@@ -9,7 +9,6 @@ data class Goal(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val description: String,
     val targetAmount: Double,
-    val currentAmount: Double,
     val deadline: Date,
     val isReachedNotificationEnabled: Boolean,
 )
