@@ -1,5 +1,6 @@
 package com.example.spendee.ui.goals.screens
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,11 +12,15 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -30,9 +35,11 @@ import com.example.spendee.data.entities.Balance
 import com.example.spendee.data.entities.Goal
 import com.example.spendee.ui.goals.GoalsEvent
 import com.example.spendee.ui.goals.components.GoalCard
+import com.example.spendee.util.DismissBackground
 import com.example.spendee.util.UiEvent
 import kotlinx.coroutines.flow.Flow
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun GoalsScreen(goals: List<Goal>,
                 balance: Balance,
@@ -85,8 +92,36 @@ fun GoalsScreen(goals: List<Goal>,
                         modifier = Modifier.padding(16.dp)
                     )
                 }
-                items(goals) { goal ->
-                    GoalCard(goal = goal, onClick = { onEvent(GoalsEvent.OnGoalClick(goal))}, currentBalance = balance.amount)
+                items(items = goals, key = {it.id}) { goal ->
+                    val dismissState = rememberSwipeToDismissBoxState(
+                        confirmValueChange = {
+                            when(it) {
+                                SwipeToDismissBoxValue.StartToEnd -> {
+                                    onEvent(GoalsEvent.OnDeleteGoal(goal))
+                                }
+                                SwipeToDismissBoxValue.EndToStart -> {
+                                    onEvent(GoalsEvent.OnGoalClick(goal))
+                                }
+                                SwipeToDismissBoxValue.Settled -> return@rememberSwipeToDismissBoxState false
+                            }
+                            return@rememberSwipeToDismissBoxState true
+                        },
+                        positionalThreshold = { it * .25f }
+                    )
+                    SwipeToDismissBox(
+                        state = dismissState,
+                        backgroundContent = { DismissBackground(dismissState = dismissState) },
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .animateItemPlacement()
+                    ) {
+                        GoalCard(
+                            goal = goal,
+                            onClick = { onEvent(GoalsEvent.OnGoalClick(goal)) },
+                            currentBalance = balance.amount
+                        )
+                    }
                 }
             }
         }

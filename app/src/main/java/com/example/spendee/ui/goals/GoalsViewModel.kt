@@ -3,6 +3,7 @@ package com.example.spendee.ui.goals
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spendee.data.entities.Balance
+import com.example.spendee.data.entities.Goal
 import com.example.spendee.data.repositories.BalanceRepository
 import com.example.spendee.data.repositories.GoalRepository
 import com.example.spendee.util.Routes
@@ -17,8 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GoalsViewModel @Inject constructor(
-    goalRepository: GoalRepository,
-    balanceRepository: BalanceRepository,
+    private val goalRepository: GoalRepository,
+    private val balanceRepository: BalanceRepository,
 ) : ViewModel() {
 
     private val _uiEvent = Channel<UiEvent>()
@@ -29,6 +30,7 @@ class GoalsViewModel @Inject constructor(
 
     val goals = goalRepository.getAllGoals()
     var balance: Balance? = null
+    private var deletedGoal: Goal? = null
 
     init {
         viewModelScope.launch {
@@ -49,6 +51,24 @@ class GoalsViewModel @Inject constructor(
             }
             is GoalsEvent.OnGoalClick -> {
                 sendUiEvent(UiEvent.Navigate(Routes.ADD_EDIT_GOAL + "?goalId=${event.goal.id}"))
+            }
+
+            is GoalsEvent.OnDeleteGoal -> {
+                viewModelScope.launch {
+                    deletedGoal = event.goal
+                    goalRepository.deleteGoal(event.goal)
+                    sendUiEvent(UiEvent.ShowSnackbar(
+                        message = "Goal deleted",
+                        action = "Undo"
+                    ))
+                }
+            }
+            GoalsEvent.OnUndoDeleteGoal -> {
+                deletedGoal?.let { goal ->
+                    viewModelScope.launch {
+                        goalRepository.upsertGoal(goal)
+                    }
+                }
             }
         }
     }

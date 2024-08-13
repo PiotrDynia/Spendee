@@ -2,7 +2,6 @@ package com.example.spendee.ui.goals.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -36,13 +35,9 @@ import com.example.spendee.util.dateToString
 @Composable
 fun GoalCard(goal: Goal, currentBalance: Double, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Card(
+        onClick = onClick,
         shape = RoundedCornerShape(12.dp),
-        modifier = modifier
-            .padding(8.dp)
-            .fillMaxWidth()
-            .clickable {
-                onClick()
-            }
+        modifier = modifier.fillMaxWidth()
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

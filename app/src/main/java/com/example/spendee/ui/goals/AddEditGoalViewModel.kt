@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spendee.data.entities.Goal
 import com.example.spendee.data.repositories.GoalRepository
+import com.example.spendee.util.Routes
 import com.example.spendee.util.UiEvent
 import com.example.spendee.util.dateToString
 import com.example.spendee.util.stringToDate
@@ -107,7 +108,7 @@ class AddEditGoalViewModel @Inject constructor(
                             isReachedNotificationEnabled = _state.value.isReachedButtonPressed
                         )
                     )
-                    sendUiEvent(UiEvent.PopBackStack)
+                    sendUiEvent(UiEvent.Navigate(Routes.GOALS))
                     _state.value = _state.value.copy(
                         isDeadlineDatePickerOpened = false
                     )
