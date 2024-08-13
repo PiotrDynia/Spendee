@@ -3,12 +3,19 @@ package com.example.spendee.ui.expenses.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -18,9 +25,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.spendee.R
 import com.example.spendee.data.entities.Expense
+import com.example.spendee.ui.expenses.ExpensesEvent
+import com.example.spendee.util.DismissBackground
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExpensesColumn(expenses: List<Expense>, onClick: (Expense) -> Unit, modifier: Modifier = Modifier) {
+fun ExpensesColumn(expenses: List<Expense>, onEvent: (ExpensesEvent) -> Unit, modifier: Modifier = Modifier) {
     LazyColumn(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -37,8 +47,37 @@ fun ExpensesColumn(expenses: List<Expense>, onClick: (Expense) -> Unit, modifier
             )
         }
         if (expenses.isNotEmpty()) {
-            items(expenses) { item ->
-                ExpenseCard(expense = item, onClick = onClick)
+            items(items = expenses, key = {it.id}) { item ->
+                val dismissState = rememberSwipeToDismissBoxState(
+                    confirmValueChange = {
+                        when(it) {
+                            SwipeToDismissBoxValue.StartToEnd -> {
+                                onEvent(ExpensesEvent.OnDeleteExpense(item))
+                            }
+                            SwipeToDismissBoxValue.EndToStart -> {
+                                onEvent(ExpensesEvent.OnExpenseClick(item))
+                            }
+                            SwipeToDismissBoxValue.Settled -> return@rememberSwipeToDismissBoxState false
+                        }
+                        return@rememberSwipeToDismissBoxState true
+                    },
+                    positionalThreshold = { it * .25f }
+                )
+                SwipeToDismissBox(
+                    state = dismissState,
+                    backgroundContent = {
+                        DismissBackground(
+                            dismissState = dismissState
+                        )
+                    },
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .clip(RoundedCornerShape(25.dp))
+                ) {
+                    ExpenseCard(
+                        expense = item,
+                        onClick = { onEvent(ExpensesEvent.OnExpenseClick(item)) })
+                }
             }
         }
         else {

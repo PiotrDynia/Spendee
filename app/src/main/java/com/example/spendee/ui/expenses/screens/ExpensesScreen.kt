@@ -11,8 +11,12 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,11 +37,21 @@ fun ExpensesScreen(
     onNavigate: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(key1 = true) {
         uiEvent.collect { event ->
             when(event) {
                 is UiEvent.Navigate -> {
                     onNavigate(event.route)
+                }
+                is UiEvent.ShowSnackbar -> {
+                    val result = snackbarHostState.showSnackbar(
+                        message = event.message,
+                        actionLabel = event.action
+                    )
+                    if(result == SnackbarResult.ActionPerformed) {
+                        onEvent(ExpensesEvent.OnUndoDelete)
+                    }
                 }
                 else -> Unit
             }
@@ -54,14 +68,15 @@ fun ExpensesScreen(
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.add_expense))
             }
-        }
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState)}
     ) { _ ->
         Box (
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.primaryContainer)
         ) {
-            ExpensesColumn(expenses = expenses, onClick = { expense -> onEvent(ExpensesEvent.OnExpenseClick(expense))}, modifier = modifier.padding(16.dp))
+            ExpensesColumn(expenses = expenses, onEvent = onEvent, modifier = modifier.padding(16.dp))
         }
     }
 }

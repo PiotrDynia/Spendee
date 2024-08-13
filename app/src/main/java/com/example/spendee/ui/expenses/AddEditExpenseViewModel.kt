@@ -9,6 +9,7 @@ import com.example.spendee.data.entities.Expense
 import com.example.spendee.data.repositories.BalanceRepository
 import com.example.spendee.data.repositories.BudgetRepository
 import com.example.spendee.data.repositories.ExpenseRepository
+import com.example.spendee.util.Routes
 import com.example.spendee.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -119,7 +120,7 @@ class AddEditExpenseViewModel @Inject constructor(
                             budgetRepository.updateBudget(budget!!.currentAmount - difference)
                         }
                     }
-                    sendUiEvent(UiEvent.PopBackStack)
+                    sendUiEvent(UiEvent.Navigate(Routes.EXPENSES))
                 }
             }
         }
