@@ -1,5 +1,6 @@
 package com.example.spendee.ui.expenses.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,7 +29,7 @@ import com.example.spendee.data.entities.Expense
 import com.example.spendee.ui.expenses.ExpensesEvent
 import com.example.spendee.util.DismissBackground
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ExpensesColumn(expenses: List<Expense>, onEvent: (ExpensesEvent) -> Unit, modifier: Modifier = Modifier) {
     LazyColumn(
@@ -73,6 +74,7 @@ fun ExpensesColumn(expenses: List<Expense>, onEvent: (ExpensesEvent) -> Unit, mo
                     modifier = Modifier
                         .padding(8.dp)
                         .clip(RoundedCornerShape(25.dp))
+                        .animateItemPlacement()
                 ) {
                     ExpenseCard(
                         expense = item,
