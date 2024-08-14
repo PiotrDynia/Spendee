@@ -44,11 +44,11 @@ fun BudgetInfoCard(
     ) {
         Column(
             modifier = Modifier
-                .padding(12.dp)
+                .padding(4.dp)
         ) {
             Row(
                 modifier = Modifier
-                    .padding(8.dp)
+                    .padding(4.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {

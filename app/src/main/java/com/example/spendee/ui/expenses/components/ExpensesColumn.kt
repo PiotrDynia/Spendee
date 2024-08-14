@@ -78,7 +78,7 @@ fun ExpensesColumn(expenses: List<Expense>, onEvent: (ExpensesEvent) -> Unit, mo
                 ) {
                     ExpenseCard(
                         expense = item,
-                        onClick = { onEvent(ExpensesEvent.OnExpenseClick(item)) })
+                        onEvent = onEvent)
                 }
             }
         }

@@ -111,6 +111,7 @@ class MainActivity : ComponentActivity() {
                                 }
                                 composable(Routes.EXPENSES) {
                                     val viewModel = hiltViewModel<ExpensesViewModel>()
+                                    println("EXPENSES: ${viewModel.expenses.collectAsState(initial = emptyList()).value}")
                                     ExpensesScreen(
                                         onEvent = viewModel::onEvent,
                                         expenses = viewModel.expenses.collectAsState(initial = emptyList()).value,

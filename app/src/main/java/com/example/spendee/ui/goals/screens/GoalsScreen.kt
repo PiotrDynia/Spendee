@@ -118,7 +118,7 @@ fun GoalsScreen(goals: List<Goal>,
                     ) {
                         GoalCard(
                             goal = goal,
-                            onClick = { onEvent(GoalsEvent.OnGoalClick(goal)) },
+                            onEvent = onEvent,
                             currentBalance = balance.amount
                         )
                     }

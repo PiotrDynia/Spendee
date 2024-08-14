@@ -40,7 +40,6 @@ class AddEditBudgetViewModel @Inject constructor(
                         endDate = dateToString(budget.endDate),
                         isExceedButtonPressed = budget.isExceedNotificationEnabled,
                         isReach80PercentButtonPressed = budget.isReach80PercentNotificationEnabled,
-                        budget = budget
                     )
                 }
             }
@@ -80,7 +79,6 @@ class AddEditBudgetViewModel @Inject constructor(
                     }
                     repository.upsertBudget(
                         Budget(
-                            id = _state.value.budget?.id ?: 0,
                             totalAmount = _state.value.amount.toDoubleOrNull() ?: 0.0,
                             currentAmount = _state.value.amount.toDoubleOrNull() ?: 0.0,
                             startDate = stringToDate(_state.value.startDate)!!,

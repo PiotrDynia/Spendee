@@ -9,6 +9,7 @@ fun isValidNumberInput(input: String): Boolean {
 }
 
 fun calculateDailySpending(date1: Date, date2: Date, totalAmount: Double): Double? {
+    // TODO calculate between end date and now instead of between start and end
     val daysDiff = differenceInDays(date1, date2)
 
     return if (daysDiff > 0) {

@@ -43,6 +43,12 @@ class BudgetViewModel @Inject constructor(
                     sendUiEvent(UiEvent.Navigate(Routes.ADD_EDIT_BUDGET))
                 }
             }
+            BudgetEvent.OnDeleteBudget -> {
+                viewModelScope.launch {
+                    repository.deleteBudget(budget!!)
+                    sendUiEvent(UiEvent.Navigate(Routes.BUDGET))
+                }
+            }
         }
     }
 

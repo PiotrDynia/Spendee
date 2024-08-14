@@ -1,6 +1,5 @@
 package com.example.spendee.util
 
-import java.text.DateFormat
 import java.text.DateFormat.getDateInstance
 import java.text.ParseException
 import java.util.Date
@@ -12,13 +11,13 @@ fun dateToString(date: Date): String {
 }
 
 fun millisToString(millis: Long): String {
-    val dateFormat: DateFormat = getDateInstance()
+    val dateFormat = getDateInstance()
     val date = Date(millis)
     return dateFormat.format(date)
 }
 
 fun stringToDate(dateString: String): Date? {
-    val dateFormat: DateFormat = getDateInstance()
+    val dateFormat = getDateInstance()
     return try {
         dateFormat.parse(dateString)
     } catch (e: ParseException) {

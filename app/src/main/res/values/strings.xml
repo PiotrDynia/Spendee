@@ -49,4 +49,7 @@
     <string name="goal_image">Goal Image</string>
     <string name="deadline">Deadline</string>
     <string name="target">Target: %1$s$</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="more_options">More options</string>
 </resources>
