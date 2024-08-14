@@ -23,8 +23,4 @@ class BalanceRepositoryImpl(
     override suspend fun upsertBalance(balance: Balance) {
         balanceDao.upsertBalance(balance)
     }
-
-    override suspend fun updateBalance(amount: Double) {
-        balanceDao.updateBalance(amount)
-    }
 }

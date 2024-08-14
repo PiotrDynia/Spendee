@@ -25,6 +25,6 @@ fun stringToDate(dateString: String): LocalDate? {
     }
 }
 
-fun differenceInDays(date1: LocalDate, date2: LocalDate): Long {
-    return ChronoUnit.DAYS.between(date1, date2)
+fun getDaysFromNow(date: LocalDate): Long {
+    return ChronoUnit.DAYS.between(LocalDate.now(), date)
 }

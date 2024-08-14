@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.sp
 import com.example.spendee.R
 import com.example.spendee.data.entities.Budget
 import com.example.spendee.util.dateToString
-import com.example.spendee.util.differenceInDays
+import com.example.spendee.util.getDaysFromNow
 
 @Composable
 fun BudgetTexts(budget: Budget, modifier: Modifier = Modifier) {
@@ -43,7 +43,7 @@ fun BudgetTexts(budget: Budget, modifier: Modifier = Modifier) {
             style = MaterialTheme.typography.bodyMedium
         )
         Text(
-            text = differenceInDays(budget.startDate, budget.endDate).toString() + " days left",
+            text = getDaysFromNow(budget.endDate).toString() + " days left",
             fontSize = 16.sp,
             style = MaterialTheme.typography.bodySmall
         )

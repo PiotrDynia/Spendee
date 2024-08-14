@@ -2,26 +2,43 @@ package com.example.spendee.ui.expenses
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.spendee.data.entities.Balance
+import com.example.spendee.data.entities.Budget
 import com.example.spendee.data.entities.Expense
+import com.example.spendee.data.repositories.BalanceRepository
+import com.example.spendee.data.repositories.BudgetRepository
 import com.example.spendee.data.repositories.ExpenseRepository
 import com.example.spendee.util.Routes
 import com.example.spendee.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ExpensesViewModel @Inject constructor(
-    private val repository: ExpenseRepository
+    private val expenseRepository: ExpenseRepository,
+    private val balanceRepository: BalanceRepository,
+    private val budgetRepository: BudgetRepository
 ) : ViewModel() {
 
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
-    val expenses = repository.getAllExpenses()
+    val expenses = expenseRepository.getAllExpenses()
 
     private var deletedExpense: Expense? = null
+    private var balance: Balance? = null
+    private var budget: Budget? = null
+
+    init {
+        viewModelScope.launch {
+            balance = balanceRepository.getBalance().first()
+            budget = budgetRepository.getBudget().firstOrNull()
+        }
+    }
 
     fun onEvent(event: ExpensesEvent) {
         when(event) {
@@ -34,7 +51,17 @@ class ExpensesViewModel @Inject constructor(
             is ExpensesEvent.OnDeleteExpense -> {
                 viewModelScope.launch {
                     deletedExpense = event.expense
-                    repository.deleteExpense(event.expense)
+                    expenseRepository.deleteExpense(event.expense)
+                    balanceRepository.upsertBalance(
+                        Balance(
+                            amount = balance!!.amount + event.expense.amount
+                        )
+                    )
+                    if (budget != null) {
+                        budgetRepository.updateBudget(
+                            budget!!.currentAmount + event.expense.amount
+                        )
+                    }
                     sendUiEvent(UiEvent.ShowSnackbar(
                         message = "Expense deleted",
                         action = "Undo"
@@ -45,7 +72,17 @@ class ExpensesViewModel @Inject constructor(
             ExpensesEvent.OnUndoDelete -> {
                 deletedExpense?.let { expense ->
                     viewModelScope.launch {
-                        repository.upsertExpense(expense)
+                        this@ExpensesViewModel.expenseRepository.upsertExpense(expense)
+                        balanceRepository.upsertBalance(
+                            Balance(
+                                amount = balance!!.amount - expense.amount
+                            )
+                        )
+                        if (budget != null) {
+                            budgetRepository.updateBudget(
+                                budget!!.currentAmount - expense.amount
+                            )
+                        }
                     }
                 }
             }

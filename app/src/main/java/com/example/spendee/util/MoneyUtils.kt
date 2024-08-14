@@ -8,9 +8,8 @@ fun isValidNumberInput(input: String): Boolean {
     return input.isBlank() || regex.matches(input)
 }
 
-fun calculateDailySpending(date1: LocalDate, date2: LocalDate, totalAmount: Double): Double? {
-    // TODO calculate between end date and now instead of between start and end
-    val daysDiff = differenceInDays(date1, date2)
+fun calculateDailySpending(date: LocalDate, totalAmount: Double): Double? {
+    val daysDiff = getDaysFromNow(date)
 
     return if (daysDiff > 0) {
         val dailySpending = totalAmount / daysDiff

@@ -65,7 +65,7 @@ fun BudgetCircle(
                     }
                     else -> {
                         drawArc(
-                            color = Color(0xFF04AF70),
+                            color = Color.Red,
                             startAngle = -90f + gapAngle / 2,
                             sweepAngle = percentageSpent * 360f * animatedProgress - gapAngle,
                             useCenter = false,
@@ -74,7 +74,7 @@ fun BudgetCircle(
                             style = Stroke(strokeWidth, cap = StrokeCap.Butt)
                         )
                         drawArc(
-                            color = Color.Red,
+                            color = Color(0xFF04AF70),
                             startAngle = -90f + percentageSpent * 360f * animatedProgress + gapAngle / 2,
                             sweepAngle = (1f - percentageSpent) * 360f * animatedProgress - gapAngle,
                             useCenter = false,

@@ -12,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,9 +35,7 @@ class GoalsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            balanceRepository.getBalance().collect { balance ->
-                this@GoalsViewModel.balance = balance
-            }
+            balance = balanceRepository.getBalance().first()
 
             goals.collect {
                 _isLoading.value = false

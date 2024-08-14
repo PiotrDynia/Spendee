@@ -58,7 +58,6 @@ fun BudgetScreen(
     onNavigate: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // TODO change the budget to be monthly, not fixed
     var animationProgress by remember { mutableFloatStateOf(0f) }
     val animatedProgress by animateFloatAsState(
         targetValue = animationProgress,

@@ -2,6 +2,7 @@ package com.example.spendee.ui.current_balance
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.spendee.data.entities.Balance
 import com.example.spendee.data.repositories.BalanceRepository
 import com.example.spendee.data.repositories.ExpenseRepository
 import com.example.spendee.util.Routes
@@ -81,7 +82,11 @@ class CurrentBalanceViewModel @Inject constructor(
                         ))
                         return@launch
                     }
-                    balanceRepository.updateBalance(_viewBalanceState.value.currentAmount.toDoubleOrNull() ?: 0.0)
+                    balanceRepository.upsertBalance(
+                        Balance(
+                            amount = _viewBalanceState.value.currentAmount.toDouble()
+                        )
+                    )
                     balanceRepository.getBalance().collect { updatedBalance ->
                         _viewBalanceState.value = _viewBalanceState.value.copy(
                             balance = updatedBalance,

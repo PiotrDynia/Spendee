@@ -16,6 +16,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -41,12 +43,8 @@ class AddEditExpenseViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            balanceRepository.getBalance().collect { balance ->
-                this@AddEditExpenseViewModel.balance = balance
-            }
-            budgetRepository.getBudget().collect{ budget ->
-                this@AddEditExpenseViewModel.budget = budget
-            }
+            balance = balanceRepository.getBalance().first()
+            budget = budgetRepository.getBudget().firstOrNull()
         }
         val expenseId = savedStateHandle.get<Int>("expenseId")!!
         if (expenseId != 0) {
@@ -92,6 +90,10 @@ class AddEditExpenseViewModel @Inject constructor(
                         sendUiEvent(UiEvent.ShowSnackbar(message = "Description can't be empty!"))
                         return@launch
                     }
+                    if (_state.value.amount.toDouble() > balance!!.amount) {
+                        sendUiEvent(UiEvent.ShowSnackbar(message = "Can't add expense, your balance is too low!"))
+                        return@launch
+                    }
                     if (_state.value.categoryId == 0) {
                         _state.value = _state.value.copy(
                             categoryId = 8
@@ -100,24 +102,30 @@ class AddEditExpenseViewModel @Inject constructor(
                     repository.upsertExpense(
                         Expense(
                             id = _state.value.expense?.id ?: 0,
-                            amount = _state.value.amount.toDoubleOrNull() ?: 0.0,
+                            amount = _state.value.amount.toDouble(),
                             description = _state.value.description,
                             categoryId = _state.value.categoryId,
                             date = LocalDate.now()
                         )
                     )
                     if (isNewExpense) {
-                        val difference = balance!!.amount - (_state.value.amount.toDoubleOrNull() ?: 0.0)
-                        balanceRepository.updateBalance(difference)
+                        balanceRepository.upsertBalance(
+                            Balance(
+                                amount = balance!!.amount - (_state.value.amount.toDouble())
+                            )
+                        )
                         if (isBudgetSet()) {
-                            budgetRepository.updateBudget(budget!!.currentAmount - difference)
+                            budgetRepository.updateBudget(budget!!.currentAmount - _state.value.amount.toDouble())
                         }
                     } else {
-                        val difference =
-                            balance!!.amount - ((_state.value.amount.toDoubleOrNull() ?: 0.0) - (_state.value.originalAmount.toDoubleOrNull() ?: 0.0))
-                        balanceRepository.updateBalance(difference)
+                        balanceRepository.upsertBalance(
+                            Balance(
+                                amount = balance!!.amount - ((_state.value.amount.toDouble()) - (_state.value.originalAmount.toDouble()))
+                            )
+                        )
                         if (isBudgetSet()) {
-                            budgetRepository.updateBudget(budget!!.currentAmount - difference)
+                            budgetRepository.updateBudget(
+                                budget!!.currentAmount - ((_state.value.amount.toDouble()) - (_state.value.originalAmount.toDouble())))
                         }
                     }
                     sendUiEvent(UiEvent.Navigate(Routes.EXPENSES))
@@ -127,7 +135,7 @@ class AddEditExpenseViewModel @Inject constructor(
     }
 
     private fun isBudgetSet(): Boolean {
-        return budget != null && (budget!!.startDate.isBefore(LocalDate.now()) && budget!!.endDate.isAfter(LocalDate.now()))
+        return budget != null
     }
 
     private fun sendUiEvent(event: UiEvent) {

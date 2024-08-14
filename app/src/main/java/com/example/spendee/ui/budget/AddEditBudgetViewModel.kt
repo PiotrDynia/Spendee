@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -65,10 +66,14 @@ class AddEditBudgetViewModel @Inject constructor(
                     }
                     val startDate = calculateStartDate(_state.value.startingDay!!)
                     val endDate = startDate.plusMonths(1).minusDays(1)
+                    val filteredExpenses = expensesRepository.getAllExpenses().first().filter { expense ->
+                        expense.date >= startDate
+                    }
+                    val expensesTotalAmount = filteredExpenses.sumOf { it.amount }
                     repository.upsertBudget(
                         Budget(
-                            totalAmount = _state.value.amount.toDoubleOrNull() ?: 0.0,
-                            currentAmount = _state.value.amount.toDoubleOrNull() ?: 0.0,
+                            totalAmount = _state.value.amount.toDouble(),
+                            currentAmount = _state.value.amount.toDouble() - expensesTotalAmount,
                             startDate = startDate,
                             endDate = endDate,
                             isExceedNotificationEnabled = _state.value.isExceedButtonPressed,

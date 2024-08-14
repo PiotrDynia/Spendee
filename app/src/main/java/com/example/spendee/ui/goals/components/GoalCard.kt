@@ -16,11 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -33,7 +29,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -42,10 +37,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.PopupProperties
 import com.example.spendee.R
 import com.example.spendee.data.entities.Goal
 import com.example.spendee.ui.goals.GoalsEvent
+import com.example.spendee.util.EditDeleteDropdownMenu
 import com.example.spendee.util.dateToString
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -141,65 +136,16 @@ fun GoalCard(
                 }
             }
         }
-        // TODO extract to utils
-        DropdownMenu(
+        EditDeleteDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            properties = PopupProperties(
-                focusable = true
-            ),
-            modifier = Modifier
-                .fillMaxWidth(0.3f)
-                .padding(8.dp)
-        ) {
-            DropdownMenuItem(
-                text = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp),
-                            tint = Color.Gray
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = stringResource(R.string.edit),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
-                },
-                onClick = {
-                    onEvent(GoalsEvent.OnGoalClick(goal))
-                    expanded = false
-                }
-            )
-            DropdownMenuItem(
-                text = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp),
-                            tint = Color.Gray
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = stringResource(R.string.delete),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
-                },
-                onClick = {
-                    onEvent(GoalsEvent.OnDeleteGoal(goal))
-                    expanded = false
-                }
-            )
-        }
+            onEditClick = {
+                onEvent(GoalsEvent.OnGoalClick(goal))
+                expanded = false
+            },
+            onDeleteClick = {
+                onEvent(GoalsEvent.OnDeleteGoal(goal))
+                expanded = false
+            })
     }
 }

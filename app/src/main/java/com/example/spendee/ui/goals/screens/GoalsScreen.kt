@@ -17,12 +17,17 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import com.example.spendee.R
 import com.example.spendee.data.entities.Balance
 import com.example.spendee.data.entities.Goal
+import com.example.spendee.ui.expenses.ExpensesEvent
 import com.example.spendee.ui.goals.GoalsEvent
 import com.example.spendee.ui.goals.components.GoalCard
 import com.example.spendee.util.DismissBackground
@@ -47,11 +53,22 @@ fun GoalsScreen(goals: List<Goal>,
                 uiEvent: Flow<UiEvent>,
                 onNavigate: (String) -> Unit,
                 modifier: Modifier = Modifier) {
+    val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(key1 = true) {
         uiEvent.collect { event ->
             when(event) {
                 is UiEvent.Navigate -> {
                     onNavigate(event.route)
+                }
+                is UiEvent.ShowSnackbar -> {
+                    val result = snackbarHostState.showSnackbar(
+                        message = event.message,
+                        actionLabel = event.action,
+                        duration = SnackbarDuration.Long
+                    )
+                    if(result == SnackbarResult.ActionPerformed) {
+                        onEvent(GoalsEvent.OnUndoDeleteGoal)
+                    }
                 }
                 else -> Unit
             }
@@ -71,7 +88,8 @@ fun GoalsScreen(goals: List<Goal>,
                     contentDescription = stringResource(R.string.add_a_new_goal)
                 )
             }
-        }
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { _ ->
         Box(
             modifier = Modifier

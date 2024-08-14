@@ -82,7 +82,6 @@ fun BudgetInfoCard(
                         "From ${budget.totalAmount}$"
                     } else {
                         calculateDailySpending(
-                            budget.startDate,
                             budget.endDate,
                             budget.currentAmount
                         ).toString() + "$/day"
