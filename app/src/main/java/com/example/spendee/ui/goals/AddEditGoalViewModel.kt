@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.util.Date
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -95,7 +95,7 @@ class AddEditGoalViewModel @Inject constructor(
                         sendUiEvent(UiEvent.ShowSnackbar("Deadline can't be empty!"))
                         return@launch
                     }
-                    if (stringToDate(_state.value.deadline)!!.before(Date())) {
+                    if (stringToDate(_state.value.deadline)!!.isBefore(LocalDate.now())) {
                         sendUiEvent(UiEvent.ShowSnackbar("Deadline should be after today's date!"))
                         return@launch
                     }

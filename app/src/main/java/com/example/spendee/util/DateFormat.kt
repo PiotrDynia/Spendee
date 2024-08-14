@@ -1,32 +1,30 @@
 package com.example.spendee.util
 
-import java.text.DateFormat.getDateInstance
-import java.text.ParseException
-import java.util.Date
-import java.util.concurrent.TimeUnit
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
+import java.time.temporal.ChronoUnit
 
-fun dateToString(date: Date): String {
-    val dateFormat = getDateInstance()
-    return dateFormat.format(date)
+private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+fun dateToString(date: LocalDate): String {
+    return dateFormatter.format(date)
 }
 
 fun millisToString(millis: Long): String {
-    val dateFormat = getDateInstance()
-    val date = Date(millis)
-    return dateFormat.format(date)
+    val date = LocalDate.ofEpochDay(millis / (24 * 60 * 60 * 1000))
+    return dateToString(date)
 }
 
-fun stringToDate(dateString: String): Date? {
-    val dateFormat = getDateInstance()
+fun stringToDate(dateString: String): LocalDate? {
     return try {
-        dateFormat.parse(dateString)
-    } catch (e: ParseException) {
+        LocalDate.parse(dateString, dateFormatter)
+    } catch (e: DateTimeParseException) {
         e.printStackTrace()
         null
     }
 }
 
-fun differenceInDays(date1: Date, date2: Date): Long {
-    val diffInMillis = date2.time - date1.time
-    return TimeUnit.MILLISECONDS.toDays(diffInMillis)
+fun differenceInDays(date1: LocalDate, date2: LocalDate): Long {
+    return ChronoUnit.DAYS.between(date1, date2)
 }

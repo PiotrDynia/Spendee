@@ -5,9 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spendee.data.entities.Budget
 import com.example.spendee.data.repositories.BudgetRepository
+import com.example.spendee.data.repositories.ExpenseRepository
 import com.example.spendee.util.UiEvent
-import com.example.spendee.util.dateToString
-import com.example.spendee.util.stringToDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -15,12 +14,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.util.Date
+import java.time.LocalDate
+import java.time.YearMonth
 import javax.inject.Inject
 
 @HiltViewModel
 class AddEditBudgetViewModel @Inject constructor(
     private val repository: BudgetRepository,
+    private val expensesRepository: ExpenseRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -36,8 +37,7 @@ class AddEditBudgetViewModel @Inject constructor(
                 repository.getBudget().collect { budget ->
                     _state.value = _state.value.copy(
                         amount = budget.totalAmount.toString(),
-                        startDate = dateToString(budget.startDate) ,
-                        endDate = dateToString(budget.endDate),
+                        startingDay = budget.startDate.dayOfMonth,
                         isExceedButtonPressed = budget.isExceedNotificationEnabled,
                         isReach80PercentButtonPressed = budget.isReach80PercentNotificationEnabled,
                     )
@@ -59,52 +59,24 @@ class AddEditBudgetViewModel @Inject constructor(
                         sendUiEvent(UiEvent.ShowSnackbar("Amount can't be empty!"))
                         return@launch
                     }
-                    if (_state.value.startDate.isBlank()) {
-                        sendUiEvent(UiEvent.ShowSnackbar("Please select a start date!"))
+                    if (_state.value.startingDay == null) {
+                        sendUiEvent(UiEvent.ShowSnackbar("Please select a starting day!"))
                         return@launch
                     }
-                    if (_state.value.endDate.isBlank()) {
-                        sendUiEvent(UiEvent.ShowSnackbar("Please select an end date!"))
-                        return@launch
-                    }
-                    val startDate = stringToDate(_state.value.startDate)
-                    val endDate = stringToDate(_state.value.endDate)
-                    if (startDate!!.before(Date())) {
-                        sendUiEvent(UiEvent.ShowSnackbar("Start date should be after today's date!"))
-                        return@launch
-                    }
-                    if (endDate!!.before(startDate)) {
-                        sendUiEvent(UiEvent.ShowSnackbar("End date should be after start date!"))
-                        return@launch
-                    }
+                    val startDate = calculateStartDate(_state.value.startingDay!!)
+                    val endDate = startDate.plusMonths(1).minusDays(1)
                     repository.upsertBudget(
                         Budget(
                             totalAmount = _state.value.amount.toDoubleOrNull() ?: 0.0,
                             currentAmount = _state.value.amount.toDoubleOrNull() ?: 0.0,
-                            startDate = stringToDate(_state.value.startDate)!!,
-                            endDate = stringToDate(_state.value.endDate)!!,
+                            startDate = startDate,
+                            endDate = endDate,
                             isExceedNotificationEnabled = _state.value.isExceedButtonPressed,
                             isReach80PercentNotificationEnabled = _state.value.isReach80PercentButtonPressed
                         )
                     )
                     sendUiEvent(UiEvent.PopBackStack)
                 }
-                _state.value = _state.value.copy(
-                    isStartDatePickerOpened = false,
-                    isEndDatePickerOpened = false
-                )
-            }
-            is AddEditBudgetEvent.OnStartDateChange -> {
-                _state.value = _state.value.copy(
-                    startDate = event.startDate,
-                    isStartDatePickerOpened = false
-                )
-            }
-            is AddEditBudgetEvent.OnEndDateChange -> {
-                _state.value = _state.value.copy(
-                    endDate = event.endDate,
-                    isEndDatePickerOpened = false
-                )
             }
             is AddEditBudgetEvent.OnExceedButtonPress -> {
                 _state.value = _state.value.copy(
@@ -116,28 +88,40 @@ class AddEditBudgetViewModel @Inject constructor(
                     isReach80PercentButtonPressed = event.isPressed
                 )
             }
-            AddEditBudgetEvent.OnCloseEndDatePicker -> {
+            AddEditBudgetEvent.OnCancelStartingDay -> {
                 _state.value = _state.value.copy(
-                    isEndDatePickerOpened = false,
-                    endDate = ""
+                    startingDay = null
                 )
             }
-            AddEditBudgetEvent.OnCloseStartDatePicker -> {
+            is AddEditBudgetEvent.OnChangeStartingDay -> {
                 _state.value = _state.value.copy(
-                    isStartDatePickerOpened = false,
-                    startDate = ""
+                    startingDay = event.newDay
                 )
             }
-            AddEditBudgetEvent.OnOpenEndDatePicker -> {
-                _state.value = _state.value.copy(
-                    isEndDatePickerOpened = true
-                )
+        }
+    }
+
+    private fun calculateStartDate(startingDay: Int): LocalDate {
+        val today = LocalDate.now()
+        val currentYear = today.year
+        val currentMonth = today.monthValue
+        val currentDayOfMonth = today.dayOfMonth
+
+        fun getValidDayForMonth(yearMonth: YearMonth, day: Int): Int {
+            return if (day > yearMonth.lengthOfMonth()) {
+                yearMonth.lengthOfMonth()
+            } else {
+                day
             }
-            AddEditBudgetEvent.OnOpenStartDatePicker -> {
-                _state.value = _state.value.copy(
-                    isStartDatePickerOpened = true
-                )
-            }
+        }
+
+        val validStartingDay = getValidDayForMonth(YearMonth.of(currentYear, currentMonth), startingDay)
+
+        return if (startingDay < currentDayOfMonth) {
+            LocalDate.of(currentYear, currentMonth, validStartingDay)
+        } else {
+            val previousMonth = YearMonth.of(currentYear, currentMonth).minusMonths(1)
+            LocalDate.of(previousMonth.year, previousMonth.monthValue, validStartingDay)
         }
     }
 

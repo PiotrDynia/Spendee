@@ -1,6 +1,6 @@
 package com.example.spendee.util
 
-import java.util.Date
+import java.time.LocalDate
 import kotlin.math.round
 
 fun isValidNumberInput(input: String): Boolean {
@@ -8,7 +8,7 @@ fun isValidNumberInput(input: String): Boolean {
     return input.isBlank() || regex.matches(input)
 }
 
-fun calculateDailySpending(date1: Date, date2: Date, totalAmount: Double): Double? {
+fun calculateDailySpending(date1: LocalDate, date2: LocalDate, totalAmount: Double): Double? {
     // TODO calculate between end date and now instead of between start and end
     val daysDiff = differenceInDays(date1, date2)
 

@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.util.Date
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -103,7 +103,7 @@ class AddEditExpenseViewModel @Inject constructor(
                             amount = _state.value.amount.toDoubleOrNull() ?: 0.0,
                             description = _state.value.description,
                             categoryId = _state.value.categoryId,
-                            date = Date()
+                            date = LocalDate.now()
                         )
                     )
                     if (isNewExpense) {
@@ -127,7 +127,7 @@ class AddEditExpenseViewModel @Inject constructor(
     }
 
     private fun isBudgetSet(): Boolean {
-        return budget != null && (budget!!.startDate.before(Date()) && budget!!.endDate.after(Date()))
+        return budget != null && (budget!!.startDate.isBefore(LocalDate.now()) && budget!!.endDate.isAfter(LocalDate.now()))
     }
 
     private fun sendUiEvent(event: UiEvent) {
