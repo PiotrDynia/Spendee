@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,6 +40,7 @@ fun ExpensesScreen(
     modifier: Modifier = Modifier
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
     LaunchedEffect(key1 = true) {
         uiEvent.collect { event ->
             when(event) {
@@ -47,8 +49,8 @@ fun ExpensesScreen(
                 }
                 is UiEvent.ShowSnackbar -> {
                     val result = snackbarHostState.showSnackbar(
-                        message = event.message,
-                        actionLabel = event.action,
+                        message = context.getString(event.message),
+                        actionLabel = context.getString(event.action!!),
                         duration = SnackbarDuration.Long
                     )
                     if(result == SnackbarResult.ActionPerformed) {

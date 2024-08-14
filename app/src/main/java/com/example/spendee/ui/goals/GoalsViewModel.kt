@@ -2,6 +2,7 @@ package com.example.spendee.ui.goals
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.spendee.R
 import com.example.spendee.data.entities.Balance
 import com.example.spendee.data.entities.Goal
 import com.example.spendee.data.repositories.BalanceRepository
@@ -57,8 +58,8 @@ class GoalsViewModel @Inject constructor(
                     deletedGoal = event.goal
                     goalRepository.deleteGoal(event.goal)
                     sendUiEvent(UiEvent.ShowSnackbar(
-                        message = "Goal deleted",
-                        action = "Undo"
+                        message = R.string.goal_deleted,
+                        action = R.string.undo
                     ))
                 }
             }

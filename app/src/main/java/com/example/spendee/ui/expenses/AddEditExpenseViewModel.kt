@@ -3,6 +3,7 @@ package com.example.spendee.ui.expenses
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.spendee.R
 import com.example.spendee.data.entities.Balance
 import com.example.spendee.data.entities.Budget
 import com.example.spendee.data.entities.Expense
@@ -83,15 +84,15 @@ class AddEditExpenseViewModel @Inject constructor(
             AddEditExpenseEvent.OnSaveExpenseClick -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     if (_state.value.amount.isBlank()) {
-                        sendUiEvent(UiEvent.ShowSnackbar(message = "Amount can't be empty!"))
+                        sendUiEvent(UiEvent.ShowSnackbar(message = R.string.amount_cant_be_empty))
                         return@launch
                     }
                     if (_state.value.description.isBlank()) {
-                        sendUiEvent(UiEvent.ShowSnackbar(message = "Description can't be empty!"))
+                        sendUiEvent(UiEvent.ShowSnackbar(message = R.string.description_cant_be_empty))
                         return@launch
                     }
                     if (_state.value.amount.toDouble() > balance!!.amount) {
-                        sendUiEvent(UiEvent.ShowSnackbar(message = "Can't add expense, your balance is too low!"))
+                        sendUiEvent(UiEvent.ShowSnackbar(message = R.string.cant_add_expense_your_balance_is_too_low))
                         return@launch
                     }
                     if (_state.value.categoryId == 0) {

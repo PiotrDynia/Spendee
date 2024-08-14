@@ -3,6 +3,7 @@ package com.example.spendee.ui.goals
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.spendee.R
 import com.example.spendee.data.entities.Goal
 import com.example.spendee.data.repositories.GoalRepository
 import com.example.spendee.util.Routes
@@ -84,19 +85,19 @@ class AddEditGoalViewModel @Inject constructor(
             AddEditGoalEvent.OnSaveGoalClick -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     if (_state.value.targetAmount.isBlank()) {
-                        sendUiEvent(UiEvent.ShowSnackbar("Target amount can't be empty!"))
+                        sendUiEvent(UiEvent.ShowSnackbar(R.string.target_amount_cant_be_empty))
                         return@launch
                     }
                     if (_state.value.description.isBlank()) {
-                        sendUiEvent(UiEvent.ShowSnackbar("Description can't be empty!"))
+                        sendUiEvent(UiEvent.ShowSnackbar(R.string.description_cant_be_empty))
                         return@launch
                     }
                     if (_state.value.deadline.isBlank()) {
-                        sendUiEvent(UiEvent.ShowSnackbar("Deadline can't be empty!"))
+                        sendUiEvent(UiEvent.ShowSnackbar(R.string.deadline_cant_be_empty))
                         return@launch
                     }
                     if (stringToDate(_state.value.deadline)!!.isBefore(LocalDate.now())) {
-                        sendUiEvent(UiEvent.ShowSnackbar("Deadline should be after today's date!"))
+                        sendUiEvent(UiEvent.ShowSnackbar(R.string.deadline_should_be_after_todays_date))
                         return@launch
                     }
                     repository.upsertGoal(

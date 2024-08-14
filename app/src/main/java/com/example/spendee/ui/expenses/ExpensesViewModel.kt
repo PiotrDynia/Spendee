@@ -2,6 +2,7 @@ package com.example.spendee.ui.expenses
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.spendee.R
 import com.example.spendee.data.entities.Balance
 import com.example.spendee.data.entities.Budget
 import com.example.spendee.data.entities.Expense
@@ -63,8 +64,8 @@ class ExpensesViewModel @Inject constructor(
                         )
                     }
                     sendUiEvent(UiEvent.ShowSnackbar(
-                        message = "Expense deleted",
-                        action = "Undo"
+                        message = R.string.expense_deleted,
+                        action = R.string.undo
                     ))
                 }
 

@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -54,6 +55,7 @@ fun GoalsScreen(goals: List<Goal>,
                 onNavigate: (String) -> Unit,
                 modifier: Modifier = Modifier) {
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
     LaunchedEffect(key1 = true) {
         uiEvent.collect { event ->
             when(event) {
@@ -62,8 +64,8 @@ fun GoalsScreen(goals: List<Goal>,
                 }
                 is UiEvent.ShowSnackbar -> {
                     val result = snackbarHostState.showSnackbar(
-                        message = event.message,
-                        actionLabel = event.action,
+                        message = context.getString(event.message),
+                        actionLabel = context.getString(event.action!!),
                         duration = SnackbarDuration.Long
                     )
                     if(result == SnackbarResult.ActionPerformed) {

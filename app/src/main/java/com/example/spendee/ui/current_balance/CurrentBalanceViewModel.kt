@@ -2,6 +2,7 @@ package com.example.spendee.ui.current_balance
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.spendee.R
 import com.example.spendee.data.entities.Balance
 import com.example.spendee.data.repositories.BalanceRepository
 import com.example.spendee.data.repositories.ExpenseRepository
@@ -78,7 +79,7 @@ class CurrentBalanceViewModel @Inject constructor(
                 viewModelScope.launch {
                     if (_viewBalanceState.value.currentAmount.isBlank()) {
                         sendUiEvent(UiEvent.ShowSnackbar(
-                            message = "Amount can't be empty!"
+                            message = R.string.amount_cant_be_empty
                         ))
                         return@launch
                     }

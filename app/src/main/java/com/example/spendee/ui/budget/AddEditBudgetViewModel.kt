@@ -3,6 +3,7 @@ package com.example.spendee.ui.budget
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.spendee.R
 import com.example.spendee.data.entities.Budget
 import com.example.spendee.data.repositories.BudgetRepository
 import com.example.spendee.data.repositories.ExpenseRepository
@@ -57,11 +58,11 @@ class AddEditBudgetViewModel @Inject constructor(
             AddEditBudgetEvent.OnSaveBudgetClick -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     if (_state.value.amount.isBlank()) {
-                        sendUiEvent(UiEvent.ShowSnackbar("Amount can't be empty!"))
+                        sendUiEvent(UiEvent.ShowSnackbar(R.string.amount_cant_be_empty))
                         return@launch
                     }
                     if (_state.value.startingDay == null) {
-                        sendUiEvent(UiEvent.ShowSnackbar("Please select a starting day!"))
+                        sendUiEvent(UiEvent.ShowSnackbar(R.string.please_select_a_starting_day))
                         return@launch
                     }
                     val startDate = calculateStartDate(_state.value.startingDay!!)
