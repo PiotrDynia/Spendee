@@ -43,6 +43,7 @@ class CurrentBalanceViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            goals = goalsRepository.getAllGoals().first()
             combine(
                 expensesRepository.getAllExpenses().take(3),
                 balanceRepository.getBalance()
@@ -56,7 +57,6 @@ class CurrentBalanceViewModel @Inject constructor(
             }.collect { newState ->
                 _viewBalanceState.value = newState
             }
-            goals = goalsRepository.getAllGoals().first()
         }
     }
 
@@ -100,13 +100,19 @@ class CurrentBalanceViewModel @Inject constructor(
                         )
                     )
                     if (notificationManager.areNotificationsEnabled()) {
+                        println("Notifications enabled, looking for goals")
+                        println("Goals - ${goals.size}")
                         goals.forEach { goal ->
+                            println("Found a goal - $goal")
                             if (_viewBalanceState.value.currentAmount.toDouble() >= goal.targetAmount) {
                                 goal.isReached = true
                                 goalsRepository.upsertGoal(goal)
+                                println("Sending a notification...")
                                 notificationManager.notify(1, notificationBuilder
-                                    .setContentTitle("You've reached your goal!")
+                                    .setContentTitle("Goal reached!")
+                                    .setContentText("Congratulations! You have reached your goal!")
                                     .build())
+                                println("Notification sent")
                             }
                         }
                     }

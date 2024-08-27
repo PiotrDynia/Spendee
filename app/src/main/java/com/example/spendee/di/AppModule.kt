@@ -37,6 +37,7 @@ object AppModule {
             SpendeeDatabase::class.java,
             "spendee_db"
         )
+            .fallbackToDestructiveMigration()
             .build()
     }
 
