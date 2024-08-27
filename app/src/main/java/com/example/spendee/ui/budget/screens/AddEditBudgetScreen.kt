@@ -175,13 +175,6 @@ fun AddEditBudgetScreen(
                     )
                 }
             )
-            SwitchButtonRow(
-                text = R.string.notify_me_when_i_reach_80_of_my_budget,
-                switchState = state.isReach80PercentButtonPressed,
-                onCheckedChange = { pressed ->
-                    onEvent(AddEditBudgetEvent.OnReach80PercentButtonPress(pressed))
-                }
-            )
         }
     }
 }

@@ -41,7 +41,6 @@ class AddEditBudgetViewModel @Inject constructor(
                         amount = budget.totalAmount.toString(),
                         startingDay = budget.startDate.dayOfMonth,
                         isExceedButtonPressed = budget.isExceedNotificationEnabled,
-                        isReach80PercentButtonPressed = budget.isReach80PercentNotificationEnabled,
                     )
                 }
             }
@@ -71,14 +70,15 @@ class AddEditBudgetViewModel @Inject constructor(
                         expense.date >= startDate
                     }
                     val expensesTotalAmount = filteredExpenses.sumOf { it.amount }
+                    val currentAmount = _state.value.amount.toDouble() - expensesTotalAmount
                     repository.upsertBudget(
                         Budget(
                             totalAmount = _state.value.amount.toDouble(),
-                            currentAmount = _state.value.amount.toDouble() - expensesTotalAmount,
+                            currentAmount = currentAmount,
                             startDate = startDate,
                             endDate = endDate,
-                            isExceedNotificationEnabled = _state.value.isExceedButtonPressed,
-                            isReach80PercentNotificationEnabled = _state.value.isReach80PercentButtonPressed
+                            isExceeded = if (currentAmount > 0) false else true,
+                            isExceedNotificationEnabled = _state.value.isExceedButtonPressed
                         )
                     )
                     sendUiEvent(UiEvent.PopBackStack)
@@ -87,11 +87,6 @@ class AddEditBudgetViewModel @Inject constructor(
             is AddEditBudgetEvent.OnExceedButtonPress -> {
                 _state.value = _state.value.copy(
                     isExceedButtonPressed = event.isPressed
-                )
-            }
-            is AddEditBudgetEvent.OnReach80PercentButtonPress -> {
-                _state.value = _state.value.copy(
-                    isReach80PercentButtonPressed = event.isPressed
                 )
             }
             AddEditBudgetEvent.OnCancelStartingDay -> {

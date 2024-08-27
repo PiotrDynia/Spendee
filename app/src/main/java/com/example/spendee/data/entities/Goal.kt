@@ -10,5 +10,6 @@ data class Goal(
     val description: String,
     val targetAmount: Double,
     val deadline: LocalDate,
+    var isReached: Boolean,
     val isReachedNotificationEnabled: Boolean,
 )

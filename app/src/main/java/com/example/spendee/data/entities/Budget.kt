@@ -8,9 +8,8 @@ import java.time.LocalDate
 data class Budget(
     @PrimaryKey val id: Int = 1,
     val totalAmount: Double,
-    val currentAmount: Double,
+    var currentAmount: Double,
     val startDate: LocalDate,
     val endDate: LocalDate,
-    val isExceedNotificationEnabled: Boolean,
-    val isReach80PercentNotificationEnabled: Boolean
-)
+    var isExceeded: Boolean,
+    val isExceedNotificationEnabled: Boolean)

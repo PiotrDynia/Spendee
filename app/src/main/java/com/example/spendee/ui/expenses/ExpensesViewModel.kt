@@ -59,9 +59,8 @@ class ExpensesViewModel @Inject constructor(
                         )
                     )
                     if (budget != null) {
-                        budgetRepository.updateBudget(
-                            budget!!.currentAmount + event.expense.amount
-                        )
+                        budget!!.currentAmount += event.expense.amount
+                        budgetRepository.upsertBudget(budget!!)
                     }
                     sendUiEvent(UiEvent.ShowSnackbar(
                         message = R.string.expense_deleted,
@@ -80,9 +79,8 @@ class ExpensesViewModel @Inject constructor(
                             )
                         )
                         if (budget != null) {
-                            budgetRepository.updateBudget(
-                                budget!!.currentAmount - expense.amount
-                            )
+                            budget!!.currentAmount -= expense.amount
+                            budgetRepository.upsertBudget(budget!!)
                         }
                     }
                 }

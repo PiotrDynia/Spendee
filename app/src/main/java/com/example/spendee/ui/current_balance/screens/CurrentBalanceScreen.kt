@@ -1,5 +1,6 @@
 package com.example.spendee.ui.current_balance.screens
 
+import android.os.Build
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -33,7 +34,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,8 +48,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.example.spendee.R
-import com.example.spendee.data.entities.Expense
 import com.example.spendee.ui.current_balance.CurrentBalanceEvent
 import com.example.spendee.ui.current_balance.CurrentBalanceState
 import com.example.spendee.ui.current_balance.components.CurrentBalanceTexts
@@ -59,7 +59,6 @@ import com.example.spendee.util.isValidNumberInput
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import java.util.Date
 
 @Composable
 fun CurrentBalanceScreen(

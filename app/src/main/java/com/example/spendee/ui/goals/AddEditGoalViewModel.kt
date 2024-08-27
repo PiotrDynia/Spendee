@@ -4,7 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spendee.R
+import com.example.spendee.data.entities.Balance
 import com.example.spendee.data.entities.Goal
+import com.example.spendee.data.repositories.BalanceRepository
 import com.example.spendee.data.repositories.GoalRepository
 import com.example.spendee.util.Routes
 import com.example.spendee.util.UiEvent
@@ -15,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -23,6 +26,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AddEditGoalViewModel @Inject constructor(
     private val repository: GoalRepository,
+    private val balanceRepository: BalanceRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val _uiEvent = Channel<UiEvent>()
@@ -31,7 +35,12 @@ class AddEditGoalViewModel @Inject constructor(
     private val _state = MutableStateFlow(AddEditGoalState())
     val state = _state.asStateFlow()
 
+    private var balance: Balance? = null
+
     init {
+        viewModelScope.launch(Dispatchers.IO) {
+            balance = balanceRepository.getBalance().first()
+        }
         val goalId = savedStateHandle.get<Int>("goalId")!!
         if (goalId != 0) {
             viewModelScope.launch(Dispatchers.IO) {
@@ -103,9 +112,10 @@ class AddEditGoalViewModel @Inject constructor(
                     repository.upsertGoal(
                         Goal(
                             id = _state.value.goal?.id ?: 0,
-                            targetAmount = _state.value.targetAmount.toDoubleOrNull() ?: 0.0,
+                            targetAmount = _state.value.targetAmount.toDouble(),
                             deadline = stringToDate(_state.value.deadline)!!,
                             description = _state.value.description,
+                            isReached = if (balance!!.amount >= _state.value.targetAmount.toDouble()) true else false,
                             isReachedNotificationEnabled = _state.value.isReachedButtonPressed
                         )
                     )

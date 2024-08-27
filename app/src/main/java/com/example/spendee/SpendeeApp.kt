@@ -5,7 +5,7 @@ import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.example.spendee.workmanager.BudgetRenewalWorker
+import com.example.spendee.workmanager.DeadlinesCheckerWorker
 import dagger.hilt.android.HiltAndroidApp
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -19,7 +19,8 @@ class SpendeeApp : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
 
-        val workRequest = PeriodicWorkRequestBuilder<BudgetRenewalWorker>(5, TimeUnit.SECONDS)
+        // TODO change to 1 day
+        val workRequest = PeriodicWorkRequestBuilder<DeadlinesCheckerWorker>(5, TimeUnit.SECONDS)
             .build()
 
         WorkManager.getInstance(this).enqueue(workRequest)

@@ -5,6 +5,5 @@ sealed class AddEditBudgetEvent {
     data object OnCancelStartingDay : AddEditBudgetEvent()
     data class OnChangeStartingDay(val newDay: Int) : AddEditBudgetEvent()
     data class OnExceedButtonPress(val isPressed: Boolean) : AddEditBudgetEvent()
-    data class OnReach80PercentButtonPress(val isPressed: Boolean) : AddEditBudgetEvent()
     data object OnSaveBudgetClick : AddEditBudgetEvent()
 }

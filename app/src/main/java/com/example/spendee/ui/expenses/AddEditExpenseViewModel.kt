@@ -43,7 +43,7 @@ class AddEditExpenseViewModel @Inject constructor(
     private var isNewExpense: Boolean = true
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             balance = balanceRepository.getBalance().first()
             budget = budgetRepository.getBudget().firstOrNull()
         }
@@ -91,7 +91,7 @@ class AddEditExpenseViewModel @Inject constructor(
                         sendUiEvent(UiEvent.ShowSnackbar(message = R.string.description_cant_be_empty))
                         return@launch
                     }
-                    if (_state.value.amount.toDouble() > balance!!.amount) {
+                    if (isBalanceExceeded()) {
                         sendUiEvent(UiEvent.ShowSnackbar(message = R.string.cant_add_expense_your_balance_is_too_low))
                         return@launch
                     }
@@ -116,7 +116,13 @@ class AddEditExpenseViewModel @Inject constructor(
                             )
                         )
                         if (isBudgetSet()) {
-                            budgetRepository.updateBudget(budget!!.currentAmount - _state.value.amount.toDouble())
+                            if (isBudgetExceeded()) {
+                                budget!!.isExceeded = true
+                                budgetRepository.upsertBudget(budget!!)
+                                // TODO add notification
+                            }
+                            budget!!.currentAmount -= _state.value.amount.toDouble()
+                            budgetRepository.upsertBudget(budget!!)
                         }
                     } else {
                         balanceRepository.upsertBalance(
@@ -125,8 +131,13 @@ class AddEditExpenseViewModel @Inject constructor(
                             )
                         )
                         if (isBudgetSet()) {
-                            budgetRepository.updateBudget(
-                                budget!!.currentAmount - ((_state.value.amount.toDouble()) - (_state.value.originalAmount.toDouble())))
+                            if (isBudgetExceeded()) {
+                                budget!!.isExceeded = true
+                                budgetRepository.upsertBudget(budget!!)
+                                // TODO add notification
+                            }
+                            budget!!.currentAmount -= _state.value.amount.toDouble() - _state.value.originalAmount.toDouble()
+                            budgetRepository.upsertBudget(budget!!)
                         }
                     }
                     sendUiEvent(UiEvent.Navigate(Routes.EXPENSES))
@@ -137,6 +148,14 @@ class AddEditExpenseViewModel @Inject constructor(
 
     private fun isBudgetSet(): Boolean {
         return budget != null
+    }
+
+    private fun isBalanceExceeded() : Boolean {
+        return (isNewExpense && (_state.value.amount.toDouble() > balance!!.amount)) || (!isNewExpense && ((_state.value.amount.toDouble()) - (_state.value.originalAmount.toDouble())) > balance!!.amount)
+    }
+
+    private fun isBudgetExceeded() : Boolean {
+        return (isNewExpense && (_state.value.amount.toDouble() > budget!!.currentAmount) && budget!!.isExceedNotificationEnabled) || (!isNewExpense && budget!!.isExceedNotificationEnabled && ((_state.value.amount.toDouble()) - (_state.value.originalAmount.toDouble())) > budget!!.currentAmount)
     }
 
     private fun sendUiEvent(event: UiEvent) {

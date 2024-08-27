@@ -1,7 +1,14 @@
 package com.example.spendee.di
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.os.Build
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.room.Room
+import com.example.spendee.R
 import com.example.spendee.data.SpendeeDatabase
 import com.example.spendee.data.repositories.BalanceRepository
 import com.example.spendee.data.repositories.BalanceRepositoryImpl
@@ -14,6 +21,7 @@ import com.example.spendee.data.repositories.GoalRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -30,6 +38,35 @@ object AppModule {
             "spendee_db"
         )
             .build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideNotificationBuilder(
+        @ApplicationContext context: Context
+    ): NotificationCompat.Builder {
+        return NotificationCompat.Builder(context, "Main Channel ID")
+            .setContentTitle("")
+            .setContentText("")
+            .setSmallIcon(R.drawable.ic_baseline_notifications_24)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+    }
+
+    @Singleton
+    @Provides
+    fun provideNotificationManager(
+        @ApplicationContext context: Context
+    ): NotificationManagerCompat {
+        val notificationManager = NotificationManagerCompat.from(context)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "Main Channel ID",
+                "Main Channel",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            notificationManager.createNotificationChannel(channel)
+        }
+        return notificationManager
     }
 
     @Provides
