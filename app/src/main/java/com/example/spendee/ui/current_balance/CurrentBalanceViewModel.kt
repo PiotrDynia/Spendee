@@ -1,9 +1,8 @@
 package com.example.spendee.ui.current_balance
 
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.spendee.NotificationService
 import com.example.spendee.R
 import com.example.spendee.data.entities.Balance
 import com.example.spendee.data.entities.Goal
@@ -28,8 +27,7 @@ class CurrentBalanceViewModel @Inject constructor(
     private val balanceRepository: BalanceRepository,
     private val expensesRepository: ExpenseRepository,
     private val goalsRepository: GoalRepository,
-    private val notificationBuilder: NotificationCompat.Builder,
-    private val notificationManager: NotificationManagerCompat
+    private val notificationService: NotificationService
 ) : ViewModel() {
     private val _viewBalanceState = MutableStateFlow(
         CurrentBalanceState()
@@ -99,23 +97,16 @@ class CurrentBalanceViewModel @Inject constructor(
                             amount = _viewBalanceState.value.currentAmount.toDouble()
                         )
                     )
-                    if (notificationManager.areNotificationsEnabled()) {
-                        println("Notifications enabled, looking for goals")
-                        println("Goals - ${goals.size}")
                         goals.forEach { goal ->
-                            println("Found a goal - $goal")
                             if (_viewBalanceState.value.currentAmount.toDouble() >= goal.targetAmount) {
                                 goal.isReached = true
+                                if (goal.isReachedNotificationEnabled) {
+                                    goal.isReachedNotificationEnabled = false
+                                    notificationService.showGoalReachedNotification(Routes.GOALS)
+                                }
                                 goalsRepository.upsertGoal(goal)
-                                println("Sending a notification...")
-                                notificationManager.notify(1, notificationBuilder
-                                    .setContentTitle("Goal reached!")
-                                    .setContentText("Congratulations! You have reached your goal!")
-                                    .build())
-                                println("Notification sent")
                             }
                         }
-                    }
                     balanceRepository.getBalance().collect { updatedBalance ->
                         _viewBalanceState.value = _viewBalanceState.value.copy(
                             balance = updatedBalance,

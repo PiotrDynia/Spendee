@@ -63,15 +63,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val intentRoute = intent.getStringExtra("route")
+
             SpendeeTheme {
-                MainScreen()
+                MainScreen(initialRoute = intentRoute)
             }
         }
     }
 }
 
 @Composable
-fun MainScreen() {
+fun MainScreen(initialRoute: String? = null) {
     var hasNotificationPermission by remember {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             mutableStateOf(false)
@@ -274,6 +276,12 @@ fun MainScreen() {
                             onNavigate = { route -> navController.navigate(route) },
                             onPopBackStack = { navController.popBackStack() }
                         )
+                    }
+                }
+                initialRoute?.let { route ->
+                    LaunchedEffect(route) {
+                        selectedItem = route
+                        navController.navigate(route)
                     }
                 }
             }
