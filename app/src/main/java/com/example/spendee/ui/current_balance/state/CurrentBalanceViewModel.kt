@@ -13,7 +13,9 @@ import com.example.spendee.util.Routes
 import com.example.spendee.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
@@ -29,13 +31,12 @@ class CurrentBalanceViewModel @Inject constructor(
     private val goalsRepository: GoalRepository,
     private val notificationService: NotificationService
 ) : ViewModel() {
-    private val _viewBalanceState = MutableStateFlow(
-        CurrentBalanceState()
-    )
-    val viewState = _viewBalanceState.asStateFlow()
 
-    private val _uiEvent = Channel<UiEvent>()
-    val uiEvent = _uiEvent.receiveAsFlow()
+    private val _viewBalanceState = MutableStateFlow(CurrentBalanceState())
+    val viewState: StateFlow<CurrentBalanceState> = _viewBalanceState.asStateFlow()
+
+    private val _uiEvent = Channel<UiEvent>(Channel.BUFFERED)
+    val uiEvent: Flow<UiEvent> = _uiEvent.receiveAsFlow()
 
     private var goals: List<Goal> = emptyList()
 
@@ -60,61 +61,61 @@ class CurrentBalanceViewModel @Inject constructor(
 
     fun onEvent(event: CurrentBalanceEvent) {
         when (event) {
-            CurrentBalanceEvent.OnSetBalanceClick -> {
-                _viewBalanceState.value = _viewBalanceState.value.copy(isDialogOpen = true)
+            CurrentBalanceEvent.OnSetBalanceClick -> setBalanceDialogOpen()
+            CurrentBalanceEvent.OnShowMoreClick -> sendUiEvent(UiEvent.Navigate(Routes.EXPENSES))
+            is CurrentBalanceEvent.OnExpenseClick -> sendUiEvent(UiEvent.Navigate(Routes.ADD_EDIT_EXPENSE + "?expenseId=${event.expense.id}"))
+            is CurrentBalanceEvent.OnAmountChange -> updateCurrentAmount(event.amount)
+            CurrentBalanceEvent.OnCancelSetBalanceClick -> resetBalanceDialog()
+            CurrentBalanceEvent.OnConfirmSetBalanceClick -> confirmSetBalance()
+        }
+    }
+
+    private fun setBalanceDialogOpen() {
+        _viewBalanceState.value = _viewBalanceState.value.copy(isDialogOpen = true)
+    }
+
+    private fun updateCurrentAmount(amount: String) {
+        _viewBalanceState.value = _viewBalanceState.value.copy(currentAmount = amount)
+    }
+
+    private fun resetBalanceDialog() {
+        _viewBalanceState.value = _viewBalanceState.value.copy(
+            currentAmount = _viewBalanceState.value.balance.amount.toString(),
+            isDialogOpen = false
+        )
+    }
+
+    private fun confirmSetBalance() {
+        viewModelScope.launch {
+            val currentAmountStr = _viewBalanceState.value.currentAmount
+            if (currentAmountStr.isBlank()) {
+                sendUiEvent(UiEvent.ShowSnackbar(R.string.amount_cant_be_empty))
+                return@launch
             }
 
-            CurrentBalanceEvent.OnShowMoreClick -> {
-                sendUiEvent(UiEvent.Navigate(Routes.EXPENSES))
-            }
+            val currentAmount = currentAmountStr.toDouble()
+            balanceRepository.upsertBalance(Balance(amount = currentAmount))
+            updateGoalsIfNeeded(currentAmount)
 
-            is CurrentBalanceEvent.OnExpenseClick -> {
-                sendUiEvent(UiEvent.Navigate(Routes.ADD_EDIT_EXPENSE + "?expenseId=${event.expense.id}"))
-            }
-
-            is CurrentBalanceEvent.OnAmountChange -> {
+            balanceRepository.getBalance().collect { updatedBalance ->
                 _viewBalanceState.value = _viewBalanceState.value.copy(
-                    currentAmount = event.amount
+                    balance = updatedBalance,
+                    isDialogOpen = false,
+                    currentAmount = updatedBalance.amount.toString()
                 )
             }
+        }
+    }
 
-            CurrentBalanceEvent.OnCancelSetBalanceClick -> {
-                _viewBalanceState.value = _viewBalanceState.value.copy(
-                    currentAmount = _viewBalanceState.value.balance.amount.toString(),
-                    isDialogOpen = false)
-            }
-
-            CurrentBalanceEvent.OnConfirmSetBalanceClick -> {
-                viewModelScope.launch {
-                    if (_viewBalanceState.value.currentAmount.isBlank()) {
-                        sendUiEvent(UiEvent.ShowSnackbar(
-                            message = R.string.amount_cant_be_empty
-                        ))
-                        return@launch
-                    }
-                    balanceRepository.upsertBalance(
-                        Balance(
-                            amount = _viewBalanceState.value.currentAmount.toDouble()
-                        )
-                    )
-                        goals.forEach { goal ->
-                            if (_viewBalanceState.value.currentAmount.toDouble() >= goal.targetAmount) {
-                                goal.isReached = true
-                                if (goal.isReachedNotificationEnabled) {
-                                    goal.isReachedNotificationEnabled = false
-                                    notificationService.showGoalReachedNotification()
-                                }
-                                goalsRepository.upsertGoal(goal)
-                            }
-                        }
-                    balanceRepository.getBalance().collect { updatedBalance ->
-                        _viewBalanceState.value = _viewBalanceState.value.copy(
-                            balance = updatedBalance,
-                            isDialogOpen = false,
-                            currentAmount = updatedBalance.amount.toString()
-                        )
-                    }
+    private suspend fun updateGoalsIfNeeded(currentAmount: Double) {
+        goals.forEach { goal ->
+            if (currentAmount >= goal.targetAmount && !goal.isReached) {
+                goal.isReached = true
+                if (goal.isReachedNotificationEnabled) {
+                    goal.isReachedNotificationEnabled = false
+                    notificationService.showGoalReachedNotification()
                 }
+                goalsRepository.upsertGoal(goal)
             }
         }
     }

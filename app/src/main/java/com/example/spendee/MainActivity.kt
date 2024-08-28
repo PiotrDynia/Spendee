@@ -33,22 +33,22 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.spendee.ui.budget.state.AddEditBudgetViewModel
-import com.example.spendee.ui.budget.state.BudgetViewModel
 import com.example.spendee.ui.budget.screens.AddEditBudgetScreen
 import com.example.spendee.ui.budget.screens.BudgetScreen
 import com.example.spendee.ui.budget.screens.NoBudgetScreen
-import com.example.spendee.ui.current_balance.state.CurrentBalanceViewModel
+import com.example.spendee.ui.budget.state.AddEditBudgetViewModel
+import com.example.spendee.ui.budget.state.BudgetViewModel
 import com.example.spendee.ui.current_balance.screens.CurrentBalanceScreen
-import com.example.spendee.ui.expenses.state.AddEditExpenseViewModel
-import com.example.spendee.ui.expenses.state.ExpensesViewModel
+import com.example.spendee.ui.current_balance.state.CurrentBalanceViewModel
 import com.example.spendee.ui.expenses.screens.AddEditExpenseScreen
 import com.example.spendee.ui.expenses.screens.ExpensesScreen
-import com.example.spendee.ui.goals.state.AddEditGoalViewModel
-import com.example.spendee.ui.goals.state.GoalsViewModel
+import com.example.spendee.ui.expenses.state.AddEditExpenseViewModel
+import com.example.spendee.ui.expenses.state.ExpensesViewModel
 import com.example.spendee.ui.goals.screens.AddEditGoalScreen
 import com.example.spendee.ui.goals.screens.GoalsScreen
 import com.example.spendee.ui.goals.screens.NoGoalsScreen
+import com.example.spendee.ui.goals.state.AddEditGoalViewModel
+import com.example.spendee.ui.goals.state.GoalsViewModel
 import com.example.spendee.ui.navigation.BottomNavItem
 import com.example.spendee.ui.navigation.BottomNavigationBar
 import com.example.spendee.util.AnimatedVisibilityComposable
@@ -178,7 +178,7 @@ fun MainScreen(initialRoute: String? = null) {
                             isLoading -> {
                                 LoadingScreen()
                             }
-                            budget == null -> {
+                            budget.collectAsState().value == null -> {
                                 NoBudgetScreen(
                                     onEvent = viewModel::onEvent,
                                     onNavigate = { navController.navigate(it) },
@@ -187,7 +187,7 @@ fun MainScreen(initialRoute: String? = null) {
                             }
                             else -> {
                                 BudgetScreen(
-                                    budget = budget,
+                                    budget = budget.collectAsState().value!!,
                                     onEvent = viewModel::onEvent,
                                     onNavigate = { navController.navigate(it) },
                                     uiEvent = viewModel.uiEvent

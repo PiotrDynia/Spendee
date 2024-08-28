@@ -29,8 +29,9 @@ fun LatestExpensesColumn(onExpenseClick: (Expense) -> Unit, latestExpenses: List
         item {
             Text(
                 text = stringResource(R.string.latest_expenses),
-                fontSize = 26.sp,
+                fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -42,8 +43,9 @@ fun LatestExpensesColumn(onExpenseClick: (Expense) -> Unit, latestExpenses: List
             item {
                 Text(
                     text = stringResource(R.string.show_more),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.SemiBold,
+                    fontSize = 16.sp,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .clickable { onShowMoreClick() }

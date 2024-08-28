@@ -48,6 +48,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.spendee.R
+import com.example.spendee.ui.current_balance.components.BalanceAlertDialog
 import com.example.spendee.ui.current_balance.state.CurrentBalanceEvent
 import com.example.spendee.ui.current_balance.state.CurrentBalanceState
 import com.example.spendee.ui.current_balance.components.CurrentBalanceTexts
@@ -155,34 +156,7 @@ fun CurrentBalanceScreen(
                 Text(text = stringResource(R.string.set_balance))
             }
             if (state.isDialogOpen) {
-                AlertDialog(
-                    onDismissRequest = { onEvent(CurrentBalanceEvent.OnCancelSetBalanceClick) },
-                    confirmButton = {
-                        Button(onClick = {
-                            onEvent(CurrentBalanceEvent.OnConfirmSetBalanceClick)
-                        }) {
-                            Text(text = stringResource(R.string.ok))
-                        } },
-                    dismissButton = {
-                        Button(onClick = {
-                            onEvent(CurrentBalanceEvent.OnCancelSetBalanceClick)
-                        }) {
-                            Text(text = stringResource(R.string.cancel))
-                        } },
-                    title = {
-                        Text(text = stringResource(R.string.set_balance))
-                    },
-                    text = {
-                        TextField(
-                            value = state.currentAmount,
-                            onValueChange = { newValue ->
-                                if (isValidNumberInput(newValue)) {
-                                    onEvent(CurrentBalanceEvent.OnAmountChange(newValue))
-                                }},
-                            label = { Text(text = stringResource(R.string.balance)) }
-                        )
-                    }
-                )
+                BalanceAlertDialog(onEvent = onEvent, currentAmount = state.currentAmount)
             }
             Spacer(modifier = Modifier.height(16.dp))
             Box(
@@ -194,7 +168,6 @@ fun CurrentBalanceScreen(
             ) {
                 LatestExpensesColumn(
                     latestExpenses = state.latestExpenses,
-                    // TODO somehow make it less confusing
                     onShowMoreClick = {
                         onShowMoreClick()
                         onEvent(CurrentBalanceEvent.OnShowMoreClick) },
