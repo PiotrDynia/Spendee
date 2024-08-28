@@ -47,7 +47,7 @@ class DeadlinesCheckerWorker @AssistedInject constructor(
             val newBudget = Budget(
                 totalAmount = budget.totalAmount,
                 leftToSpend = budget.totalAmount,
-                totalSpent = budget.totalAmount,
+                totalSpent = 0.0,
                 startDate = newStartDate,
                 endDate = newEndDate,
                 isExceeded = budget.isExceeded,

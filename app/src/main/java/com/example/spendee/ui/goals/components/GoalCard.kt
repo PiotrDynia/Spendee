@@ -55,6 +55,11 @@ fun GoalCard(
         mutableStateOf(false)
     }
     val haptics = LocalHapticFeedback.current
+    val isGoalReached = goal.isReached || currentBalance >= goal.targetAmount
+    val cardBackgroundColor = if (isGoalReached) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f) else MaterialTheme.colorScheme.surface
+    val progressColor = if (isGoalReached) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary
+    val progress = (currentBalance / goal.targetAmount).toFloat()
+
     Box(modifier = modifier) {
         Card(
             shape = RoundedCornerShape(12.dp),
@@ -71,11 +76,11 @@ fun GoalCard(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .background(MaterialTheme.colorScheme.surface)
+                    .background(cardBackgroundColor)
                     .padding(16.dp)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.goal_icon),
+                    painter = painterResource(id = if (isGoalReached) R.drawable.baseline_check_24 else R.drawable.goal_icon),
                     contentDescription = stringResource(R.string.goal_image),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -101,7 +106,6 @@ fun GoalCard(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
 
-
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Default.DateRange,
@@ -125,14 +129,24 @@ fun GoalCard(
 
                     Spacer(modifier = Modifier.height(8.dp))
                     LinearProgressIndicator(
-                        progress = { (currentBalance / goal.targetAmount).toFloat() },
-                        color = MaterialTheme.colorScheme.primary,
-                        trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
+                        progress = { progress.coerceAtMost(1f) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(6.dp)
-                            .clip(RoundedCornerShape(4.dp))
+                            .clip(RoundedCornerShape(4.dp)),
+                        color = progressColor,
+                        trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
                     )
+
+                    if (isGoalReached) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = stringResource(R.string.goal_reached),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
             }
         }

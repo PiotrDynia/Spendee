@@ -71,7 +71,7 @@ fun BudgetInfoCard(
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = if (cardType == BudgetInfoCardType.SPENT) {
-                        ((budget.totalAmount) - (budget.totalSpent)).toString() + "$"
+                        budget.totalSpent.toString() + "$"
                     } else budget.leftToSpend.toString() + "$",
                     fontWeight = FontWeight.ExtraBold,
                     color = MaterialTheme.colorScheme.onPrimaryContainer

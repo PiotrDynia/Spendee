@@ -20,6 +20,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -80,18 +81,30 @@ fun BudgetScreen(
     }
     var expanded by rememberSaveable { mutableStateOf(false) }
     val totalBudget = budget.totalAmount
-    val amountSpent = budget.totalAmount - budget.totalSpent
+    val amountSpent = budget.totalSpent
     val percentageSpent = if (totalBudget != 0.0) amountSpent / totalBudget else 0.0
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
-            .padding(16.dp)
+            .padding(8.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            Spacer(modifier = Modifier.weight(2f))
+            if (budget.isExceeded) {
+                Text(
+                    text = stringResource(R.string.budget_exceeded) + " by ${(budget.totalSpent - budget.totalAmount)}$!",
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.error,
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
             IconButton(onClick = { expanded = true }) {
                 Icon(imageVector = Icons.Default.MoreVert, contentDescription = stringResource(R.string.more_options))
             }

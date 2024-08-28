@@ -60,7 +60,7 @@ class ExpensesViewModel @Inject constructor(
                     )
                     if (budget != null) {
                         budget!!.leftToSpend += event.expense.amount
-                        budget!!.totalSpent += event.expense.amount
+                        budget!!.totalSpent -= event.expense.amount
                         budgetRepository.upsertBudget(budget!!)
                     }
                     sendUiEvent(UiEvent.ShowSnackbar(
@@ -81,7 +81,7 @@ class ExpensesViewModel @Inject constructor(
                         )
                         if (budget != null) {
                             budget!!.leftToSpend -= expense.amount
-                            budget!!.totalSpent -= expense.amount
+                            budget!!.totalSpent += expense.amount
                             budgetRepository.upsertBudget(budget!!)
                         }
                     }

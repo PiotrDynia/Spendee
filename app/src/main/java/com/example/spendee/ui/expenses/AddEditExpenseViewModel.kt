@@ -127,7 +127,7 @@ class AddEditExpenseViewModel @Inject constructor(
                             } else {
                                 budget!!.leftToSpend -= _state.value.amount.toDouble()
                             }
-                            budget!!.totalSpent -= _state.value.amount.toDouble()
+                            budget!!.totalSpent += _state.value.amount.toDouble()
                             budgetRepository.upsertBudget(budget!!)
                         }
                     } else {
@@ -146,7 +146,7 @@ class AddEditExpenseViewModel @Inject constructor(
                             } else {
                                 budget!!.leftToSpend -= _state.value.amount.toDouble() - _state.value.originalAmount.toDouble()
                             }
-                            budget!!.totalSpent -= _state.value.amount.toDouble() - _state.value.originalAmount.toDouble()
+                            budget!!.totalSpent += _state.value.amount.toDouble() - _state.value.originalAmount.toDouble()
                             budgetRepository.upsertBudget(budget!!)
                         }
                     }

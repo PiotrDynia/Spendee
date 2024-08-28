@@ -39,7 +39,6 @@ fun BudgetCircle(
                     size.width - halfStrokeWidth,
                     size.height - halfStrokeWidth
                 )
-                println("Percentage spent - $percentageSpent")
                 when {
                     percentageSpent >= 1f -> {
                         drawArc(

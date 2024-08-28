@@ -75,7 +75,7 @@ class AddEditBudgetViewModel @Inject constructor(
                         Budget(
                             totalAmount = _state.value.amount.toDouble(),
                             leftToSpend = if (currentAmount < 0) 0.0 else currentAmount,
-                            totalSpent = currentAmount,
+                            totalSpent = expensesTotalAmount,
                             startDate = startDate,
                             endDate = endDate,
                             isExceeded = if (currentAmount > 0) false else true,
