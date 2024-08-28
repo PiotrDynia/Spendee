@@ -21,6 +21,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,12 +44,14 @@ import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddEditGoalScreen(onEvent: (AddEditGoalEvent) -> Unit,
-                      state: AddEditGoalState,
-                      uiEvent: Flow<UiEvent>,
-                      onNavigate: (String) -> Unit,
-                      onPopBackStack: () -> Unit,
-                      modifier: Modifier = Modifier) {
+fun AddEditGoalScreen(
+    onEvent: (AddEditGoalEvent) -> Unit,
+    state: AddEditGoalState,
+    uiEvent: Flow<UiEvent>,
+    onNavigate: (String) -> Unit,
+    onPopBackStack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val deadlineDateState = rememberDatePickerState()
     val deadlineDate = deadlineDateState.selectedDateMillis?.let {
         millisToString(it)
@@ -70,12 +73,16 @@ fun AddEditGoalScreen(onEvent: (AddEditGoalEvent) -> Unit,
             .padding(12.dp),
         snackbarHost = { SnackbarHost(snackbarState) },
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                onEvent(AddEditGoalEvent.OnSaveGoalClick)
-            }) {
+            FloatingActionButton(
+                onClick = {
+                    onEvent(AddEditGoalEvent.OnSaveGoalClick)
+                },
+                containerColor = MaterialTheme.colorScheme.secondary
+            ) {
                 Icon(
                     imageVector = Icons.Default.Check,
-                    contentDescription = stringResource(R.string.save)
+                    contentDescription = stringResource(R.string.save),
+                    tint = MaterialTheme.colorScheme.onSecondary
                 )
             }
         }
@@ -88,7 +95,8 @@ fun AddEditGoalScreen(onEvent: (AddEditGoalEvent) -> Unit,
             Text(
                 text = stringResource(R.string.your_goal),
                 style = MaterialTheme.typography.headlineMedium.copy(
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             )
             TextField(
@@ -101,17 +109,25 @@ fun AddEditGoalScreen(onEvent: (AddEditGoalEvent) -> Unit,
                 },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = false,
-                maxLines = 2
+                maxLines = 2,
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                    unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
             )
             TextField(
                 value = state.targetAmount,
                 onValueChange = { amount ->
-                    if(isValidNumberInput(amount)) {
+                    if (isValidNumberInput(amount)) {
                         onEvent(AddEditGoalEvent.OnAmountChange(amount))
                     }
                 },
                 placeholder = { Text(text = stringResource(R.string.target_amount)) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                    unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
             )
             DatePickerInput(
                 placeholder = R.string.set_a_deadline,

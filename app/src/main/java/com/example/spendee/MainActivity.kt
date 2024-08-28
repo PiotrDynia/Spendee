@@ -197,8 +197,8 @@ fun MainScreen(initialRoute: String? = null) {
                     }
                     composable(Routes.GOALS) {
                         val viewModel = hiltViewModel<GoalsViewModel>()
-                        val goals = viewModel.goals.collectAsState(initial = emptyList()).value
-                        val balance = viewModel.balance
+                        val goals = viewModel.goalsState.collectAsState(initial = emptyList()).value
+                        val balance = viewModel.balanceState.collectAsState().value
                         val isLoading = viewModel.isLoading.collectAsState().value
 
                         when {

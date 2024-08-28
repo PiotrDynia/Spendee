@@ -17,8 +17,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
@@ -29,6 +30,7 @@ class AddEditGoalViewModel @Inject constructor(
     private val balanceRepository: BalanceRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
@@ -38,94 +40,113 @@ class AddEditGoalViewModel @Inject constructor(
     private var balance: Balance? = null
 
     init {
+        loadInitialData(savedStateHandle)
+    }
+
+    private fun loadInitialData(savedStateHandle: SavedStateHandle) {
         viewModelScope.launch(Dispatchers.IO) {
-            balance = balanceRepository.getBalance().first()
-        }
-        val goalId = savedStateHandle.get<Int>("goalId")!!
-        if (goalId != 0) {
-            viewModelScope.launch(Dispatchers.IO) {
+            balance = balanceRepository.getBalance().firstOrNull()
+            val goalId = savedStateHandle.get<Int>("goalId") ?: 0
+            if (goalId != 0) {
                 repository.getGoalById(goalId)?.let { goal ->
-                    _state.value = _state.value.copy(
-                        targetAmount = goal.targetAmount.toString(),
-                        deadline = dateToString(goal.deadline),
-                        description = goal.description,
-                        isReachedButtonPressed = goal.isReachedNotificationEnabled,
-                        goal = goal
-                    )
+                    updateStateWithGoal(goal)
                 }
             }
         }
     }
 
+    private fun updateStateWithGoal(goal: Goal) {
+        _state.update {
+            it.copy(
+                targetAmount = goal.targetAmount.toString(),
+                deadline = dateToString(goal.deadline),
+                description = goal.description,
+                isReachedButtonPressed = goal.isReachedNotificationEnabled,
+                goal = goal
+            )
+        }
+    }
+
     fun onEvent(event: AddEditGoalEvent) {
         when (event) {
-            is AddEditGoalEvent.OnAmountChange -> {
-                _state.value = _state.value.copy(
-                    targetAmount = event.amount
-                )
-            }
-            AddEditGoalEvent.OnCloseDeadlineDatePicker -> {
-                _state.value = _state.value.copy(
-                    deadline = "",
-                    isDeadlineDatePickerOpened = false
-                )
-            }
-            is AddEditGoalEvent.OnDeadlineChange -> {
-                _state.value = _state.value.copy(
-                    deadline = event.deadline,
-                    isDeadlineDatePickerOpened = false
-                )
-            }
-            is AddEditGoalEvent.OnDescriptionChange -> {
-                _state.value = _state.value.copy(
-                    description = event.description
-                )
-            }
-            AddEditGoalEvent.OnOpenDeadlineDatePicker -> {
-                _state.value = _state.value.copy(
-                    isDeadlineDatePickerOpened = true
-                )
-            }
-            is AddEditGoalEvent.OnReachedButtonPress -> {
-                _state.value = _state.value.copy(
-                    isReachedButtonPressed = event.isPressed
-                )
-            }
-            AddEditGoalEvent.OnSaveGoalClick -> {
-                viewModelScope.launch(Dispatchers.IO) {
-                    if (_state.value.targetAmount.isBlank()) {
-                        sendUiEvent(UiEvent.ShowSnackbar(R.string.target_amount_cant_be_empty))
-                        return@launch
-                    }
-                    if (_state.value.description.isBlank()) {
-                        sendUiEvent(UiEvent.ShowSnackbar(R.string.description_cant_be_empty))
-                        return@launch
-                    }
-                    if (_state.value.deadline.isBlank()) {
-                        sendUiEvent(UiEvent.ShowSnackbar(R.string.deadline_cant_be_empty))
-                        return@launch
-                    }
-                    if (stringToDate(_state.value.deadline)!!.isBefore(LocalDate.now())) {
-                        sendUiEvent(UiEvent.ShowSnackbar(R.string.deadline_should_be_after_todays_date))
-                        return@launch
-                    }
-                    repository.upsertGoal(
-                        Goal(
-                            id = _state.value.goal?.id ?: 0,
-                            targetAmount = _state.value.targetAmount.toDouble(),
-                            deadline = stringToDate(_state.value.deadline)!!,
-                            description = _state.value.description,
-                            isReached = if (balance!!.amount >= _state.value.targetAmount.toDouble()) true else false,
-                            isReachedNotificationEnabled = _state.value.isReachedButtonPressed
-                        )
-                    )
-                    sendUiEvent(UiEvent.Navigate(Routes.GOALS))
-                    _state.value = _state.value.copy(
-                        isDeadlineDatePickerOpened = false
-                    )
-                }
+            is AddEditGoalEvent.OnAmountChange -> updateTargetAmount(event.amount)
+            AddEditGoalEvent.OnCloseDeadlineDatePicker -> closeDeadlineDatePicker()
+            is AddEditGoalEvent.OnDeadlineChange -> updateDeadline(event.deadline)
+            is AddEditGoalEvent.OnDescriptionChange -> updateDescription(event.description)
+            AddEditGoalEvent.OnOpenDeadlineDatePicker -> openDeadlineDatePicker()
+            is AddEditGoalEvent.OnReachedButtonPress -> updateReachedButtonState(event.isPressed)
+            AddEditGoalEvent.OnSaveGoalClick -> saveGoal()
+        }
+    }
+
+    private fun updateTargetAmount(amount: String) {
+        _state.update { it.copy(targetAmount = amount) }
+    }
+
+    private fun closeDeadlineDatePicker() {
+        _state.update { it.copy(deadline = "", isDeadlineDatePickerOpened = false) }
+    }
+
+    private fun updateDeadline(deadline: String) {
+        _state.update { it.copy(deadline = deadline, isDeadlineDatePickerOpened = false) }
+    }
+
+    private fun updateDescription(description: String) {
+        _state.update { it.copy(description = description) }
+    }
+
+    private fun openDeadlineDatePicker() {
+        _state.update { it.copy(isDeadlineDatePickerOpened = true) }
+    }
+
+    private fun updateReachedButtonState(isPressed: Boolean) {
+        _state.update { it.copy(isReachedButtonPressed = isPressed) }
+    }
+
+    private fun saveGoal() {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (isInputValid()) {
+                val goal = createGoalFromState()
+                repository.upsertGoal(goal)
+                sendUiEvent(UiEvent.Navigate(Routes.GOALS))
+                closeDeadlineDatePicker()
             }
         }
+    }
+
+    private fun isInputValid(): Boolean {
+        return when {
+            _state.value.targetAmount.isBlank() -> {
+                sendUiEvent(UiEvent.ShowSnackbar(R.string.target_amount_cant_be_empty))
+                false
+            }
+            _state.value.description.isBlank() -> {
+                sendUiEvent(UiEvent.ShowSnackbar(R.string.description_cant_be_empty))
+                false
+            }
+            _state.value.deadline.isBlank() -> {
+                sendUiEvent(UiEvent.ShowSnackbar(R.string.deadline_cant_be_empty))
+                false
+            }
+            stringToDate(_state.value.deadline)?.isBefore(LocalDate.now()) == true -> {
+                sendUiEvent(UiEvent.ShowSnackbar(R.string.deadline_should_be_after_todays_date))
+                false
+            }
+            else -> true
+        }
+    }
+
+    private fun createGoalFromState(): Goal {
+        val targetAmount = _state.value.targetAmount.toDouble()
+        val deadline = stringToDate(_state.value.deadline)!!
+        return Goal(
+            id = _state.value.goal?.id ?: 0,
+            targetAmount = targetAmount,
+            deadline = deadline,
+            description = _state.value.description,
+            isReached = (balance?.amount ?: 0.0) >= targetAmount,
+            isReachedNotificationEnabled = _state.value.isReachedButtonPressed
+        )
     }
 
     private fun sendUiEvent(event: UiEvent) {

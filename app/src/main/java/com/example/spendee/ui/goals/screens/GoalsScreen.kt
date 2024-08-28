@@ -39,8 +39,8 @@ import androidx.compose.ui.unit.sp
 import com.example.spendee.R
 import com.example.spendee.data.entities.Balance
 import com.example.spendee.data.entities.Goal
-import com.example.spendee.ui.goals.state.GoalsEvent
 import com.example.spendee.ui.goals.components.GoalCard
+import com.example.spendee.ui.goals.state.GoalsEvent
 import com.example.spendee.util.DismissBackground
 import com.example.spendee.util.UiEvent
 import kotlinx.coroutines.flow.Flow
@@ -82,7 +82,8 @@ fun GoalsScreen(goals: List<Goal>,
                     onEvent(GoalsEvent.OnAddGoalClick)
                 },
                 shape = CircleShape,
-                containerColor = MaterialTheme.colorScheme.secondary
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -108,10 +109,10 @@ fun GoalsScreen(goals: List<Goal>,
                         text = stringResource(R.string.your_financial_goals),
                         fontSize = 26.sp,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(12.dp)
                     )
                 }
-                items(items = goals, key = {it.id}) { goal ->
+                items(items = goals, key = { it.id }) { goal ->
                     val dismissState = rememberSwipeToDismissBoxState(
                         confirmValueChange = {
                             when(it) {
@@ -133,6 +134,7 @@ fun GoalsScreen(goals: List<Goal>,
                         modifier = Modifier
                             .padding(8.dp)
                             .clip(RoundedCornerShape(12.dp))
+                            .background(MaterialTheme.colorScheme.surface)
                             .animateItemPlacement()
                     ) {
                         GoalCard(
