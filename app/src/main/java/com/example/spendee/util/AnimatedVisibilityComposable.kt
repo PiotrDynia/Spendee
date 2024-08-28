@@ -23,14 +23,14 @@ fun AnimatedVisibilityComposable(
     val animatedAlpha by animateFloatAsState(
         targetValue = alpha,
         animationSpec = tween(durationMillis = 2000),
-        label = "animated text alpha"
+        label = "animated alpha"
     )
 
     var scale by remember { mutableFloatStateOf(0.6f) }
     val animatedScale by animateFloatAsState(
         targetValue = scale,
         animationSpec = tween(durationMillis = 2000),
-        label = "animated text scale"
+        label = "animated scale"
     )
 
     LaunchedEffect(Unit) {

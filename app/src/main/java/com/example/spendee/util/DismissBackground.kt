@@ -17,7 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.spendee.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,12 +40,12 @@ fun DismissBackground(dismissState: SwipeToDismissBoxState) {
     ) {
         Icon(
             imageVector = Icons.Default.Delete,
-            contentDescription = "Delete"
+            contentDescription = stringResource(R.string.delete)
         )
         Spacer(modifier = Modifier)
         Icon(
             imageVector = Icons.Default.Edit,
-            contentDescription = "Edit"
+            contentDescription = stringResource(R.string.edit)
         )
     }
 }
