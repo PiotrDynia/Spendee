@@ -25,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.spendee.R
 import com.example.spendee.data.entities.Expense
-import com.example.spendee.ui.expenses.ExpensesEvent
+import com.example.spendee.ui.expenses.state.ExpensesEvent
 import com.example.spendee.ui.expenses.components.ExpensesColumn
 import com.example.spendee.util.UiEvent
 import kotlinx.coroutines.flow.Flow

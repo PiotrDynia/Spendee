@@ -1,4 +1,4 @@
-package com.example.spendee.ui.expenses
+package com.example.spendee.ui.expenses.state
 
 import com.example.spendee.data.entities.Expense
 

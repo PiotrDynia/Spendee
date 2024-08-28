@@ -39,8 +39,7 @@ import androidx.compose.ui.unit.sp
 import com.example.spendee.R
 import com.example.spendee.data.entities.Balance
 import com.example.spendee.data.entities.Goal
-import com.example.spendee.ui.expenses.ExpensesEvent
-import com.example.spendee.ui.goals.GoalsEvent
+import com.example.spendee.ui.goals.state.GoalsEvent
 import com.example.spendee.ui.goals.components.GoalCard
 import com.example.spendee.util.DismissBackground
 import com.example.spendee.util.UiEvent

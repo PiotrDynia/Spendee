@@ -1,4 +1,4 @@
-package com.example.spendee.ui.expenses
+package com.example.spendee.ui.expenses.state
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

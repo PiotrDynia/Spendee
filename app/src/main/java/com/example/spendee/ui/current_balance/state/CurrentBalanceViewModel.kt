@@ -1,4 +1,4 @@
-package com.example.spendee.ui.current_balance
+package com.example.spendee.ui.current_balance.state
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

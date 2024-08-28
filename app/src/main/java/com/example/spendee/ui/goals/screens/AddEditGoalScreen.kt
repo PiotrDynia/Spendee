@@ -32,8 +32,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.spendee.R
-import com.example.spendee.ui.goals.AddEditGoalEvent
-import com.example.spendee.ui.goals.AddEditGoalState
+import com.example.spendee.ui.goals.state.AddEditGoalEvent
+import com.example.spendee.ui.goals.state.AddEditGoalState
 import com.example.spendee.util.DatePickerInput
 import com.example.spendee.util.SwitchButtonRow
 import com.example.spendee.util.UiEvent

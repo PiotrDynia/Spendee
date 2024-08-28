@@ -16,7 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.spendee.R
-import com.example.spendee.ui.goals.GoalsEvent
+import com.example.spendee.ui.goals.state.GoalsEvent
 import com.example.spendee.util.UiEvent
 import kotlinx.coroutines.flow.Flow
 

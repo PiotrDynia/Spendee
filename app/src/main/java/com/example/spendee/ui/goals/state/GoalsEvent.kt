@@ -1,4 +1,4 @@
-package com.example.spendee.ui.goals
+package com.example.spendee.ui.goals.state
 
 import com.example.spendee.data.entities.Goal
 

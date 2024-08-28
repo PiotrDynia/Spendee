@@ -32,8 +32,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.spendee.R
 import com.example.spendee.data.entities.ExpenseCategory
-import com.example.spendee.ui.expenses.AddEditExpenseEvent
-import com.example.spendee.ui.expenses.AddEditExpenseState
+import com.example.spendee.ui.expenses.state.AddEditExpenseEvent
+import com.example.spendee.ui.expenses.state.AddEditExpenseState
 import com.example.spendee.ui.expenses.components.CategoryCard
 import com.example.spendee.util.UiEvent
 import com.example.spendee.util.isValidNumberInput

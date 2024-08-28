@@ -1,6 +1,5 @@
 package com.example.spendee.ui.current_balance.screens
 
-import android.os.Build
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -48,10 +47,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import com.example.spendee.R
-import com.example.spendee.ui.current_balance.CurrentBalanceEvent
-import com.example.spendee.ui.current_balance.CurrentBalanceState
+import com.example.spendee.ui.current_balance.state.CurrentBalanceEvent
+import com.example.spendee.ui.current_balance.state.CurrentBalanceState
 import com.example.spendee.ui.current_balance.components.CurrentBalanceTexts
 import com.example.spendee.ui.current_balance.components.LatestExpensesColumn
 import com.example.spendee.util.UiEvent

@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.spendee.data.entities.Expense
 import com.example.spendee.data.entities.ExpenseCategory
-import com.example.spendee.ui.expenses.ExpensesEvent
+import com.example.spendee.ui.expenses.state.ExpensesEvent
 import com.example.spendee.util.EditDeleteDropdownMenu
 import com.example.spendee.util.dateToString
 

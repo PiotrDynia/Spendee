@@ -1,4 +1,4 @@
-package com.example.spendee.ui.goals
+package com.example.spendee.ui.goals.state
 
 sealed class AddEditGoalEvent {
     data class OnDescriptionChange(val description: String) : AddEditGoalEvent()
