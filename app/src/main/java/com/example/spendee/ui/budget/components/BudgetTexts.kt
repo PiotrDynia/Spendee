@@ -2,6 +2,8 @@ package com.example.spendee.ui.budget.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,37 +23,45 @@ import com.example.spendee.util.getDaysFromNow
 @Composable
 fun BudgetTexts(budget: Budget, modifier: Modifier = Modifier) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = stringResource(R.string.you_can_spend),
             fontWeight = FontWeight.Bold,
-            fontSize = 22.sp,
-            style = MaterialTheme.typography.bodyLarge
+            fontSize = 20.sp,
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.titleLarge
         )
         Text(
             text = "${budget.leftToSpend}$",
             fontWeight = FontWeight.ExtraBold,
+            fontSize = 32.sp,
             color = Color(0xFF04AF70),
             style = MaterialTheme.typography.headlineMedium
         )
         Text(
-            text = "From ${budget.totalAmount}$",
+            text = stringResource(R.string.from, budget.totalAmount),
             fontStyle = FontStyle.Italic,
             fontSize = 16.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium
         )
         Text(
-            text = getDaysFromNow(budget.endDate).toString() + " days left",
+            text = stringResource(R.string.days_left, getDaysFromNow(budget.endDate)),
             fontSize = 16.sp,
-            style = MaterialTheme.typography.bodySmall
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium
         )
         Text(
             text = "${dateToString(budget.startDate)} - ${dateToString(budget.endDate)}",
             fontStyle = FontStyle.Italic,
             fontSize = 16.sp,
-            style = MaterialTheme.typography.bodySmall
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.bodyMedium
         )
     }
 }

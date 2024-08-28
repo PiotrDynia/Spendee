@@ -125,6 +125,7 @@ class AddEditExpenseViewModel @Inject constructor(
                                     notificationService.showBudgetExceededNotification()
                                 }
                             } else {
+                                budget!!.isExceeded = false
                                 budget!!.leftToSpend -= _state.value.amount.toDouble()
                             }
                             budget!!.totalSpent += _state.value.amount.toDouble()
@@ -144,6 +145,7 @@ class AddEditExpenseViewModel @Inject constructor(
                                     notificationService.showBudgetExceededNotification()
                                 }
                             } else {
+                                budget!!.isExceeded = false
                                 budget!!.leftToSpend -= _state.value.amount.toDouble() - _state.value.originalAmount.toDouble()
                             }
                             budget!!.totalSpent += _state.value.amount.toDouble() - _state.value.originalAmount.toDouble()

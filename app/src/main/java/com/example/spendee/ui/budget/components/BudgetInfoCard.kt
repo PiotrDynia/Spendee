@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -17,10 +18,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.spendee.data.entities.Budget
 import com.example.spendee.util.calculateDailySpending
 
@@ -37,57 +40,61 @@ fun BudgetInfoCard(
     modifier: Modifier = Modifier
 ) {
     ElevatedCard(
-        onClick = { },
-        modifier = Modifier
+        modifier = modifier
             .padding(8.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium,
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        ),
     ) {
         Column(
             modifier = Modifier
-                .padding(4.dp)
+                .padding(12.dp)
         ) {
             Row(
                 modifier = Modifier
-                    .padding(4.dp)
+                    .padding(bottom = 8.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(text),
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
             Row(
                 modifier = Modifier
-                    .padding(8.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
                     modifier = Modifier
                         .size(8.dp, 16.dp)
-                        .background(color)
+                        .background(color, RectangleShape)
                 )
-                Spacer(modifier = Modifier.width(4.dp))
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = if (cardType == BudgetInfoCardType.SPENT) {
-                        budget.totalSpent.toString() + "$"
-                    } else budget.leftToSpend.toString() + "$",
-                    fontWeight = FontWeight.ExtraBold,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                        "${budget.totalSpent}$"
+                    } else "${budget.leftToSpend}$",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
-                Spacer(modifier = Modifier.weight(2f))
+                Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = if (cardType == BudgetInfoCardType.SPENT) {
                         "From ${budget.totalAmount}$"
                     } else {
-                        calculateDailySpending(
-                            budget.endDate,
-                            budget.leftToSpend
-                        ).toString() + "$/day"
+                        "${calculateDailySpending(budget.endDate, budget.leftToSpend)}$/day"
                     },
                     fontStyle = FontStyle.Italic,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
