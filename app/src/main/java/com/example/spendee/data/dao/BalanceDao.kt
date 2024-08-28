@@ -13,5 +13,4 @@ interface BalanceDao {
 
     @Upsert
     suspend fun upsertBalance(balance: Balance)
-
 }

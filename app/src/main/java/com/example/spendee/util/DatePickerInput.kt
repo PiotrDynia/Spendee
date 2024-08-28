@@ -15,13 +15,13 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 
 @Composable
-fun DatePickerInput(onClick: () -> Unit, @StringRes text: Int, modifier: Modifier = Modifier) {
+fun DatePickerInput(onClick: () -> Unit, value: String, @StringRes placeholder: Int, modifier: Modifier = Modifier) {
     Box {
         TextField(
-            value = "",
+            value = value,
             onValueChange = {},
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(text = stringResource(text)) },
+            placeholder = { Text(text = stringResource(placeholder)) },
             trailingIcon = {
                 Icon(
                     imageVector = Icons.Default.DateRange,

@@ -1,7 +1,9 @@
 package com.example.spendee.di
 
 import android.app.Application
+import android.content.Context
 import androidx.room.Room
+import com.example.spendee.NotificationService
 import com.example.spendee.data.SpendeeDatabase
 import com.example.spendee.data.repositories.BalanceRepository
 import com.example.spendee.data.repositories.BalanceRepositoryImpl
@@ -14,6 +16,7 @@ import com.example.spendee.data.repositories.GoalRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -28,7 +31,15 @@ object AppModule {
             app,
             SpendeeDatabase::class.java,
             "spendee_db"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideNotificationService(@ApplicationContext context: Context): NotificationService {
+        return NotificationService(context)
     }
 
     @Provides

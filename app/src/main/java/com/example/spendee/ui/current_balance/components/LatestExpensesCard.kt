@@ -24,13 +24,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.spendee.data.entities.Expense
 import com.example.spendee.data.entities.ExpenseCategory
-import com.example.spendee.util.formatDate
+import com.example.spendee.util.dateToString
 
 @Composable
-fun LatestExpensesCard(expense: Expense, modifier: Modifier = Modifier) {
+fun LatestExpensesCard(onExpenseClick: (Expense) -> Unit, expense: Expense, modifier: Modifier = Modifier) {
     Card(
         shape = RoundedCornerShape(25.dp),
-        onClick = { },
+        onClick = { onExpenseClick(expense) },
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
@@ -58,7 +58,7 @@ fun LatestExpensesCard(expense: Expense, modifier: Modifier = Modifier) {
                     fontStyle = FontStyle.Italic
                 )
                 Text(
-                    text = "${expense.description} at ${formatDate(expense.date)}",
+                    text = "${expense.description} at ${dateToString(expense.date)}",
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )

@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 
 @Composable
-fun SwitchButtonRow(@StringRes text: Int, modifier: Modifier = Modifier) {
+fun SwitchButtonRow(@StringRes text: Int, switchState: Boolean, onCheckedChange: (Boolean) -> Unit, modifier: Modifier = Modifier) {
     Row (
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
@@ -21,8 +21,8 @@ fun SwitchButtonRow(@StringRes text: Int, modifier: Modifier = Modifier) {
             modifier = Modifier.weight(1f)
         )
         Switch(
-            checked = true,
-            onCheckedChange = {}
+            checked = switchState,
+            onCheckedChange = onCheckedChange
         )
     }
 }

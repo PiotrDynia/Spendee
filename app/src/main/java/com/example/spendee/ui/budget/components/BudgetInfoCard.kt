@@ -21,9 +21,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.spendee.data.entities.Budget
+import com.example.spendee.util.calculateDailySpending
+
+enum class BudgetInfoCardType {
+    SPENT, YOU_CAN_SPEND
+}
 
 @Composable
-fun BudgetInfoCard(@StringRes text: Int, color: Color, modifier: Modifier = Modifier) {
+fun BudgetInfoCard(
+    @StringRes text: Int,
+    color: Color,
+    budget: Budget,
+    cardType: BudgetInfoCardType,
+    modifier: Modifier = Modifier
+) {
     ElevatedCard(
         onClick = { },
         modifier = Modifier
@@ -32,11 +44,11 @@ fun BudgetInfoCard(@StringRes text: Int, color: Color, modifier: Modifier = Modi
     ) {
         Column(
             modifier = Modifier
-                .padding(12.dp)
+                .padding(4.dp)
         ) {
             Row(
                 modifier = Modifier
-                    .padding(8.dp)
+                    .padding(4.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -58,13 +70,22 @@ fun BudgetInfoCard(@StringRes text: Int, color: Color, modifier: Modifier = Modi
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "8000$",
+                    text = if (cardType == BudgetInfoCardType.SPENT) {
+                        budget.totalSpent.toString() + "$"
+                    } else budget.leftToSpend.toString() + "$",
                     fontWeight = FontWeight.ExtraBold,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Spacer(modifier = Modifier.weight(2f))
                 Text(
-                    text = "From 10000.00$",
+                    text = if (cardType == BudgetInfoCardType.SPENT) {
+                        "From ${budget.totalAmount}$"
+                    } else {
+                        calculateDailySpending(
+                            budget.endDate,
+                            budget.leftToSpend
+                        ).toString() + "$/day"
+                    },
                     fontStyle = FontStyle.Italic,
                     color = MaterialTheme.colorScheme.onSecondaryContainer
                 )

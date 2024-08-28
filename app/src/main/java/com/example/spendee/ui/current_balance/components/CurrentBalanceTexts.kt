@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.sp
 import com.example.spendee.R
 
 @Composable
-fun CurrentBalanceTexts(modifier: Modifier = Modifier) {
+fun CurrentBalanceTexts(currentBalance: String, modifier: Modifier = Modifier) {
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -23,6 +23,6 @@ fun CurrentBalanceTexts(modifier: Modifier = Modifier) {
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold
         )
-        Text(text = "2137.69$", fontSize = 26.sp, fontWeight = FontWeight.Bold)
+        Text(text = "${currentBalance}$", fontSize = 26.sp, fontWeight = FontWeight.Bold)
     }
 }

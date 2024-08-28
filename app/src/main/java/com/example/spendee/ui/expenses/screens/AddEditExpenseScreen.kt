@@ -17,28 +17,60 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.spendee.R
 import com.example.spendee.data.entities.ExpenseCategory
-import com.example.spendee.ui.budget.components.CategoryCard
+import com.example.spendee.ui.expenses.AddEditExpenseEvent
+import com.example.spendee.ui.expenses.AddEditExpenseState
+import com.example.spendee.ui.expenses.components.CategoryCard
+import com.example.spendee.util.UiEvent
+import com.example.spendee.util.isValidNumberInput
+import kotlinx.coroutines.flow.Flow
 
 @Composable
-fun AddEditExpenseScreen(modifier: Modifier = Modifier) {
+fun AddEditExpenseScreen(
+    onEvent: (AddEditExpenseEvent) -> Unit,
+    state: AddEditExpenseState,
+    uiEvent: Flow<UiEvent>,
+    onNavigate: (String) -> Unit,
+    onPopBackStack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+    LaunchedEffect(key1 = true) {
+        uiEvent.collect { event ->
+            when(event) {
+                UiEvent.PopBackStack -> onPopBackStack()
+                is UiEvent.Navigate -> onNavigate(event.route)
+                is UiEvent.ShowSnackbar -> snackbarHostState.showSnackbar(context.getString(event.message))
+            }
+        }
+    }
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
             .padding(12.dp),
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-
-            }) {
+            FloatingActionButton(
+                onClick = {
+                    onEvent(AddEditExpenseEvent.OnSaveExpenseClick)
+                },
+                containerColor = MaterialTheme.colorScheme.secondary
+            ) {
                 Icon(
                     imageVector = Icons.Default.Check,
                     contentDescription = stringResource(R.string.save)
@@ -58,17 +90,22 @@ fun AddEditExpenseScreen(modifier: Modifier = Modifier) {
                 )
             )
             TextField(
-                value = "",
-                onValueChange = {
+                value = state.amount,
+                onValueChange = { amount ->
+                    if (isValidNumberInput(amount)) {
+                        onEvent(AddEditExpenseEvent.OnAmountChange(amount))
+                    }
                 },
                 placeholder = { Text(stringResource(R.string.amount)) },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(8.dp))
             TextField(
-                value = "",
-                onValueChange = {
-
+                value = state.description,
+                onValueChange = {description ->
+                    if (description.isNotBlank()) {
+                        onEvent(AddEditExpenseEvent.OnDescriptionChange(description))
+                    }
                 },
                 placeholder = {
                     Text(text = stringResource(R.string.description))
@@ -86,7 +123,12 @@ fun AddEditExpenseScreen(modifier: Modifier = Modifier) {
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 items(ExpenseCategory.getAllCategories()) { category ->
-                    CategoryCard(drawable = category.iconResource, text = category.name)
+                    CategoryCard(
+                        drawable = category.iconResource,
+                        isSelected = category.id == state.categoryId,
+                        onClick = { onEvent(AddEditExpenseEvent.OnCategoryChange(category.id)) },
+                        text = category.name
+                    )
                 }
             }
         }

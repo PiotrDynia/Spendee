@@ -14,9 +14,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.spendee.R
+import com.example.spendee.data.entities.Budget
+import com.example.spendee.util.dateToString
+import com.example.spendee.util.getDaysFromNow
 
 @Composable
-fun BudgetTexts(modifier: Modifier = Modifier) {
+fun BudgetTexts(budget: Budget, modifier: Modifier = Modifier) {
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -28,24 +31,24 @@ fun BudgetTexts(modifier: Modifier = Modifier) {
             style = MaterialTheme.typography.bodyLarge
         )
         Text(
-            text = "2137.69$",
+            text = "${budget.leftToSpend}$",
             fontWeight = FontWeight.ExtraBold,
             color = Color(0xFF04AF70),
             style = MaterialTheme.typography.headlineMedium
         )
         Text(
-            text = "From 10000.00$",
+            text = "From ${budget.totalAmount}$",
             fontStyle = FontStyle.Italic,
             fontSize = 16.sp,
             style = MaterialTheme.typography.bodyMedium
         )
         Text(
-            text = "5 days left",
+            text = getDaysFromNow(budget.endDate).toString() + " days left",
             fontSize = 16.sp,
             style = MaterialTheme.typography.bodySmall
         )
         Text(
-            text = "4.07.2024-4.08.2024",
+            text = "${dateToString(budget.startDate)} - ${dateToString(budget.endDate)}",
             fontStyle = FontStyle.Italic,
             fontSize = 16.sp,
             style = MaterialTheme.typography.bodySmall

@@ -12,6 +12,9 @@ interface GoalDao {
     @Query("SELECT * FROM goal")
     fun getAllGoals(): Flow<List<Goal>>
 
+    @Query("SELECT * FROM goal WHERE id = :id")
+    suspend fun getGoalById(id: Int) : Goal?
+
     @Upsert
     suspend fun upsertGoal(goal: Goal)
 

@@ -3,13 +3,12 @@ package com.example.spendee.data.repositories
 import com.example.spendee.data.dao.BudgetDao
 import com.example.spendee.data.entities.Budget
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
 class BudgetRepositoryImpl(
     private val budgetDao: BudgetDao
 ) : BudgetRepository {
-    override fun getAllBudgets(): Flow<List<Budget>> {
-        return budgetDao.getAllBudgets()
+    override fun getBudget(): Flow<Budget> {
+        return budgetDao.getBudget()
     }
 
     override suspend fun upsertBudget(budget: Budget) {

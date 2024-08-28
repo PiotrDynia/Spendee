@@ -8,10 +8,10 @@ import androidx.compose.ui.res.stringResource
 import com.example.spendee.R
 
 @Composable
-fun UpdateBudgetButton(modifier: Modifier = Modifier) {
+fun UpdateBudgetButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Button(
-        onClick = { }
+        onClick = { onClick() }
     ) {
-        Text(text = stringResource(R.string.set_budget))
+        Text(text = stringResource(R.string.update_budget))
     }
 }
