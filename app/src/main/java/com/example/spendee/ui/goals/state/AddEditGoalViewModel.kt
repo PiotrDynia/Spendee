@@ -37,7 +37,8 @@ class AddEditGoalViewModel @Inject constructor(
     private val _state = MutableStateFlow(AddEditGoalState())
     val state = _state.asStateFlow()
 
-    private var balance: Balance? = null
+    private val _balance = MutableStateFlow<Balance?>(null)
+    val balance = _balance.asStateFlow()
 
     init {
         loadInitialData(savedStateHandle)
@@ -45,7 +46,7 @@ class AddEditGoalViewModel @Inject constructor(
 
     private fun loadInitialData(savedStateHandle: SavedStateHandle) {
         viewModelScope.launch(Dispatchers.IO) {
-            balance = balanceRepository.getBalance().firstOrNull()
+            _balance.value = balanceRepository.getBalance().firstOrNull()
             val goalId = savedStateHandle.get<Int>("goalId") ?: 0
             if (goalId != 0) {
                 repository.getGoalById(goalId)?.let { goal ->
@@ -144,7 +145,7 @@ class AddEditGoalViewModel @Inject constructor(
             targetAmount = targetAmount,
             deadline = deadline,
             description = _state.value.description,
-            isReached = (balance?.amount ?: 0.0) >= targetAmount,
+            isReached = (balance.value?.amount ?: 0.0) >= targetAmount,
             isReachedNotificationEnabled = _state.value.isReachedButtonPressed
         )
     }

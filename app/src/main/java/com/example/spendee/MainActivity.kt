@@ -1,15 +1,11 @@
 package com.example.spendee
 
 import SpendeeTheme
-import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -22,12 +18,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -52,6 +47,7 @@ import com.example.spendee.ui.goals.state.GoalsViewModel
 import com.example.spendee.ui.navigation.BottomNavItem
 import com.example.spendee.ui.navigation.BottomNavigationBar
 import com.example.spendee.util.AnimatedVisibilityComposable
+import com.example.spendee.util.HandleNotificationPermission
 import com.example.spendee.util.LoadingScreen
 import com.example.spendee.util.Routes
 import dagger.hilt.android.AndroidEntryPoint
@@ -75,33 +71,12 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen(initialRoute: String? = null) {
     var hasNotificationPermission by remember {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            mutableStateOf(false)
-        } else {
-            mutableStateOf(true)
-        }
+        mutableStateOf(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
     }
 
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted ->
-            hasNotificationPermission = isGranted
-        }
-    )
-    val context = LocalContext.current
-    LaunchedEffect(Unit) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            } else {
-                hasNotificationPermission = true
-            }
-        }
-    }
+    HandleNotificationPermission(onPermissionResult = { isGranted ->
+        hasNotificationPermission = isGranted
+    })
 
     val navController = rememberNavController()
     val items = listOf(
@@ -144,147 +119,140 @@ fun MainScreen(initialRoute: String? = null) {
     ) { padding ->
         Box(modifier = Modifier.padding(padding)) {
             AnimatedVisibilityComposable {
-                NavHost(
+                SetupNavHost(
                     navController = navController,
-                    startDestination = Routes.CURRENT_BALANCE
-                ) {
-                    composable(Routes.CURRENT_BALANCE) {
-                        val viewModel = hiltViewModel<CurrentBalanceViewModel>()
-                        CurrentBalanceScreen(
-                            state = viewModel.viewState.collectAsState().value,
-                            onEvent = viewModel::onEvent,
-                            onNavigate = { route -> navController.navigate(route) },
-                            onShowMoreClick = {
-                                selectedItem = Routes.EXPENSES
-                                navController.navigate(Routes.EXPENSES)
-                            },
-                            uiEvent = viewModel.uiEvent
-                        )
-                    }
-                    composable(Routes.EXPENSES) {
-                        val viewModel = hiltViewModel<ExpensesViewModel>()
-                        ExpensesScreen(
-                            onEvent = viewModel::onEvent,
-                            expenses = viewModel.expenses.collectAsState(initial = emptyList()).value,
-                            onNavigate = { navController.navigate(it) },
-                            uiEvent = viewModel.uiEvent
-                        )
-                    }
-                    composable(Routes.BUDGET) {
-                        val viewModel = hiltViewModel<BudgetViewModel>()
-                        val budget = viewModel.budget
-                        val isLoading = viewModel.isLoading.collectAsState().value
-                        when {
-                            isLoading -> {
-                                LoadingScreen()
-                            }
-                            budget.collectAsState().value == null -> {
-                                NoBudgetScreen(
-                                    onEvent = viewModel::onEvent,
-                                    onNavigate = { navController.navigate(it) },
-                                    uiEvent = viewModel.uiEvent
-                                )
-                            }
-                            else -> {
-                                BudgetScreen(
-                                    budget = budget.collectAsState().value!!,
-                                    onEvent = viewModel::onEvent,
-                                    onNavigate = { navController.navigate(it) },
-                                    uiEvent = viewModel.uiEvent
-                                )
-                            }
-                        }
-                    }
-                    composable(Routes.GOALS) {
-                        val viewModel = hiltViewModel<GoalsViewModel>()
-                        val goals = viewModel.goalsState.collectAsState(initial = emptyList()).value
-                        val balance = viewModel.balanceState.collectAsState().value
-                        val isLoading = viewModel.isLoading.collectAsState().value
-
-                        when {
-                            isLoading -> {
-                                LoadingScreen()
-                            }
-                            goals.isEmpty() -> {
-                                NoGoalsScreen(
-                                    onEvent = viewModel::onEvent,
-                                    onNavigate = { navController.navigate(it) },
-                                    uiEvent = viewModel.uiEvent
-                                )
-                            }
-                            else -> {
-                                GoalsScreen(
-                                    goals = goals,
-                                    balance = balance!!,
-                                    onEvent = viewModel::onEvent,
-                                    onNavigate = { navController.navigate(it) },
-                                    uiEvent = viewModel.uiEvent
-                                )
-                            }
-                        }
-                    }
-                    composable(
-                        route = Routes.ADD_EDIT_EXPENSE + "?expenseId={expenseId}",
-                        arguments = listOf(
-                            navArgument(name = "expenseId") {
-                                type = NavType.IntType
-                                defaultValue = 0
-                            }
-                        )
-                    ) {
-                        val viewModel = hiltViewModel<AddEditExpenseViewModel>()
-                        AddEditExpenseScreen(
-                            onEvent = viewModel::onEvent,
-                            uiEvent = viewModel.uiEvent,
-                            state = viewModel.state.collectAsState().value,
-                            onNavigate = { route -> navController.navigate(route) },
-                            onPopBackStack = { navController.popBackStack() }
-                        )
-                    }
-                    composable(
-                        route = Routes.ADD_EDIT_BUDGET + "?isCreated={isCreated}",
-                        arguments = listOf(
-                            navArgument(name = "isCreated") {
-                                type = NavType.BoolType
-                                defaultValue = false
-                            }
-                        )
-                    ) {
-                        val viewModel = hiltViewModel<AddEditBudgetViewModel>()
-                        AddEditBudgetScreen(
-                            onEvent = viewModel::onEvent,
-                            uiEvent = viewModel.uiEvent,
-                            state = viewModel.state.collectAsState().value,
-                            onNavigate = { route -> navController.navigate(route) },
-                            onPopBackStack = { navController.popBackStack() }
-                        )
-                    }
-                    composable(
-                        route = Routes.ADD_EDIT_GOAL + "?goalId={goalId}",
-                        arguments = listOf(
-                            navArgument(name = "goalId") {
-                                type = NavType.IntType
-                                defaultValue = 0
-                            }
-                        )
-                    ) {
-                        val viewModel = hiltViewModel<AddEditGoalViewModel>()
-                        AddEditGoalScreen(
-                            onEvent = viewModel::onEvent,
-                            uiEvent = viewModel.uiEvent,
-                            state = viewModel.state.collectAsState().value,
-                            onNavigate = { route -> navController.navigate(route) },
-                            onPopBackStack = { navController.popBackStack() }
-                        )
-                    }
-                }
-                initialRoute?.let { route ->
-                    LaunchedEffect(route) {
-                        selectedItem = route
-                        navController.navigate(route)
-                    }
-                }
+                    initialRoute = initialRoute,
+                    onItemSelected = { route -> selectedItem = route }
+                )
             }
+        }
+    }
+}
+
+@Composable
+fun SetupNavHost(
+    navController: NavHostController,
+    initialRoute: String?,
+    onItemSelected: (String) -> Unit
+) {
+    NavHost(navController = navController, startDestination = Routes.CURRENT_BALANCE) {
+        composable(Routes.CURRENT_BALANCE) {
+            val viewModel = hiltViewModel<CurrentBalanceViewModel>()
+            CurrentBalanceScreen(
+                state = viewModel.viewState.collectAsState().value,
+                onEvent = viewModel::onEvent,
+                onNavigate = { route -> navController.navigate(route) },
+                onShowMoreClick = {
+                    onItemSelected(Routes.EXPENSES)
+                    navController.navigate(Routes.EXPENSES)
+                },
+                uiEvent = viewModel.uiEvent
+            )
+        }
+        composable(Routes.EXPENSES) {
+            val viewModel = hiltViewModel<ExpensesViewModel>()
+            ExpensesScreen(
+                onEvent = viewModel::onEvent,
+                expenses = viewModel.expenses.collectAsState(initial = emptyList()).value,
+                onNavigate = { navController.navigate(it) },
+                uiEvent = viewModel.uiEvent
+            )
+        }
+        composable(Routes.BUDGET) {
+            val viewModel = hiltViewModel<BudgetViewModel>()
+            val budget = viewModel.budget
+            val isLoading = viewModel.isLoading.collectAsState().value
+            when {
+                isLoading -> LoadingScreen()
+                budget.collectAsState().value == null -> NoBudgetScreen(
+                    onEvent = viewModel::onEvent,
+                    onNavigate = { navController.navigate(it) },
+                    uiEvent = viewModel.uiEvent
+                )
+                else -> BudgetScreen(
+                    budget = budget.collectAsState().value!!,
+                    onEvent = viewModel::onEvent,
+                    onNavigate = { navController.navigate(it) },
+                    uiEvent = viewModel.uiEvent
+                )
+            }
+        }
+        composable(Routes.GOALS) {
+            val viewModel = hiltViewModel<GoalsViewModel>()
+            val goals = viewModel.goalsState.collectAsState(initial = emptyList()).value
+            val balance = viewModel.balanceState.collectAsState().value
+            val isLoading = viewModel.isLoading.collectAsState().value
+
+            when {
+                isLoading -> LoadingScreen()
+                goals.isEmpty() -> NoGoalsScreen(
+                    onEvent = viewModel::onEvent,
+                    onNavigate = { navController.navigate(it) },
+                    uiEvent = viewModel.uiEvent
+                )
+                else -> GoalsScreen(
+                    goals = goals,
+                    balance = balance!!,
+                    onEvent = viewModel::onEvent,
+                    onNavigate = { navController.navigate(it) },
+                    uiEvent = viewModel.uiEvent
+                )
+            }
+        }
+        composable(
+            route = Routes.ADD_EDIT_EXPENSE + "?expenseId={expenseId}",
+            arguments = listOf(navArgument("expenseId") {
+                type = NavType.IntType
+                defaultValue = 0
+            })
+        ) {
+            val viewModel = hiltViewModel<AddEditExpenseViewModel>()
+            AddEditExpenseScreen(
+                onEvent = viewModel::onEvent,
+                uiEvent = viewModel.uiEvent,
+                state = viewModel.state.collectAsState().value,
+                onNavigate = { route -> navController.navigate(route) },
+                onPopBackStack = { navController.popBackStack() }
+            )
+        }
+        composable(
+            route = Routes.ADD_EDIT_BUDGET + "?isCreated={isCreated}",
+            arguments = listOf(navArgument("isCreated") {
+                type = NavType.BoolType
+                defaultValue = false
+            })
+        ) {
+            val viewModel = hiltViewModel<AddEditBudgetViewModel>()
+            AddEditBudgetScreen(
+                onEvent = viewModel::onEvent,
+                uiEvent = viewModel.uiEvent,
+                state = viewModel.state.collectAsState().value,
+                onNavigate = { route -> navController.navigate(route) },
+                onPopBackStack = { navController.popBackStack() }
+            )
+        }
+        composable(
+            route = Routes.ADD_EDIT_GOAL + "?goalId={goalId}",
+            arguments = listOf(navArgument("goalId") {
+                type = NavType.IntType
+                defaultValue = 0
+            })
+        ) {
+            val viewModel = hiltViewModel<AddEditGoalViewModel>()
+            AddEditGoalScreen(
+                onEvent = viewModel::onEvent,
+                uiEvent = viewModel.uiEvent,
+                state = viewModel.state.collectAsState().value,
+                onNavigate = { route -> navController.navigate(route) },
+                onPopBackStack = { navController.popBackStack() }
+            )
+        }
+    }
+
+    initialRoute?.let { route ->
+        LaunchedEffect(route) {
+            onItemSelected(route)
+            navController.navigate(route)
         }
     }
 }
