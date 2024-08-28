@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,6 +23,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -45,16 +48,24 @@ fun ExpenseCard(expense: Expense, onEvent: (ExpensesEvent) -> Unit, modifier: Mo
 
     Box(modifier = modifier) {
         Card(
-            shape = RoundedCornerShape(25.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface
+            ),
             modifier = Modifier
                 .fillMaxWidth()
+                .shadow(4.dp, RoundedCornerShape(16.dp))
                 .combinedClickable(
                     onClick = { onEvent(ExpensesEvent.OnExpenseClick(expense)) },
                     onLongClick = {
                         haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                         expanded = true
                     }
-                )
+                ),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 4.dp
+            )
         ) {
             Row(
                 modifier = Modifier
@@ -75,17 +86,25 @@ fun ExpenseCard(expense: Expense, onEvent: (ExpensesEvent) -> Unit, modifier: Mo
                 ) {
                     Text(
                         text = stringResource(ExpenseCategory.fromId(expense.categoryId)!!.name),
-                        fontSize = 12.sp,
-                        fontStyle = FontStyle.Italic
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            fontSize = 12.sp,
+                            fontStyle = FontStyle.Italic,
+                            color = MaterialTheme.colorScheme.secondary
+                        )
                     )
                     Text(
                         text = "${expense.description} at ${dateToString(expense.date)}",
+                        style = MaterialTheme.typography.bodyLarge,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
-                Text(text = "${expense.amount}$", fontWeight = FontWeight.SemiBold)
+                Text(text = "${expense.amount}$", style = MaterialTheme.typography.bodyLarge.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.primary
+                ))
             }
         }
 

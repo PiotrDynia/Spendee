@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -19,14 +20,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.spendee.R
 import com.example.spendee.data.entities.Expense
-import com.example.spendee.ui.expenses.state.ExpensesEvent
 import com.example.spendee.ui.expenses.components.ExpensesColumn
+import com.example.spendee.ui.expenses.state.ExpensesEvent
 import com.example.spendee.util.UiEvent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -68,9 +70,15 @@ fun ExpensesScreen(
                     onEvent(ExpensesEvent.OnAddExpenseClick)
                 },
                 shape = CircleShape,
-                containerColor = MaterialTheme.colorScheme.secondary
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = Color.White,
+                elevation = FloatingActionButtonDefaults.elevation(8.dp)
             ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.add_expense))
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(R.string.add_expense),
+                    tint = Color.White
+                )
             }
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState)}
@@ -80,7 +88,11 @@ fun ExpensesScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.primaryContainer)
         ) {
-            ExpensesColumn(expenses = expenses, onEvent = onEvent, modifier = modifier.padding(16.dp))
+            ExpensesColumn(
+                expenses = expenses,
+                onEvent = onEvent,
+                modifier = modifier.padding(16.dp)
+            )
         }
     }
 }

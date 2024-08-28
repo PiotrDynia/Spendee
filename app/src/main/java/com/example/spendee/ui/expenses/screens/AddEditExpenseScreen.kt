@@ -21,20 +21,23 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.spendee.R
 import com.example.spendee.data.entities.ExpenseCategory
+import com.example.spendee.ui.expenses.components.CategoryCard
 import com.example.spendee.ui.expenses.state.AddEditExpenseEvent
 import com.example.spendee.ui.expenses.state.AddEditExpenseState
-import com.example.spendee.ui.expenses.components.CategoryCard
 import com.example.spendee.util.UiEvent
 import com.example.spendee.util.isValidNumberInput
 import kotlinx.coroutines.flow.Flow
@@ -69,11 +72,13 @@ fun AddEditExpenseScreen(
                 onClick = {
                     onEvent(AddEditExpenseEvent.OnSaveExpenseClick)
                 },
-                containerColor = MaterialTheme.colorScheme.secondary
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = Color.White
             ) {
                 Icon(
                     imageVector = Icons.Default.Check,
-                    contentDescription = stringResource(R.string.save)
+                    contentDescription = stringResource(R.string.save),
+                    tint = Color.White
                 )
             }
         }
@@ -86,7 +91,8 @@ fun AddEditExpenseScreen(
             Text(
                 text = stringResource(R.string.your_expense),
                 style = MaterialTheme.typography.headlineMedium.copy(
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             )
             TextField(
@@ -97,7 +103,11 @@ fun AddEditExpenseScreen(
                     }
                 },
                 placeholder = { Text(stringResource(R.string.amount)) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                    unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                )
             )
             Spacer(modifier = Modifier.height(8.dp))
             TextField(
@@ -112,10 +122,22 @@ fun AddEditExpenseScreen(
                 },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = false,
-                maxLines = 2
+                maxLines = 2,
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                    unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                )
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = stringResource(R.string.select_a_category), fontWeight = FontWeight.Bold)
+            Text(
+                text = stringResource(R.string.select_a_category),
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 contentPadding = PaddingValues(horizontal = 16.dp),
