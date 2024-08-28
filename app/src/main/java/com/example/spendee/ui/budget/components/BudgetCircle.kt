@@ -39,11 +39,11 @@ fun BudgetCircle(
                     size.width - halfStrokeWidth,
                     size.height - halfStrokeWidth
                 )
-
-                when (percentageSpent) {
-                    0f -> {
+                println("Percentage spent - $percentageSpent")
+                when {
+                    percentageSpent >= 1f -> {
                         drawArc(
-                            color = Color(0xFF04AF70),
+                            color = Color.Red,
                             startAngle = -90f + gapAngle / 2,
                             sweepAngle = 360f * animatedProgress,
                             useCenter = false,
@@ -52,9 +52,9 @@ fun BudgetCircle(
                             style = Stroke(strokeWidth, cap = StrokeCap.Butt)
                         )
                     }
-                    1f -> {
+                    percentageSpent == 0f -> {
                         drawArc(
-                            color = Color.Red,
+                            color = Color(0xFF04AF70),
                             startAngle = -90f + gapAngle / 2,
                             sweepAngle = 360f * animatedProgress,
                             useCenter = false,

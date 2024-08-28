@@ -102,7 +102,7 @@ class CurrentBalanceViewModel @Inject constructor(
                                 goal.isReached = true
                                 if (goal.isReachedNotificationEnabled) {
                                     goal.isReachedNotificationEnabled = false
-                                    notificationService.showGoalReachedNotification(Routes.GOALS)
+                                    notificationService.showGoalReachedNotification()
                                 }
                                 goalsRepository.upsertGoal(goal)
                             }

@@ -74,7 +74,8 @@ class AddEditBudgetViewModel @Inject constructor(
                     repository.upsertBudget(
                         Budget(
                             totalAmount = _state.value.amount.toDouble(),
-                            currentAmount = currentAmount,
+                            leftToSpend = if (currentAmount < 0) 0.0 else currentAmount,
+                            totalSpent = currentAmount,
                             startDate = startDate,
                             endDate = endDate,
                             isExceeded = if (currentAmount > 0) false else true,

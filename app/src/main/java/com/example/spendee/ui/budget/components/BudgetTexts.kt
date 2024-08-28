@@ -31,7 +31,7 @@ fun BudgetTexts(budget: Budget, modifier: Modifier = Modifier) {
             style = MaterialTheme.typography.bodyLarge
         )
         Text(
-            text = "${budget.currentAmount}$",
+            text = "${budget.leftToSpend}$",
             fontWeight = FontWeight.ExtraBold,
             color = Color(0xFF04AF70),
             style = MaterialTheme.typography.headlineMedium

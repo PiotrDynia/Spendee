@@ -71,8 +71,8 @@ fun BudgetInfoCard(
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = if (cardType == BudgetInfoCardType.SPENT) {
-                        ((budget.totalAmount) - (budget.currentAmount)).toString() + "$"
-                    } else budget.currentAmount.toString() + "$",
+                        ((budget.totalAmount) - (budget.totalSpent)).toString() + "$"
+                    } else budget.leftToSpend.toString() + "$",
                     fontWeight = FontWeight.ExtraBold,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
@@ -83,7 +83,7 @@ fun BudgetInfoCard(
                     } else {
                         calculateDailySpending(
                             budget.endDate,
-                            budget.currentAmount
+                            budget.leftToSpend
                         ).toString() + "$/day"
                     },
                     fontStyle = FontStyle.Italic,

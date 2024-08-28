@@ -80,7 +80,7 @@ fun BudgetScreen(
     }
     var expanded by rememberSaveable { mutableStateOf(false) }
     val totalBudget = budget.totalAmount
-    val amountSpent = budget.totalAmount - budget.currentAmount
+    val amountSpent = budget.totalAmount - budget.totalSpent
     val percentageSpent = if (totalBudget != 0.0) amountSpent / totalBudget else 0.0
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,

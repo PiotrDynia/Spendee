@@ -19,8 +19,7 @@ class SpendeeApp : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
 
-        // TODO change to 1 day
-        val workRequest = PeriodicWorkRequestBuilder<DeadlinesCheckerWorker>(5, TimeUnit.SECONDS)
+        val workRequest = PeriodicWorkRequestBuilder<DeadlinesCheckerWorker>(1, TimeUnit.DAYS)
             .build()
 
         WorkManager.getInstance(this).enqueue(workRequest)

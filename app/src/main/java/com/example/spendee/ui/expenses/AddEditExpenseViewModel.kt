@@ -3,6 +3,7 @@ package com.example.spendee.ui.expenses
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.spendee.NotificationService
 import com.example.spendee.R
 import com.example.spendee.data.entities.Balance
 import com.example.spendee.data.entities.Budget
@@ -29,6 +30,7 @@ class AddEditExpenseViewModel @Inject constructor(
     private val repository: ExpenseRepository,
     private val balanceRepository: BalanceRepository,
     private val budgetRepository: BudgetRepository,
+    private val notificationService: NotificationService,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val _uiEvent = Channel<UiEvent>()
@@ -118,10 +120,14 @@ class AddEditExpenseViewModel @Inject constructor(
                         if (isBudgetSet()) {
                             if (isBudgetExceeded()) {
                                 budget!!.isExceeded = true
-                                budgetRepository.upsertBudget(budget!!)
-                                // TODO add notification
+                                budget!!.leftToSpend = 0.0
+                                if (budget!!.isExceedNotificationEnabled) {
+                                    notificationService.showBudgetExceededNotification()
+                                }
+                            } else {
+                                budget!!.leftToSpend -= _state.value.amount.toDouble()
                             }
-                            budget!!.currentAmount -= _state.value.amount.toDouble()
+                            budget!!.totalSpent -= _state.value.amount.toDouble()
                             budgetRepository.upsertBudget(budget!!)
                         }
                     } else {
@@ -133,10 +139,14 @@ class AddEditExpenseViewModel @Inject constructor(
                         if (isBudgetSet()) {
                             if (isBudgetExceeded()) {
                                 budget!!.isExceeded = true
-                                budgetRepository.upsertBudget(budget!!)
-                                // TODO add notification
+                                budget!!.leftToSpend = 0.0
+                                if (budget!!.isExceedNotificationEnabled) {
+                                    notificationService.showBudgetExceededNotification()
+                                }
+                            } else {
+                                budget!!.leftToSpend -= _state.value.amount.toDouble() - _state.value.originalAmount.toDouble()
                             }
-                            budget!!.currentAmount -= _state.value.amount.toDouble() - _state.value.originalAmount.toDouble()
+                            budget!!.totalSpent -= _state.value.amount.toDouble() - _state.value.originalAmount.toDouble()
                             budgetRepository.upsertBudget(budget!!)
                         }
                     }
@@ -155,7 +165,7 @@ class AddEditExpenseViewModel @Inject constructor(
     }
 
     private fun isBudgetExceeded() : Boolean {
-        return (isNewExpense && (_state.value.amount.toDouble() > budget!!.currentAmount) && budget!!.isExceedNotificationEnabled) || (!isNewExpense && budget!!.isExceedNotificationEnabled && ((_state.value.amount.toDouble()) - (_state.value.originalAmount.toDouble())) > budget!!.currentAmount)
+        return (isNewExpense && (_state.value.amount.toDouble() > budget!!.leftToSpend)) || (!isNewExpense && ((_state.value.amount.toDouble()) - (_state.value.originalAmount.toDouble())) > budget!!.leftToSpend)
     }
 
     private fun sendUiEvent(event: UiEvent) {

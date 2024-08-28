@@ -15,7 +15,7 @@ import com.example.spendee.data.entities.Goal
 
 @Database(
     entities = [Balance::class, Budget::class, Expense::class, Goal::class],
-    version = 6,
+    version = 7,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
