@@ -12,9 +12,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +24,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,8 +41,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.chargemap.compose.numberpicker.NumberPicker
 import com.example.spendee.R
-import com.example.spendee.ui.budget.AddEditBudgetEvent
-import com.example.spendee.ui.budget.AddEditBudgetState
+import com.example.spendee.ui.budget.state.AddEditBudgetEvent
+import com.example.spendee.ui.budget.state.AddEditBudgetState
 import com.example.spendee.util.DatePickerInput
 import com.example.spendee.util.SwitchButtonRow
 import com.example.spendee.util.UiEvent
@@ -61,6 +63,7 @@ fun AddEditBudgetScreen(
     }
     val snackbarState = remember { SnackbarHostState() }
     val context = LocalContext.current
+
     LaunchedEffect(key1 = true) {
         uiEvent.collect { event ->
             when (event) {
@@ -70,15 +73,20 @@ fun AddEditBudgetScreen(
             }
         }
     }
+
     Scaffold(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .padding(12.dp),
+            .padding(16.dp),
         snackbarHost = { SnackbarHost(snackbarState) },
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                onEvent(AddEditBudgetEvent.OnSaveBudgetClick)
-            }) {
+            FloatingActionButton(
+                onClick = {
+                    onEvent(AddEditBudgetEvent.OnSaveBudgetClick)
+                },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ) {
                 Icon(
                     imageVector = Icons.Default.Check,
                     contentDescription = stringResource(R.string.save)
@@ -87,15 +95,19 @@ fun AddEditBudgetScreen(
         }
     ) { _ ->
         Column(
+            modifier = Modifier
+                .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(32.dp))
             Text(
                 text = stringResource(R.string.your_budget),
-                style = MaterialTheme.typography.headlineMedium.copy(
-                    fontWeight = FontWeight.Bold
-                )
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
+                ),
+                modifier = Modifier.padding(bottom = 8.dp)
             )
             TextField(
                 value = state.amount,
@@ -105,12 +117,19 @@ fun AddEditBudgetScreen(
                     }
                 },
                 placeholder = { Text(stringResource(R.string.enter_budget_amount)) },
-                modifier = Modifier.fillMaxWidth()
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    focusedPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
             )
             DatePickerInput(
                 placeholder = R.string.select_a_starting_day_of_the_month,
                 value = state.startingDay?.toString() ?: "",
-                onClick = { isPickerOpened = true }
+                onClick = { isPickerOpened = true },
+                modifier = Modifier.fillMaxWidth()
             )
             if (isPickerOpened) {
                 Dialog(onDismissRequest = {
@@ -119,6 +138,7 @@ fun AddEditBudgetScreen(
                 }) {
                     Card(
                         shape = RoundedCornerShape(16.dp),
+                        elevation = CardDefaults.cardElevation(8.dp),
                         modifier = Modifier.padding(16.dp)
                     ) {
                         Column(
@@ -128,6 +148,8 @@ fun AddEditBudgetScreen(
                             Text(
                                 text = stringResource(R.string.select_a_starting_day_of_the_month),
                                 fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier.padding(bottom = 16.dp)
                             )
 
@@ -137,7 +159,9 @@ fun AddEditBudgetScreen(
                                     onEvent(AddEditBudgetEvent.OnChangeStartingDay(it))
                                 },
                                 range = 1..31,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp)
                             )
 
                             Spacer(modifier = Modifier.size(16.dp))
@@ -150,12 +174,22 @@ fun AddEditBudgetScreen(
                                     onClick = {
                                         isPickerOpened = false
                                         onEvent(AddEditBudgetEvent.OnCancelStartingDay)
-                                    }
+                                    },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.secondary,
+                                        contentColor = MaterialTheme.colorScheme.onSecondary
+                                    )
                                 ) {
                                     Text(text = stringResource(R.string.cancel))
                                 }
                                 Button(
-                                    onClick = { isPickerOpened = false }
+                                    onClick = {
+                                        isPickerOpened = false
+                                    },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.primary,
+                                        contentColor = MaterialTheme.colorScheme.onPrimary
+                                    )
                                 ) {
                                     Text(text = stringResource(R.string.ok))
                                 }

@@ -1,4 +1,4 @@
-package com.example.spendee.ui.budget
+package com.example.spendee.ui.budget.state
 
 sealed class AddEditBudgetEvent {
     data class OnAmountChange(val amount: String) : AddEditBudgetEvent()

@@ -13,4 +13,5 @@ data class Budget(
     val startDate: LocalDate,
     val endDate: LocalDate,
     var isExceeded: Boolean,
-    var isExceedNotificationEnabled: Boolean)
+    var isExceedNotificationEnabled: Boolean
+)

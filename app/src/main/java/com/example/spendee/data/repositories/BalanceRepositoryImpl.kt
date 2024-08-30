@@ -10,8 +10,7 @@ class BalanceRepositoryImpl(
     private val balanceDao: BalanceDao
 ) : BalanceRepository {
     override fun getBalance(): Flow<Balance> = flow {
-        val balanceFlow = balanceDao.getBalance()
-        val balance = balanceFlow.firstOrNull()
+        val balance = balanceDao.getBalance().firstOrNull()
         if (balance == null) {
             balanceDao.upsertBalance(Balance(id = 1, amount = 0.0))
             emit(Balance(id = 1, amount = 0.0))

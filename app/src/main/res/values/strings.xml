@@ -67,4 +67,6 @@
     <string name="you_failed_to_reach_your_goal_in_time_the_goal_has_been_deleted">You failed to reach your goal in time! The goal has been deleted</string>
     <string name="budget_exceeded">Budget exceeded</string>
     <string name="you_have_exceeded_your_budget">You have exceeded your budget!</string>
+    <string name="from">From %1$s$</string>
+    <string name="days_left">%1$s days left</string>
 </resources>

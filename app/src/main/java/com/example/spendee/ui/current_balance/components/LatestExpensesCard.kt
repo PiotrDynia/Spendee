@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,11 +31,12 @@ import com.example.spendee.util.dateToString
 @Composable
 fun LatestExpensesCard(onExpenseClick: (Expense) -> Unit, expense: Expense, modifier: Modifier = Modifier) {
     Card(
-        shape = RoundedCornerShape(25.dp),
+        shape = RoundedCornerShape(12.dp),
         onClick = { onExpenseClick(expense) },
         modifier = Modifier
             .padding(8.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(
             modifier = Modifier
@@ -47,24 +50,30 @@ fun LatestExpensesCard(onExpenseClick: (Expense) -> Unit, expense: Expense, modi
                 tint = Color.Unspecified,
                 modifier = Modifier.size(40.dp)
             )
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(12.dp))
             Column(
                 modifier = Modifier
                     .weight(100f)
             ) {
                 Text(
                     text = stringResource(ExpenseCategory.fromId(expense.categoryId)!!.name),
-                    fontSize = 12.sp,
-                    fontStyle = FontStyle.Italic
+                    fontSize = 14.sp,
+                    fontStyle = FontStyle.Italic,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
                     text = "${expense.description} at ${dateToString(expense.date)}",
                     maxLines = 1,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            Spacer(modifier = Modifier.weight(1f))
-            Text(text = "${expense.amount}$", fontWeight = FontWeight.SemiBold)
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                text = "${expense.amount}$",
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }

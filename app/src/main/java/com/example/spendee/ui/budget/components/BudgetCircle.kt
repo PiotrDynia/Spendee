@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -27,59 +28,69 @@ fun BudgetCircle(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .fillMaxWidth()
-            .padding(4.dp)
+            .padding(16.dp)
             .aspectRatio(1f)
             .drawBehind {
                 val strokeWidth = 24.dp.toPx()
                 val halfStrokeWidth = strokeWidth / 2
                 val gapAngle = 2f
+
                 val rect = Rect(
                     halfStrokeWidth,
                     halfStrokeWidth,
                     size.width - halfStrokeWidth,
                     size.height - halfStrokeWidth
                 )
+
+                val redGradient = Brush.sweepGradient(
+                    listOf(Color.Red, Color(0xFFFC4637))
+                )
+                val greenGradient = Brush.sweepGradient(
+                    listOf(Color(0xFF04AF70), Color(0xFF81C784))
+                )
+
                 when {
                     percentageSpent >= 1f -> {
                         drawArc(
-                            color = Color.Red,
+                            brush = redGradient,
                             startAngle = -90f + gapAngle / 2,
                             sweepAngle = 360f * animatedProgress,
                             useCenter = false,
                             topLeft = rect.topLeft,
                             size = Size(rect.width, rect.height),
-                            style = Stroke(strokeWidth, cap = StrokeCap.Butt)
+                            style = Stroke(strokeWidth, cap = StrokeCap.Round)
                         )
                     }
                     percentageSpent == 0f -> {
                         drawArc(
-                            color = Color(0xFF04AF70),
+                            brush = greenGradient,
                             startAngle = -90f + gapAngle / 2,
                             sweepAngle = 360f * animatedProgress,
                             useCenter = false,
                             topLeft = rect.topLeft,
                             size = Size(rect.width, rect.height),
-                            style = Stroke(strokeWidth, cap = StrokeCap.Butt)
+                            style = Stroke(strokeWidth, cap = StrokeCap.Round)
                         )
                     }
                     else -> {
                         drawArc(
-                            color = Color.Red,
+                            brush = redGradient,
                             startAngle = -90f + gapAngle / 2,
                             sweepAngle = percentageSpent * 360f * animatedProgress - gapAngle,
                             useCenter = false,
                             topLeft = rect.topLeft,
                             size = Size(rect.width, rect.height),
-                            style = Stroke(strokeWidth, cap = StrokeCap.Butt)
+                            style = Stroke(strokeWidth, cap = StrokeCap.Round)
                         )
+
                         drawArc(
-                            color = Color(0xFF04AF70),
+                            brush = greenGradient,
                             startAngle = -90f + percentageSpent * 360f * animatedProgress + gapAngle / 2,
                             sweepAngle = (1f - percentageSpent) * 360f * animatedProgress - gapAngle,
                             useCenter = false,
                             topLeft = rect.topLeft,
                             size = Size(rect.width, rect.height),
-                            style = Stroke(strokeWidth, cap = StrokeCap.Butt)
+                            style = Stroke(strokeWidth, cap = StrokeCap.Round)
                         )
                     }
                 }

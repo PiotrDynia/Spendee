@@ -1,4 +1,4 @@
-package com.example.spendee.ui.current_balance
+package com.example.spendee.ui.current_balance.state
 
 import com.example.spendee.data.entities.Balance
 import com.example.spendee.data.entities.Expense

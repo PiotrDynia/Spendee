@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -24,7 +25,11 @@ fun BottomNavigationBar(
     onNavigate: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    BottomAppBar {
+    BottomAppBar(
+        modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface
+    ) {
         Row(
             modifier = Modifier
                 .padding(16.dp)
@@ -62,7 +67,17 @@ fun BottomNavigationItem(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Icon(painter = item.icon, contentDescription = item.label, tint = iconTint)
-        Text(text = item.label, color = textColor, style = MaterialTheme.typography.labelSmall)
+        Icon(
+            painter = item.icon,
+            contentDescription = item.label,
+            tint = iconTint,
+            modifier = Modifier.size(24.dp)
+        )
+        Text(
+            text = item.label,
+            color = textColor,
+            style = MaterialTheme.typography.labelSmall,
+            maxLines = 1
+        )
     }
 }

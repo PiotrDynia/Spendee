@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.spendee.R
 import com.example.spendee.data.entities.Goal
-import com.example.spendee.ui.goals.GoalsEvent
+import com.example.spendee.ui.goals.state.GoalsEvent
 import com.example.spendee.util.EditDeleteDropdownMenu
 import com.example.spendee.util.dateToString
 
