@@ -6,7 +6,7 @@ import com.example.spendee.core.presentation.util.Routes
 import com.example.spendee.core.presentation.util.UiEvent
 import com.example.spendee.feature_current_balance.domain.model.InvalidBalanceException
 import com.example.spendee.feature_current_balance.domain.use_case.BalanceUseCases
-import com.example.spendee.feature_expenses.domain.repository.ExpenseRepository
+import com.example.spendee.feature_expenses.domain.use_case.ExpensesUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CurrentBalanceViewModel @Inject constructor(
-    private val expensesRepository: ExpenseRepository,
+    private val expensesUseCases: ExpensesUseCases,
     private val balanceUseCases: BalanceUseCases
 ) : ViewModel() {
 
@@ -37,8 +37,7 @@ class CurrentBalanceViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             combine(
-                // TODO get it from ExpenseUseCases
-                expensesRepository.getAllExpenses().take(3),
+                expensesUseCases.getExpenses().take(3),
                 balanceUseCases.getBalance()
             ) { expenses, balance ->
                 CurrentBalanceState(

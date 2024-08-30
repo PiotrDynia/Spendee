@@ -3,14 +3,15 @@ package com.example.spendee.feature_expenses.presentation.expenses
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spendee.R
-import com.example.spendee.feature_current_balance.domain.model.Balance
-import com.example.spendee.feature_budget.domain.model.Budget
-import com.example.spendee.feature_expenses.domain.model.Expense
-import com.example.spendee.feature_current_balance.domain.repository.BalanceRepository
-import com.example.spendee.feature_budget.domain.repository.BudgetRepository
-import com.example.spendee.feature_expenses.domain.repository.ExpenseRepository
 import com.example.spendee.core.presentation.util.Routes
 import com.example.spendee.core.presentation.util.UiEvent
+import com.example.spendee.feature_budget.domain.model.Budget
+import com.example.spendee.feature_budget.domain.repository.BudgetRepository
+import com.example.spendee.feature_current_balance.domain.model.Balance
+import com.example.spendee.feature_current_balance.domain.repository.BalanceRepository
+import com.example.spendee.feature_expenses.domain.model.Expense
+import com.example.spendee.feature_expenses.domain.repository.ExpenseRepository
+import com.example.spendee.feature_expenses.domain.use_case.ExpensesUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -25,12 +26,13 @@ import javax.inject.Inject
 class ExpensesViewModel @Inject constructor(
     private val expenseRepository: ExpenseRepository,
     private val balanceRepository: BalanceRepository,
-    private val budgetRepository: BudgetRepository
+    private val budgetRepository: BudgetRepository,
+    private val useCases: ExpensesUseCases
 ) : ViewModel() {
 
     private val _uiEvent = Channel<UiEvent>(Channel.BUFFERED)
     val uiEvent = _uiEvent.receiveAsFlow()
-    val expenses = expenseRepository.getAllExpenses()
+    val expenses = useCases.getExpenses()
 
     private val _balance = MutableStateFlow<Balance?>(null)
     val balance = _balance.asStateFlow()
@@ -44,8 +46,9 @@ class ExpensesViewModel @Inject constructor(
         fetchInitialData()
     }
 
+    // TODO delete
     private fun fetchInitialData() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             _balance.value = balanceRepository.getBalance().firstOrNull()
             _budget.value = budgetRepository.getBudget().firstOrNull()
         }
@@ -53,14 +56,14 @@ class ExpensesViewModel @Inject constructor(
 
     fun onEvent(event: ExpensesEvent) {
         when (event) {
-            ExpensesEvent.OnAddExpenseClick -> navigateToAddEditExpense()
+            ExpensesEvent.OnAddExpenseClick -> navigateToAddExpense()
             is ExpensesEvent.OnExpenseClick -> navigateToEditExpense(event.expense.id)
             is ExpensesEvent.OnDeleteExpense -> deleteExpense(event.expense)
             ExpensesEvent.OnUndoDelete -> undoDeleteExpense()
         }
     }
 
-    private fun navigateToAddEditExpense() {
+    private fun navigateToAddExpense() {
         sendUiEvent(UiEvent.Navigate(Routes.ADD_EDIT_EXPENSE))
     }
 
@@ -69,11 +72,9 @@ class ExpensesViewModel @Inject constructor(
     }
 
     private fun deleteExpense(expense: Expense) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             _deletedExpense.value = expense
-            expenseRepository.deleteExpense(expense)
-            updateBalanceOnExpenseDeletion(expense)
-            updateBudgetOnExpenseDeletion(expense)
+            useCases.deleteExpense(expense)
             sendUiEvent(
                 UiEvent.ShowSnackbar(
                 message = R.string.expense_deleted,
@@ -82,25 +83,7 @@ class ExpensesViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updateBalanceOnExpenseDeletion(expense: Expense) {
-        _balance.value?.let {
-            val updatedBalance = it.copy(amount = it.amount + expense.amount)
-            _balance.value = updatedBalance
-            balanceRepository.upsertBalance(updatedBalance)
-        }
-    }
-
-    private suspend fun updateBudgetOnExpenseDeletion(expense: Expense) {
-        _budget.value?.let {
-            val updatedBudget = it.copy(
-                leftToSpend = it.leftToSpend + expense.amount,
-                totalSpent = it.totalSpent - expense.amount
-            )
-            _budget.value = updatedBudget
-            budgetRepository.upsertBudget(updatedBudget)
-        }
-    }
-
+    // TODO change to useCases.addNote (I hope)
     private fun undoDeleteExpense() {
         _deletedExpense.value?.let { expense ->
             viewModelScope.launch(Dispatchers.IO) {

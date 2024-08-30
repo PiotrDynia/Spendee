@@ -18,6 +18,11 @@ import com.example.spendee.feature_current_balance.domain.use_case.GetCurrentBal
 import com.example.spendee.feature_current_balance.domain.use_case.UpdateBalance
 import com.example.spendee.feature_expenses.data.repository.ExpenseRepositoryImpl
 import com.example.spendee.feature_expenses.domain.repository.ExpenseRepository
+import com.example.spendee.feature_expenses.domain.use_case.AddExpense
+import com.example.spendee.feature_expenses.domain.use_case.DeleteExpense
+import com.example.spendee.feature_expenses.domain.use_case.ExpensesUseCases
+import com.example.spendee.feature_expenses.domain.use_case.GetExpense
+import com.example.spendee.feature_expenses.domain.use_case.GetExpenses
 import com.example.spendee.feature_goals.data.repository.GoalRepositoryImpl
 import com.example.spendee.feature_goals.domain.repository.GoalRepository
 import dagger.Module
@@ -69,6 +74,22 @@ object AppModule {
     @Singleton
     fun provideExpenseRepository(db: SpendeeDatabase) : ExpenseRepository {
         return ExpenseRepositoryImpl(db.expenseDao())
+    }
+
+    @Provides
+    @Singleton
+    fun provideExpensesUseCases(
+        expenseRepository: ExpenseRepository,
+        balanceRepository: BalanceRepository,
+        budgetRepository: BudgetRepository,
+        notificationService: NotificationService
+    ) : ExpensesUseCases {
+        return ExpensesUseCases(
+            getExpenses = GetExpenses(expenseRepository),
+            deleteExpense = DeleteExpense(expenseRepository, budgetRepository, balanceRepository),
+            getExpense = GetExpense(expenseRepository),
+            addExpense = AddExpense(expenseRepository, budgetRepository, balanceRepository, notificationService)
+        )
     }
 
     @Provides
