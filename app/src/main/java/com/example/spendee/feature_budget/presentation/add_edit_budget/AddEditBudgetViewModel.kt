@@ -36,7 +36,7 @@ class AddEditBudgetViewModel @Inject constructor(
     }
 
     private fun loadBudget() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             budgetUseCases.getBudget().collect { budget ->
                 _state.value = _state.value.copy(
                     amount = budget.totalAmount.toString(),

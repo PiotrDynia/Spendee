@@ -8,6 +8,7 @@ import com.example.spendee.feature_current_balance.domain.repository.BalanceRepo
 import com.example.spendee.feature_goals.domain.model.Goal
 import com.example.spendee.feature_goals.domain.repository.GoalRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 
 class UpdateBalance(
     private val balanceRepository: BalanceRepository,
@@ -24,16 +25,16 @@ class UpdateBalance(
     }
 
     private suspend fun updateGoalsIfNeeded(currentAmount: Double, goals: Flow<List<Goal>>) {
-        goals.collect { goalList ->
-            goalList.forEach { goal ->
-                if (currentAmount >= goal.targetAmount && !goal.isReached) {
-                    goal.isReached = true
-                    if (goal.isReachedNotificationEnabled) {
-                        goal.isReachedNotificationEnabled = false
-                        notificationService.showGoalReachedNotification()
-                    }
-                    goalsRepository.upsertGoal(goal)
+        val goalList = goals.firstOrNull() ?: return
+
+        goalList.forEach { goal ->
+            if (currentAmount >= goal.targetAmount && !goal.isReached) {
+                goal.isReached = true
+                if (goal.isReachedNotificationEnabled) {
+                    goal.isReachedNotificationEnabled = false
+                    notificationService.showGoalReachedNotification()
                 }
+                goalsRepository.upsertGoal(goal)
             }
         }
     }

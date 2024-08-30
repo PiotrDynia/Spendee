@@ -13,6 +13,9 @@ import com.example.spendee.feature_budget.domain.use_case.DeleteBudget
 import com.example.spendee.feature_budget.domain.use_case.GetBudget
 import com.example.spendee.feature_current_balance.data.repository.BalanceRepositoryImpl
 import com.example.spendee.feature_current_balance.domain.repository.BalanceRepository
+import com.example.spendee.feature_current_balance.domain.use_case.BalanceUseCases
+import com.example.spendee.feature_current_balance.domain.use_case.GetCurrentBalance
+import com.example.spendee.feature_current_balance.domain.use_case.UpdateBalance
 import com.example.spendee.feature_expenses.data.repository.ExpenseRepositoryImpl
 import com.example.spendee.feature_expenses.domain.repository.ExpenseRepository
 import com.example.spendee.feature_goals.data.repository.GoalRepositoryImpl
@@ -73,6 +76,20 @@ object AppModule {
     fun provideBalanceRepository(db: SpendeeDatabase) : BalanceRepository {
         return BalanceRepositoryImpl(db.balanceDao())
     }
+
+    @Provides
+    @Singleton
+    fun provideBalanceUseCases(
+        balanceRepository: BalanceRepository,
+        goalsRepository: GoalRepository,
+        notificationService: NotificationService
+    ) : BalanceUseCases {
+        return BalanceUseCases(
+            getBalance = GetCurrentBalance(balanceRepository),
+            updateBalance = UpdateBalance(balanceRepository, goalsRepository, notificationService)
+        )
+    }
+
     @Provides
     @Singleton
     fun provideGoalRepository(db: SpendeeDatabase) : GoalRepository {

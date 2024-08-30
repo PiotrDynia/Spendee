@@ -8,15 +8,18 @@ import com.example.spendee.feature_current_balance.domain.model.InvalidBalanceEx
 import com.example.spendee.feature_current_balance.domain.use_case.BalanceUseCases
 import com.example.spendee.feature_expenses.domain.repository.ExpenseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -79,19 +82,19 @@ class CurrentBalanceViewModel @Inject constructor(
     private fun confirmSetBalance() {
         viewModelScope.launch {
             try {
-                balanceUseCases.updateBalance(currentAmount = _viewBalanceState.value.currentAmount)
-            } catch(e: InvalidBalanceException) {
-                sendUiEvent(UiEvent.ShowSnackbar(
-                    message = e.messageResId
-                ))
-            }
+                withContext(Dispatchers.IO) {
+                    balanceUseCases.updateBalance(currentAmount = _viewBalanceState.value.currentAmount)
+                }
 
-            balanceUseCases.getBalance().collect { updatedBalance ->
-                _viewBalanceState.value = _viewBalanceState.value.copy(
-                    balance = updatedBalance,
-                    isDialogOpen = false,
-                    currentAmount = updatedBalance.amount.toString()
-                )
+                balanceUseCases.getBalance().firstOrNull()?.let { updatedBalance ->
+                    _viewBalanceState.value = _viewBalanceState.value.copy(
+                        balance = updatedBalance,
+                        isDialogOpen = false,
+                        currentAmount = updatedBalance.amount.toString()
+                    )
+                }
+            } catch (e: InvalidBalanceException) {
+                sendUiEvent(UiEvent.ShowSnackbar(message = e.messageResId))
             }
         }
     }

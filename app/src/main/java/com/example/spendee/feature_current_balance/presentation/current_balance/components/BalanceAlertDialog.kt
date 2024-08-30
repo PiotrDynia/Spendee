@@ -15,8 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.spendee.R
-import com.example.spendee.feature_current_balance.presentation.current_balance.CurrentBalanceEvent
 import com.example.spendee.core.domain.util.isValidNumberInput
+import com.example.spendee.feature_current_balance.presentation.current_balance.CurrentBalanceEvent
 
 @Composable
 fun BalanceAlertDialog(
@@ -52,7 +52,7 @@ fun BalanceAlertDialog(
                     containerColor = MaterialTheme.colorScheme.secondary,
                     contentColor = MaterialTheme.colorScheme.onSecondary
                 ),
-                modifier = Modifier.padding(start = 8.dp) // Added padding for spacing
+                modifier = Modifier.padding(start = 8.dp)
             ) {
                 Text(
                     text = stringResource(R.string.cancel),
