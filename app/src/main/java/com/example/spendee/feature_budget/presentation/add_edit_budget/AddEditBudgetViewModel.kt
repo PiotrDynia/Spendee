@@ -72,7 +72,6 @@ class AddEditBudgetViewModel @Inject constructor(
                     message = e.messageResId
                 ))
             }
-            sendUiEvent(UiEvent.PopBackStack)
         }
     }
 

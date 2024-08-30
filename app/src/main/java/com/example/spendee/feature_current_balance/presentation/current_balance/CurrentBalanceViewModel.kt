@@ -2,15 +2,11 @@ package com.example.spendee.feature_current_balance.presentation.current_balance
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.spendee.core.domain.util.NotificationService
-import com.example.spendee.R
-import com.example.spendee.feature_current_balance.domain.model.Balance
-import com.example.spendee.feature_goals.domain.model.Goal
-import com.example.spendee.feature_current_balance.domain.repository.BalanceRepository
-import com.example.spendee.feature_expenses.domain.repository.ExpenseRepository
-import com.example.spendee.feature_goals.domain.repository.GoalRepository
 import com.example.spendee.core.presentation.util.Routes
 import com.example.spendee.core.presentation.util.UiEvent
+import com.example.spendee.feature_current_balance.domain.model.InvalidBalanceException
+import com.example.spendee.feature_current_balance.domain.use_case.BalanceUseCases
+import com.example.spendee.feature_expenses.domain.repository.ExpenseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -18,7 +14,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
@@ -26,10 +21,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CurrentBalanceViewModel @Inject constructor(
-    private val balanceRepository: BalanceRepository,
     private val expensesRepository: ExpenseRepository,
-    private val goalsRepository: GoalRepository,
-    private val notificationService: NotificationService
+    private val balanceUseCases: BalanceUseCases
 ) : ViewModel() {
 
     private val _viewBalanceState = MutableStateFlow(CurrentBalanceState())
@@ -38,14 +31,12 @@ class CurrentBalanceViewModel @Inject constructor(
     private val _uiEvent = Channel<UiEvent>(Channel.BUFFERED)
     val uiEvent: Flow<UiEvent> = _uiEvent.receiveAsFlow()
 
-    private var goals: List<Goal> = emptyList()
-
     init {
         viewModelScope.launch {
-            goals = goalsRepository.getAllGoals().first()
             combine(
+                // TODO get it from ExpenseUseCases
                 expensesRepository.getAllExpenses().take(3),
-                balanceRepository.getBalance()
+                balanceUseCases.getBalance()
             ) { expenses, balance ->
                 CurrentBalanceState(
                     balance = balance,
@@ -87,35 +78,20 @@ class CurrentBalanceViewModel @Inject constructor(
 
     private fun confirmSetBalance() {
         viewModelScope.launch {
-            val currentAmountStr = _viewBalanceState.value.currentAmount
-            if (currentAmountStr.isBlank()) {
-                sendUiEvent(UiEvent.ShowSnackbar(R.string.amount_cant_be_empty))
-                return@launch
+            try {
+                balanceUseCases.updateBalance(currentAmount = _viewBalanceState.value.currentAmount)
+            } catch(e: InvalidBalanceException) {
+                sendUiEvent(UiEvent.ShowSnackbar(
+                    message = e.messageResId
+                ))
             }
 
-            val currentAmount = currentAmountStr.toDouble()
-            balanceRepository.upsertBalance(Balance(amount = currentAmount))
-            updateGoalsIfNeeded(currentAmount)
-
-            balanceRepository.getBalance().collect { updatedBalance ->
+            balanceUseCases.getBalance().collect { updatedBalance ->
                 _viewBalanceState.value = _viewBalanceState.value.copy(
                     balance = updatedBalance,
                     isDialogOpen = false,
                     currentAmount = updatedBalance.amount.toString()
                 )
-            }
-        }
-    }
-
-    private suspend fun updateGoalsIfNeeded(currentAmount: Double) {
-        goals.forEach { goal ->
-            if (currentAmount >= goal.targetAmount && !goal.isReached) {
-                goal.isReached = true
-                if (goal.isReachedNotificationEnabled) {
-                    goal.isReachedNotificationEnabled = false
-                    notificationService.showGoalReachedNotification()
-                }
-                goalsRepository.upsertGoal(goal)
             }
         }
     }
