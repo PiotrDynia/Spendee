@@ -2,10 +2,10 @@ package com.example.spendee.feature_budget.presentation.budget
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.spendee.feature_budget.domain.model.Budget
-import com.example.spendee.feature_budget.domain.repository.BudgetRepository
 import com.example.spendee.core.presentation.util.Routes
 import com.example.spendee.core.presentation.util.UiEvent
+import com.example.spendee.feature_budget.domain.model.Budget
+import com.example.spendee.feature_budget.domain.use_case.BudgetUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BudgetViewModel @Inject constructor(
-    private val repository: BudgetRepository
+    private val useCases: BudgetUseCases
 ) : ViewModel() {
 
     private val _uiEvent = Channel<UiEvent>(Channel.BUFFERED)
@@ -37,7 +37,7 @@ class BudgetViewModel @Inject constructor(
 
     private fun loadBudget() {
         viewModelScope.launch {
-            repository.getBudget().collect { fetchedBudget ->
+            useCases.getBudget().collect { fetchedBudget ->
                 _budget.value = fetchedBudget
                 _isLoading.value = false
             }
@@ -63,7 +63,7 @@ class BudgetViewModel @Inject constructor(
     private fun handleDeleteBudget() {
         viewModelScope.launch(Dispatchers.IO) {
             _budget.value?.let { budgetToDelete ->
-                repository.deleteBudget(budgetToDelete)
+                useCases.deleteBudget(budgetToDelete)
                 sendUiEvent(UiEvent.Navigate(Routes.BUDGET))
             }
         }

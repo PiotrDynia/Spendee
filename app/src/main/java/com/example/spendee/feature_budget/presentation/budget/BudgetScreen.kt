@@ -21,9 +21,9 @@ import androidx.compose.ui.unit.dp
 import com.example.spendee.R
 import com.example.spendee.core.presentation.util.UiEvent
 import com.example.spendee.feature_budget.domain.model.Budget
+import com.example.spendee.feature_budget.domain.util.BudgetInfoCardType
 import com.example.spendee.feature_budget.presentation.budget.components.BudgetCircle
 import com.example.spendee.feature_budget.presentation.budget.components.BudgetInfoCard
-import com.example.spendee.feature_budget.presentation.budget.components.BudgetInfoCardType
 import com.example.spendee.feature_budget.presentation.budget.components.BudgetMapKey
 import com.example.spendee.feature_budget.presentation.budget.components.TopBudgetRow
 import com.example.spendee.feature_budget.presentation.budget.components.UpdateBudgetButton
@@ -83,13 +83,13 @@ fun BudgetScreen(
                 text = R.string.spent,
                 color = Color.Red,
                 budget = budget,
-                cardType = BudgetInfoCardType.SPENT
+                cardType = BudgetInfoCardType.SpentCard
             )
             BudgetInfoCard(
                 text = R.string.you_can_spend,
                 color = Color(0xFF04AF70),
                 budget = budget,
-                cardType = BudgetInfoCardType.YOU_CAN_SPEND
+                cardType = BudgetInfoCardType.YouCanSpendCard
             )
         }
     }

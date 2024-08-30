@@ -1,5 +1,6 @@
 package com.example.spendee.feature_budget.domain.model
 
+import androidx.annotation.StringRes
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.time.LocalDate
@@ -15,3 +16,5 @@ data class Budget(
     var isExceeded: Boolean,
     var isExceedNotificationEnabled: Boolean
 )
+
+class InvalidBudgetException(@StringRes val messageResId: Int) : Exception()

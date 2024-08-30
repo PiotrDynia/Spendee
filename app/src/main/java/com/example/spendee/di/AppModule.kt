@@ -3,16 +3,20 @@ package com.example.spendee.di
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
-import com.example.spendee.core.domain.util.NotificationService
 import com.example.spendee.core.data.db.SpendeeDatabase
-import com.example.spendee.feature_current_balance.domain.repository.BalanceRepository
-import com.example.spendee.feature_current_balance.data.repository.BalanceRepositoryImpl
-import com.example.spendee.feature_budget.domain.repository.BudgetRepository
+import com.example.spendee.core.domain.util.NotificationService
 import com.example.spendee.feature_budget.data.repository.BudgetRepositoryImpl
-import com.example.spendee.feature_expenses.domain.repository.ExpenseRepository
+import com.example.spendee.feature_budget.domain.repository.BudgetRepository
+import com.example.spendee.feature_budget.domain.use_case.AddBudget
+import com.example.spendee.feature_budget.domain.use_case.BudgetUseCases
+import com.example.spendee.feature_budget.domain.use_case.DeleteBudget
+import com.example.spendee.feature_budget.domain.use_case.GetBudget
+import com.example.spendee.feature_current_balance.data.repository.BalanceRepositoryImpl
+import com.example.spendee.feature_current_balance.domain.repository.BalanceRepository
 import com.example.spendee.feature_expenses.data.repository.ExpenseRepositoryImpl
-import com.example.spendee.feature_goals.domain.repository.GoalRepository
+import com.example.spendee.feature_expenses.domain.repository.ExpenseRepository
 import com.example.spendee.feature_goals.data.repository.GoalRepositoryImpl
+import com.example.spendee.feature_goals.domain.repository.GoalRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,6 +50,16 @@ object AppModule {
     @Singleton
     fun provideBudgetRepository(db: SpendeeDatabase) : BudgetRepository {
         return BudgetRepositoryImpl(db.budgetDao())
+    }
+
+    @Provides
+    @Singleton
+    fun provideBudgetUseCases(budgetRepository: BudgetRepository, expenseRepository: ExpenseRepository) : BudgetUseCases {
+        return BudgetUseCases(
+            addBudget = AddBudget(budgetRepository, expenseRepository),
+            deleteBudget = DeleteBudget(budgetRepository),
+            getBudget = GetBudget(budgetRepository)
+        )
     }
 
     @Provides
