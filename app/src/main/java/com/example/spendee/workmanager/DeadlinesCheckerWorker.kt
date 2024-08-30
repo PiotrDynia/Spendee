@@ -4,10 +4,10 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.example.spendee.NotificationService
-import com.example.spendee.data.entities.Budget
-import com.example.spendee.data.repositories.BudgetRepository
-import com.example.spendee.data.repositories.GoalRepository
+import com.example.spendee.core.domain.util.NotificationService
+import com.example.spendee.feature_budget.domain.model.Budget
+import com.example.spendee.feature_budget.domain.repository.BudgetRepository
+import com.example.spendee.feature_goals.domain.repository.GoalRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
