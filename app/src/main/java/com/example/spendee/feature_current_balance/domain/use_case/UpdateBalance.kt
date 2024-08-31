@@ -1,7 +1,7 @@
 package com.example.spendee.feature_current_balance.domain.use_case
 
 import com.example.spendee.R
-import com.example.spendee.core.domain.util.NotificationService
+import com.example.spendee.core.domain.util.NotificationServiceImpl
 import com.example.spendee.feature_current_balance.domain.model.Balance
 import com.example.spendee.feature_current_balance.domain.model.InvalidBalanceException
 import com.example.spendee.feature_current_balance.domain.repository.BalanceRepository
@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.firstOrNull
 class UpdateBalance(
     private val balanceRepository: BalanceRepository,
     private val goalsRepository: GoalRepository,
-    private val notificationService: NotificationService
+    private val notificationService: NotificationServiceImpl
 ) {
     @Throws(InvalidBalanceException::class)
     suspend operator fun invoke(currentAmount: String) {

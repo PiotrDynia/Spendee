@@ -4,7 +4,7 @@ import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import com.example.spendee.core.data.db.SpendeeDatabase
-import com.example.spendee.core.domain.util.NotificationService
+import com.example.spendee.core.domain.util.NotificationServiceImpl
 import com.example.spendee.feature_budget.data.repository.BudgetRepositoryImpl
 import com.example.spendee.feature_budget.domain.repository.BudgetRepository
 import com.example.spendee.feature_budget.domain.use_case.AddBudget
@@ -55,8 +55,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideNotificationService(@ApplicationContext context: Context): NotificationService {
-        return NotificationService(context)
+    fun provideNotificationService(@ApplicationContext context: Context): NotificationServiceImpl {
+        return NotificationServiceImpl(context)
     }
 
     @Provides
@@ -87,7 +87,7 @@ object AppModule {
         expenseRepository: ExpenseRepository,
         balanceRepository: BalanceRepository,
         budgetRepository: BudgetRepository,
-        notificationService: NotificationService
+        notificationService: NotificationServiceImpl
     ) : ExpensesUseCases {
         return ExpensesUseCases(
             getExpenses = GetExpenses(expenseRepository),
@@ -108,7 +108,7 @@ object AppModule {
     fun provideBalanceUseCases(
         balanceRepository: BalanceRepository,
         goalsRepository: GoalRepository,
-        notificationService: NotificationService
+        notificationService: NotificationServiceImpl
     ) : BalanceUseCases {
         return BalanceUseCases(
             getBalance = GetCurrentBalance(balanceRepository),

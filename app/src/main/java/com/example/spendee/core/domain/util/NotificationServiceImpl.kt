@@ -10,9 +10,10 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.spendee.MainActivity
 import com.example.spendee.R
+import com.example.spendee.core.domain.NotificationService
 import com.example.spendee.core.presentation.util.Routes
 
-class NotificationService(private val context: Context) {
+class NotificationServiceImpl(private val context: Context) : NotificationService {
 
     private val notificationManager: NotificationManagerCompat = NotificationManagerCompat.from(context)
     private val channelId = "Main Channel ID"
@@ -53,7 +54,7 @@ class NotificationService(private val context: Context) {
         }
     }
 
-    fun showGoalReachedNotification() {
+    override fun showGoalReachedNotification() {
         showNotification(
             R.string.goal_reached,
             R.string.congratulations_you_have_reached_your_goal,
@@ -61,7 +62,7 @@ class NotificationService(private val context: Context) {
         )
     }
 
-    fun showGoalDeletedNotification() {
+    override fun showGoalDeletedNotification() {
         showNotification(
             R.string.goal_deleted,
             R.string.you_failed_to_reach_your_goal_in_time_the_goal_has_been_deleted,
@@ -69,7 +70,7 @@ class NotificationService(private val context: Context) {
         )
     }
 
-    fun showBudgetExceededNotification() {
+    override fun showBudgetExceededNotification() {
         showNotification(
             R.string.budget_exceeded,
             R.string.you_have_exceeded_your_budget,
