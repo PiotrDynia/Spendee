@@ -8,7 +8,6 @@ import com.example.spendee.feature_current_balance.domain.repository.BalanceRepo
 import com.example.spendee.feature_expenses.domain.model.Expense
 import com.example.spendee.feature_expenses.domain.model.InvalidExpenseException
 import com.example.spendee.feature_expenses.domain.repository.ExpenseRepository
-import com.example.spendee.feature_expenses.presentation.add_edit_expense.AddEditExpenseState
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 
@@ -18,34 +17,32 @@ class AddExpense(
     private val balanceRepository: BalanceRepository,
     private val notificationService: NotificationService
 ) {
-    // TODO figure out how to reuse this, isNewExpense can be set to true, what's with original amount?
-    suspend operator fun invoke(state: AddEditExpenseState, isNewExpense: Boolean, expense: Expense) {
-        val amount = state.amount
+    suspend operator fun invoke(originalAmount: Double, isNewExpense: Boolean, expense: Expense) {
+        val amount = expense.amount
         when {
-            amount.isBlank() -> {
+            amount.toString().isBlank() -> {
                 throw InvalidExpenseException(R.string.amount_cant_be_empty)
             }
-            state.description.isBlank() -> {
+            expense.description.isBlank() -> {
                 throw InvalidExpenseException(R.string.description_cant_be_empty)
             }
-            isBalanceExceeded(state.originalAmount, isNewExpense, amount.toDouble()) -> {
+            isBalanceExceeded(originalAmount, isNewExpense, amount) -> {
                 throw InvalidExpenseException(R.string.cant_add_expense_your_balance_is_too_low)
             }
         }
         expenseRepository.upsertExpense(expense)
 
         if (isNewExpense) {
-            updateBalanceForNewExpense(amount.toDouble())
-            updateBudgetForNewExpense(amount.toDouble())
+            updateBalanceForNewExpense(amount)
+            updateBudgetForNewExpense(amount)
         } else {
-            updateBalanceForExistingExpense(originalAmount = state.originalAmount, newAmount = amount.toDouble())
-            updateBudgetForExistingExpense(originalAmount = state.originalAmount, newAmount = amount.toDouble())
+            updateBalanceForExistingExpense(originalAmount = originalAmount, newAmount = amount)
+            updateBudgetForExistingExpense(originalAmount = originalAmount, newAmount = amount)
         }
     }
 
-    private suspend fun isBalanceExceeded(originalAmountStr: String, isNewExpense: Boolean, amount: Double): Boolean {
+    private suspend fun isBalanceExceeded(originalAmount: Double, isNewExpense: Boolean, amount: Double): Boolean {
         val balanceAmount = balanceRepository.getBalance().first().amount
-        val originalAmount = originalAmountStr.toDoubleOrNull() ?: 0.0
         return if (isNewExpense) amount > balanceAmount else (amount - originalAmount) > balanceAmount
     }
 
@@ -56,11 +53,11 @@ class AddExpense(
         }
     }
 
-    private suspend fun updateBalanceForExistingExpense(originalAmount: String, newAmount: Double) {
+    private suspend fun updateBalanceForExistingExpense(originalAmount: Double, newAmount: Double) {
         val balance = balanceRepository.getBalance().first()
         balance.let {
             balanceRepository.upsertBalance(
-                it.copy(amount = it.amount - (newAmount - originalAmount.toDouble()))
+                it.copy(amount = it.amount - (newAmount - originalAmount))
             )
         }
     }
@@ -72,10 +69,10 @@ class AddExpense(
         }
     }
 
-    private suspend fun updateBudgetForExistingExpense(originalAmount: String, newAmount: Double) {
+    private suspend fun updateBudgetForExistingExpense(originalAmount: Double, newAmount: Double) {
         val budget = budgetRepository.getBudget().firstOrNull()
         budget?.let {
-            updateBudget(it, newAmount - originalAmount.toDouble())
+            updateBudget(it, newAmount - originalAmount)
         }
     }
 
