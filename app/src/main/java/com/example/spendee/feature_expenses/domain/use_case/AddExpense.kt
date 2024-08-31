@@ -17,6 +17,8 @@ class AddExpense(
     private val balanceRepository: BalanceRepository,
     private val notificationService: NotificationService
 ) {
+
+    @Throws(InvalidExpenseException::class)
     suspend operator fun invoke(originalAmount: Double, isNewExpense: Boolean, expense: Expense) {
         val amount = expense.amount
         when {

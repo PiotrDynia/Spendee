@@ -3,12 +3,12 @@ package com.example.spendee.feature_goals.presentation.goals
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spendee.R
-import com.example.spendee.feature_current_balance.domain.model.Balance
-import com.example.spendee.feature_goals.domain.model.Goal
-import com.example.spendee.feature_current_balance.domain.repository.BalanceRepository
-import com.example.spendee.feature_goals.domain.repository.GoalRepository
 import com.example.spendee.core.presentation.util.Routes
 import com.example.spendee.core.presentation.util.UiEvent
+import com.example.spendee.feature_current_balance.domain.model.Balance
+import com.example.spendee.feature_current_balance.domain.use_case.BalanceUseCases
+import com.example.spendee.feature_goals.domain.model.Goal
+import com.example.spendee.feature_goals.domain.use_case.GoalsUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -24,8 +24,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GoalsViewModel @Inject constructor(
-    private val goalRepository: GoalRepository,
-    private val balanceRepository: BalanceRepository
+    private val balanceUseCases: BalanceUseCases,
+    private val goalsUseCases: GoalsUseCases
 ) : ViewModel() {
 
     private val _uiEvent = Channel<UiEvent>(Channel.BUFFERED)
@@ -47,10 +47,10 @@ class GoalsViewModel @Inject constructor(
     }
 
     private fun loadInitialData() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             combine(
-                balanceRepository.getBalance(),
-                goalRepository.getAllGoals()
+                balanceUseCases.getBalance(),
+                goalsUseCases.getGoals()
             ) { balance, goals ->
                 _balanceState.value = balance
                 _goalsState.value = goals
@@ -79,7 +79,7 @@ class GoalsViewModel @Inject constructor(
     private fun handleDeleteGoal(goal: Goal) {
         viewModelScope.launch(Dispatchers.IO) {
             deletedGoal = goal
-            goalRepository.deleteGoal(goal)
+            goalsUseCases.deleteGoal(goal)
             sendUiEvent(
                 UiEvent.ShowSnackbar(
                 message = R.string.goal_deleted,
@@ -91,7 +91,7 @@ class GoalsViewModel @Inject constructor(
     private fun undoDeleteGoal() {
         deletedGoal?.let { goal ->
             viewModelScope.launch(Dispatchers.IO) {
-                goalRepository.upsertGoal(goal)
+                goalsUseCases.addGoal(goal)
                 deletedGoal = null
             }
         }

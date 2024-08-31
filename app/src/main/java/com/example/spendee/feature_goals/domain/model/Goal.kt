@@ -1,5 +1,6 @@
 package com.example.spendee.feature_goals.domain.model
 
+import androidx.annotation.StringRes
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.time.LocalDate
@@ -13,3 +14,5 @@ data class Goal(
     var isReached: Boolean,
     var isReachedNotificationEnabled: Boolean,
 )
+
+class InvalidGoalException(@StringRes val messageResId: Int) : Exception()

@@ -25,6 +25,11 @@ import com.example.spendee.feature_expenses.domain.use_case.GetExpense
 import com.example.spendee.feature_expenses.domain.use_case.GetExpenses
 import com.example.spendee.feature_goals.data.repository.GoalRepositoryImpl
 import com.example.spendee.feature_goals.domain.repository.GoalRepository
+import com.example.spendee.feature_goals.domain.use_case.AddGoal
+import com.example.spendee.feature_goals.domain.use_case.DeleteGoal
+import com.example.spendee.feature_goals.domain.use_case.GetGoal
+import com.example.spendee.feature_goals.domain.use_case.GetGoals
+import com.example.spendee.feature_goals.domain.use_case.GoalsUseCases
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -115,6 +120,20 @@ object AppModule {
     @Singleton
     fun provideGoalRepository(db: SpendeeDatabase) : GoalRepository {
         return GoalRepositoryImpl(db.goalDao())
+    }
+
+    @Provides
+    @Singleton
+    fun provideGoalsUseCases(
+        balanceRepository: BalanceRepository,
+        goalsRepository: GoalRepository
+    ) : GoalsUseCases {
+        return GoalsUseCases(
+            getGoals = GetGoals(goalsRepository),
+            getGoal = GetGoal(goalsRepository),
+            addGoal = AddGoal(goalsRepository, balanceRepository),
+            deleteGoal = DeleteGoal(goalsRepository)
+        )
     }
 
 }
