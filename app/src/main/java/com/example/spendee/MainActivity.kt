@@ -28,33 +28,32 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.spendee.feature_budget.presentation.add_edit_budget.AddEditBudgetScreen
-import com.example.spendee.feature_budget.presentation.budget.BudgetScreen
-import com.example.spendee.feature_budget.presentation.budget.NoBudgetScreen
-import com.example.spendee.feature_budget.presentation.add_edit_budget.AddEditBudgetViewModel
-import com.example.spendee.feature_budget.presentation.budget.BudgetViewModel
-import com.example.spendee.feature_current_balance.presentation.current_balance.CurrentBalanceScreen
-import com.example.spendee.feature_current_balance.presentation.current_balance.CurrentBalanceViewModel
-import com.example.spendee.feature_expenses.presentation.add_edit_expense.AddEditExpenseScreen
-import com.example.spendee.feature_expenses.presentation.expenses.ExpensesScreen
-import com.example.spendee.feature_expenses.presentation.add_edit_expense.AddEditExpenseViewModel
-import com.example.spendee.feature_expenses.presentation.expenses.ExpensesViewModel
-import com.example.spendee.feature_goals.presentation.add_edit_goal.AddEditGoalScreen
-import com.example.spendee.feature_goals.presentation.goals.GoalsScreen
-import com.example.spendee.feature_goals.presentation.goals.NoGoalsScreen
-import com.example.spendee.feature_goals.presentation.add_edit_goal.AddEditGoalViewModel
-import com.example.spendee.feature_goals.presentation.goals.GoalsViewModel
 import com.example.spendee.core.presentation.navigation.BottomNavItem
 import com.example.spendee.core.presentation.navigation.BottomNavigationBar
 import com.example.spendee.core.presentation.util.AnimatedVisibilityComposable
 import com.example.spendee.core.presentation.util.HandleNotificationPermission
 import com.example.spendee.core.presentation.util.LoadingScreen
 import com.example.spendee.core.presentation.util.Routes
+import com.example.spendee.feature_budget.presentation.add_edit_budget.AddEditBudgetScreen
+import com.example.spendee.feature_budget.presentation.add_edit_budget.AddEditBudgetViewModel
+import com.example.spendee.feature_budget.presentation.budget.BudgetScreen
+import com.example.spendee.feature_budget.presentation.budget.BudgetViewModel
+import com.example.spendee.feature_budget.presentation.budget.NoBudgetScreen
+import com.example.spendee.feature_current_balance.presentation.current_balance.CurrentBalanceScreen
+import com.example.spendee.feature_current_balance.presentation.current_balance.CurrentBalanceViewModel
+import com.example.spendee.feature_expenses.presentation.add_edit_expense.AddEditExpenseScreen
+import com.example.spendee.feature_expenses.presentation.add_edit_expense.AddEditExpenseViewModel
+import com.example.spendee.feature_expenses.presentation.expenses.ExpensesScreen
+import com.example.spendee.feature_expenses.presentation.expenses.ExpensesViewModel
+import com.example.spendee.feature_goals.presentation.add_edit_goal.AddEditGoalScreen
+import com.example.spendee.feature_goals.presentation.add_edit_goal.AddEditGoalViewModel
+import com.example.spendee.feature_goals.presentation.goals.GoalsScreen
+import com.example.spendee.feature_goals.presentation.goals.GoalsViewModel
+import com.example.spendee.feature_goals.presentation.goals.NoGoalsScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
