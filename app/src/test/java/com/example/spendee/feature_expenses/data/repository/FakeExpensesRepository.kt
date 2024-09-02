@@ -1,4 +1,4 @@
-package com.example.spendee.feature_expense.data.repository
+package com.example.spendee.feature_expenses.data.repository
 
 import com.example.spendee.feature_expenses.domain.model.Expense
 import com.example.spendee.feature_expenses.domain.repository.ExpenseRepository

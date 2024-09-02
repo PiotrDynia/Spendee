@@ -4,7 +4,7 @@ import com.example.spendee.R
 import com.example.spendee.feature_budget.data.repository.FakeBudgetRepository
 import com.example.spendee.feature_budget.domain.model.InvalidBudgetException
 import com.example.spendee.feature_budget.presentation.add_edit_budget.AddEditBudgetState
-import com.example.spendee.feature_expense.data.repository.FakeExpensesRepository
+import com.example.spendee.feature_expenses.data.repository.FakeExpensesRepository
 import com.example.spendee.feature_expenses.domain.model.Expense
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking

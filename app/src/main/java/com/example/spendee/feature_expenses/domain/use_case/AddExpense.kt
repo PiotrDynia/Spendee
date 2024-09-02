@@ -1,7 +1,7 @@
 package com.example.spendee.feature_expenses.domain.use_case
 
 import com.example.spendee.R
-import com.example.spendee.core.domain.util.NotificationServiceImpl
+import com.example.spendee.core.domain.NotificationService
 import com.example.spendee.feature_budget.domain.model.Budget
 import com.example.spendee.feature_budget.domain.repository.BudgetRepository
 import com.example.spendee.feature_current_balance.domain.repository.BalanceRepository
@@ -15,14 +15,14 @@ class AddExpense(
     private val expenseRepository: ExpenseRepository,
     private val budgetRepository: BudgetRepository,
     private val balanceRepository: BalanceRepository,
-    private val notificationService: NotificationServiceImpl
+    private val notificationService: NotificationService
 ) {
 
     @Throws(InvalidExpenseException::class)
     suspend operator fun invoke(originalAmount: Double, isNewExpense: Boolean, expense: Expense) {
         val amount = expense.amount
         when {
-            amount.toString().isBlank() -> {
+            amount == 0.0 -> {
                 throw InvalidExpenseException(R.string.amount_cant_be_empty)
             }
             expense.description.isBlank() -> {
