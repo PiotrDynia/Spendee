@@ -1,6 +1,4 @@
-package com.example.spendee.core.domain
-
-import androidx.annotation.StringRes
+package com.example.spendee.core.domain.util
 
 interface NotificationService {
     fun showGoalReachedNotification()

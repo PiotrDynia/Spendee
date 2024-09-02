@@ -1,7 +1,7 @@
 package com.example.spendee.feature_current_balance.domain.use_case
 
 import com.example.spendee.R
-import com.example.spendee.core.domain.NotificationService
+import com.example.spendee.core.domain.util.NotificationService
 import com.example.spendee.feature_current_balance.domain.model.Balance
 import com.example.spendee.feature_current_balance.domain.model.InvalidBalanceException
 import com.example.spendee.feature_current_balance.domain.repository.BalanceRepository

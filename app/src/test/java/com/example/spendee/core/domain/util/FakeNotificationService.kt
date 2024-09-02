@@ -2,7 +2,6 @@ package com.example.spendee.core.domain.util
 
 import androidx.annotation.StringRes
 import com.example.spendee.R
-import com.example.spendee.core.domain.NotificationService
 import com.example.spendee.core.presentation.util.Routes
 
 class FakeNotificationService : NotificationService {
