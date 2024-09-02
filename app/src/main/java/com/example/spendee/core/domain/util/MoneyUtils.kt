@@ -8,13 +8,13 @@ fun isValidNumberInput(input: String): Boolean {
     return input.isBlank() || regex.matches(input)
 }
 
-fun calculateDailySpending(date: LocalDate, totalAmount: Double): Double? {
+fun calculateDailySpending(date: LocalDate, totalAmount: Double): Double {
     val daysDiff = getDaysFromNow(date)
 
     return if (daysDiff > 0) {
         val dailySpending = totalAmount / daysDiff
         round(dailySpending * 100) / 100
     } else {
-        null
+        round(totalAmount * 100) / 100
     }
 }
