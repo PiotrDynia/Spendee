@@ -7,7 +7,7 @@ import com.example.spendee.core.presentation.util.Routes
 
 class FakeNotificationService : NotificationService {
 
-    val shownNotifications = mutableListOf<NotificationData>()
+    private val shownNotifications = mutableListOf<NotificationData>()
 
     data class NotificationData(
         @StringRes val titleResId: Int,

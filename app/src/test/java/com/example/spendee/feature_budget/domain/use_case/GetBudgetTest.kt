@@ -35,7 +35,7 @@ class GetBudgetTest {
     }
 
     @Test
-    fun `Get budget without one, return null`() = runBlocking {
+    fun `Get non existing budget, return null`() = runBlocking {
         assertEquals(budgetRepository.getBudget().firstOrNull(), null)
     }
 }

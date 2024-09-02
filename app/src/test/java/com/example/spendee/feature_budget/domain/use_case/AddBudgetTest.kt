@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
@@ -158,14 +159,13 @@ class AddBudgetTest {
 
         val budgetAmount = "50"
         val expectedLeftToSpend = 0.0
-        val expectedIsExceeded = true
         val state = AddEditBudgetState(amount = budgetAmount, startingDay = startingDay)
         addBudget(state)
 
         val budget = budgetRepository.getBudget().firstOrNull()
 
         assertEquals(expectedLeftToSpend, budget?.leftToSpend)
-        assertEquals(expectedIsExceeded, budget?.isExceeded)
+        assertTrue(budget!!.isExceeded)
     }
 
     @Test
@@ -188,8 +188,9 @@ class AddBudgetTest {
                 categoryId = 3
             )
         )
-        expensesRepository.upsertExpense(exampleExpenses.first())
-        expensesRepository.upsertExpense(exampleExpenses.elementAt(1))
+        exampleExpenses.forEach {
+            expensesRepository.upsertExpense(it)
+        }
 
         val budgetAmount = "100"
         val state = AddEditBudgetState(amount = budgetAmount, startingDay = today.dayOfMonth)

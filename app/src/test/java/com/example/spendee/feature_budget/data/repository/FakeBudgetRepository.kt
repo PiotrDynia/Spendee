@@ -11,11 +11,9 @@ class FakeBudgetRepository : BudgetRepository {
     private var budget: Budget? = null
 
     override fun getBudget(): Flow<Budget> {
-        return if (budget != null) {
-            flow { emit(budget!!) }
-        } else {
-            emptyFlow()
-        }
+        return budget?.let {
+            flow { emit(it) }
+        } ?: emptyFlow()
     }
 
     override suspend fun upsertBudget(budget: Budget) {
