@@ -4,6 +4,7 @@ import com.example.spendee.feature_budget.data.repository.FakeBudgetRepository
 import com.example.spendee.feature_budget.domain.model.Budget
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import java.time.LocalDate
@@ -35,7 +36,7 @@ class DeleteBudgetTest {
     fun `Delete budget, return null`() = runBlocking {
         deleteBudget(budget)
 
-        assert(budgetRepository.getBudget().firstOrNull() == null)
+        assertNull(budgetRepository.getBudget().firstOrNull())
     }
 
 }

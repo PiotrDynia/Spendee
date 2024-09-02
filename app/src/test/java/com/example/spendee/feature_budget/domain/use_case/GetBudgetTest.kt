@@ -5,6 +5,7 @@ import com.example.spendee.feature_budget.domain.model.Budget
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import java.time.LocalDate
@@ -36,6 +37,6 @@ class GetBudgetTest {
 
     @Test
     fun `Get non existing budget, return null`() = runBlocking {
-        assertEquals(budgetRepository.getBudget().firstOrNull(), null)
+        assertNull(budgetRepository.getBudget().firstOrNull())
     }
 }
