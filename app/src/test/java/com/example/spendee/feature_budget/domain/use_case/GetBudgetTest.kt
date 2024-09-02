@@ -4,20 +4,24 @@ import com.example.spendee.feature_budget.data.repository.FakeBudgetRepository
 import com.example.spendee.feature_budget.domain.model.Budget
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import java.time.LocalDate
 
-class DeleteBudgetTest {
-    private lateinit var deleteBudget: DeleteBudget
+class GetBudgetTest {
+    private lateinit var getBudget: GetBudget
     private lateinit var budgetRepository: FakeBudgetRepository
-    private lateinit var budget: Budget
 
     @Before
     fun setUp() {
         budgetRepository = FakeBudgetRepository()
-        deleteBudget = DeleteBudget(budgetRepository)
-        budget = Budget(
+        getBudget = GetBudget(budgetRepository)
+    }
+
+    @Test
+    fun `Get budget, budget is equal to inserted`() = runBlocking{
+        val insertedBudget = Budget(
             totalAmount = 100.0,
             leftToSpend = 80.0,
             totalSpent = 20.0,
@@ -26,16 +30,12 @@ class DeleteBudgetTest {
             isExceeded = true,
             isExceedNotificationEnabled = true
         )
-        runBlocking {
-            budgetRepository.upsertBudget(budget)
-        }
+        budgetRepository.upsertBudget(insertedBudget)
+        assertEquals(budgetRepository.getBudget().firstOrNull(), insertedBudget)
     }
 
     @Test
-    fun `Delete budget, return null`() = runBlocking {
-        deleteBudget(budget)
-
-        assert(budgetRepository.getBudget().firstOrNull() == null)
+    fun `Get budget without one, return null`() = runBlocking {
+        assertEquals(budgetRepository.getBudget().firstOrNull(), null)
     }
-
 }
