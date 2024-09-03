@@ -39,18 +39,15 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AppModule {
+object TestAppModule {
 
     @Provides
     @Singleton
     fun provideDatabase(app: Application) : SpendeeDatabase {
-        return Room.databaseBuilder(
+        return Room.inMemoryDatabaseBuilder(
             app,
-            SpendeeDatabase::class.java,
-            "spendee_db"
-        )
-            .fallbackToDestructiveMigration()
-            .build()
+            SpendeeDatabase::class.java
+        ).build()
     }
 
     @Provides

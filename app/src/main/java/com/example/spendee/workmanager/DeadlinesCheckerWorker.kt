@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.example.spendee.core.domain.util.NotificationService
+import com.example.spendee.core.domain.util.NotificationServiceImpl
 import com.example.spendee.feature_budget.domain.model.Budget
 import com.example.spendee.feature_budget.domain.repository.BudgetRepository
 import com.example.spendee.feature_goals.domain.repository.GoalRepository
@@ -21,7 +21,7 @@ class DeadlinesCheckerWorker @AssistedInject constructor(
     @Assisted workerParams: WorkerParameters,
     private val budgetRepository: BudgetRepository,
     private val goalsRepository: GoalRepository,
-    private val notificationService: NotificationService
+    private val notificationService: NotificationServiceImpl
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {

@@ -25,6 +25,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.spendee.R
 import com.example.spendee.feature_expenses.domain.model.Expense
 import com.example.spendee.feature_expenses.presentation.expenses.components.ExpensesColumn
@@ -34,16 +36,15 @@ import kotlinx.coroutines.flow.flow
 
 @Composable
 fun ExpensesScreen(
-    expenses: List<Expense>,
-    onEvent: (ExpensesEvent) -> Unit,
-    uiEvent: Flow<UiEvent>,
     onNavigate: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: ExpensesViewModel = hiltViewModel()
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
+    val expenses = viewModel.expenses.collectAsStateWithLifecycle(initialValue = emptyList()).value
     val context = LocalContext.current
     LaunchedEffect(key1 = true) {
-        uiEvent.collect { event ->
+        viewModel.uiEvent.collect { event ->
             when(event) {
                 is UiEvent.Navigate -> {
                     onNavigate(event.route)
@@ -55,7 +56,7 @@ fun ExpensesScreen(
                         duration = SnackbarDuration.Long
                     )
                     if(result == SnackbarResult.ActionPerformed) {
-                        onEvent(ExpensesEvent.OnUndoDelete)
+                        viewModel.onEvent(ExpensesEvent.OnUndoDelete)
                     }
                 }
                 else -> Unit
@@ -66,7 +67,7 @@ fun ExpensesScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    onEvent(ExpensesEvent.OnAddExpenseClick)
+                    viewModel.onEvent(ExpensesEvent.OnAddExpenseClick)
                 },
                 shape = CircleShape,
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -89,7 +90,7 @@ fun ExpensesScreen(
         ) {
             ExpensesColumn(
                 expenses = expenses,
-                onEvent = onEvent,
+                onEvent = viewModel::onEvent,
                 modifier = modifier.padding(16.dp)
             )
         }
@@ -100,9 +101,6 @@ fun ExpensesScreen(
 @Composable
 private fun ExpensesScreenPreview() {
     ExpensesScreen(
-        expenses = emptyList(),
-        onEvent = {},
-        uiEvent = flow {},
         onNavigate = {}
     )
 }

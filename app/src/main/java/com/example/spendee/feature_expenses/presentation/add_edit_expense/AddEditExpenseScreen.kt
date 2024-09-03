@@ -33,6 +33,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.spendee.R
 import com.example.spendee.feature_expenses.domain.util.ExpenseCategory
 import com.example.spendee.feature_expenses.presentation.add_edit_expense.components.CategoryCard
@@ -42,17 +44,16 @@ import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun AddEditExpenseScreen(
-    onEvent: (AddEditExpenseEvent) -> Unit,
-    state: AddEditExpenseState,
-    uiEvent: Flow<UiEvent>,
     onNavigate: (String) -> Unit,
     onPopBackStack: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: AddEditExpenseViewModel = hiltViewModel()
 ) {
+    val state = viewModel.state.collectAsStateWithLifecycle().value
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     LaunchedEffect(key1 = true) {
-        uiEvent.collect { event ->
+        viewModel.uiEvent.collect { event ->
             when(event) {
                 UiEvent.PopBackStack -> onPopBackStack()
                 is UiEvent.Navigate -> onNavigate(event.route)
@@ -68,7 +69,7 @@ fun AddEditExpenseScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    onEvent(AddEditExpenseEvent.OnSaveExpenseClick)
+                    viewModel.onEvent(AddEditExpenseEvent.OnSaveExpenseClick)
                 },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = Color.White
@@ -97,7 +98,7 @@ fun AddEditExpenseScreen(
                 value = state.amount,
                 onValueChange = { amount ->
                     if (isValidNumberInput(amount)) {
-                        onEvent(AddEditExpenseEvent.OnAmountChange(amount))
+                        viewModel.onEvent(AddEditExpenseEvent.OnAmountChange(amount))
                     }
                 },
                 placeholder = { Text(stringResource(R.string.amount)) },
@@ -112,7 +113,7 @@ fun AddEditExpenseScreen(
                 value = state.description,
                 onValueChange = {description ->
                     if (description.isNotBlank()) {
-                        onEvent(AddEditExpenseEvent.OnDescriptionChange(description))
+                        viewModel.onEvent(AddEditExpenseEvent.OnDescriptionChange(description))
                     }
                 },
                 placeholder = {
@@ -146,7 +147,7 @@ fun AddEditExpenseScreen(
                     CategoryCard(
                         drawable = category.iconResource,
                         isSelected = category.id == state.categoryId,
-                        onClick = { onEvent(AddEditExpenseEvent.OnCategoryChange(category.id)) },
+                        onClick = { viewModel.onEvent(AddEditExpenseEvent.OnCategoryChange(category.id)) },
                         text = category.name
                     )
                 }

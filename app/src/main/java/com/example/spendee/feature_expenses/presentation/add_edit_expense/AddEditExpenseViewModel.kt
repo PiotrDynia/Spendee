@@ -80,8 +80,9 @@ class AddEditExpenseViewModel @Inject constructor(
     private fun saveExpense() {
         viewModelScope.launch {
             val originalAmount = _state.value.originalAmount.toDoubleOrNull() ?: 0.0
+            val amount = _state.value.amount.toDoubleOrNull() ?: 0.0
             try {
-                useCases.addExpense(originalAmount = originalAmount, isNewExpense = isNewExpense, expense = createExpenseFromState(_state.value.amount.toDouble()))
+                useCases.addExpense(originalAmount = originalAmount, isNewExpense = isNewExpense, expense = createExpenseFromState(amount))
                 sendUiEvent(UiEvent.Navigate(Routes.EXPENSES))
             } catch (e: InvalidExpenseException) {
                 sendUiEvent(UiEvent.ShowSnackbar(

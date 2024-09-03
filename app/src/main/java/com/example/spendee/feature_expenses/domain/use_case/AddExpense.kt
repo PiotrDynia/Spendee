@@ -22,7 +22,7 @@ class AddExpense(
     suspend operator fun invoke(originalAmount: Double, isNewExpense: Boolean, expense: Expense) {
         val amount = expense.amount
         when {
-            amount.toString().isBlank() -> {
+            amount == 0.0 -> {
                 throw InvalidExpenseException(R.string.amount_cant_be_empty)
             }
             expense.description.isBlank() -> {
