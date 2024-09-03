@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,34 +21,35 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.spendee.feature_budget.presentation.add_edit_budget.AddEditBudgetScreen
-import com.example.spendee.feature_budget.presentation.budget.BudgetScreen
-import com.example.spendee.feature_budget.presentation.budget.NoBudgetScreen
-import com.example.spendee.feature_budget.presentation.add_edit_budget.AddEditBudgetViewModel
-import com.example.spendee.feature_budget.presentation.budget.BudgetViewModel
-import com.example.spendee.feature_current_balance.presentation.current_balance.CurrentBalanceScreen
-import com.example.spendee.feature_current_balance.presentation.current_balance.CurrentBalanceViewModel
-import com.example.spendee.feature_expenses.presentation.add_edit_expense.AddEditExpenseScreen
-import com.example.spendee.feature_expenses.presentation.expenses.ExpensesScreen
-import com.example.spendee.feature_expenses.presentation.add_edit_expense.AddEditExpenseViewModel
-import com.example.spendee.feature_expenses.presentation.expenses.ExpensesViewModel
-import com.example.spendee.feature_goals.presentation.add_edit_goal.AddEditGoalScreen
-import com.example.spendee.feature_goals.presentation.goals.GoalsScreen
-import com.example.spendee.feature_goals.presentation.goals.NoGoalsScreen
-import com.example.spendee.feature_goals.presentation.add_edit_goal.AddEditGoalViewModel
-import com.example.spendee.feature_goals.presentation.goals.GoalsViewModel
 import com.example.spendee.core.presentation.navigation.BottomNavItem
 import com.example.spendee.core.presentation.navigation.BottomNavigationBar
 import com.example.spendee.core.presentation.util.AnimatedVisibilityComposable
 import com.example.spendee.core.presentation.util.HandleNotificationPermission
 import com.example.spendee.core.presentation.util.LoadingScreen
 import com.example.spendee.core.presentation.util.Routes
+import com.example.spendee.feature_budget.presentation.add_edit_budget.AddEditBudgetScreen
+import com.example.spendee.feature_budget.presentation.add_edit_budget.AddEditBudgetViewModel
+import com.example.spendee.feature_budget.presentation.budget.BudgetScreen
+import com.example.spendee.feature_budget.presentation.budget.BudgetViewModel
+import com.example.spendee.feature_budget.presentation.budget.NoBudgetScreen
+import com.example.spendee.feature_current_balance.presentation.current_balance.CurrentBalanceScreen
+import com.example.spendee.feature_current_balance.presentation.current_balance.CurrentBalanceViewModel
+import com.example.spendee.feature_expenses.presentation.add_edit_expense.AddEditExpenseScreen
+import com.example.spendee.feature_expenses.presentation.add_edit_expense.AddEditExpenseViewModel
+import com.example.spendee.feature_expenses.presentation.expenses.ExpensesScreen
+import com.example.spendee.feature_expenses.presentation.expenses.ExpensesViewModel
+import com.example.spendee.feature_goals.presentation.add_edit_goal.AddEditGoalScreen
+import com.example.spendee.feature_goals.presentation.add_edit_goal.AddEditGoalViewModel
+import com.example.spendee.feature_goals.presentation.goals.GoalsScreen
+import com.example.spendee.feature_goals.presentation.goals.GoalsViewModel
+import com.example.spendee.feature_goals.presentation.goals.NoGoalsScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -139,7 +139,7 @@ fun SetupNavHost(
         composable(Routes.CURRENT_BALANCE) {
             val viewModel = hiltViewModel<CurrentBalanceViewModel>()
             CurrentBalanceScreen(
-                state = viewModel.viewState.collectAsState().value,
+                state = viewModel.viewState.collectAsStateWithLifecycle().value,
                 onEvent = viewModel::onEvent,
                 onNavigate = { route -> navController.navigate(route) },
                 onShowMoreClick = {
@@ -153,7 +153,7 @@ fun SetupNavHost(
             val viewModel = hiltViewModel<ExpensesViewModel>()
             ExpensesScreen(
                 onEvent = viewModel::onEvent,
-                expenses = viewModel.expenses.collectAsState(initial = emptyList()).value,
+                expenses = viewModel.expenses.collectAsStateWithLifecycle(initialValue = emptyList()).value,
                 onNavigate = { navController.navigate(it) },
                 uiEvent = viewModel.uiEvent
             )
@@ -161,16 +161,16 @@ fun SetupNavHost(
         composable(Routes.BUDGET) {
             val viewModel = hiltViewModel<BudgetViewModel>()
             val budget = viewModel.budget
-            val isLoading = viewModel.isLoading.collectAsState().value
+            val isLoading = viewModel.isLoading.collectAsStateWithLifecycle().value
             when {
                 isLoading -> LoadingScreen()
-                budget.collectAsState().value == null -> NoBudgetScreen(
+                budget.collectAsStateWithLifecycle().value == null -> NoBudgetScreen(
                     onEvent = viewModel::onEvent,
                     onNavigate = { navController.navigate(it) },
                     uiEvent = viewModel.uiEvent
                 )
                 else -> BudgetScreen(
-                    budget = budget.collectAsState().value!!,
+                    budget = budget.collectAsStateWithLifecycle().value!!,
                     onEvent = viewModel::onEvent,
                     onNavigate = { navController.navigate(it) },
                     uiEvent = viewModel.uiEvent
@@ -179,9 +179,9 @@ fun SetupNavHost(
         }
         composable(Routes.GOALS) {
             val viewModel = hiltViewModel<GoalsViewModel>()
-            val goals = viewModel.goalsState.collectAsState(initial = emptyList()).value
-            val balance = viewModel.balanceState.collectAsState().value
-            val isLoading = viewModel.isLoading.collectAsState().value
+            val goals = viewModel.goalsState.collectAsStateWithLifecycle(initialValue = emptyList()).value
+            val balance = viewModel.balanceState.collectAsStateWithLifecycle().value
+            val isLoading = viewModel.isLoading.collectAsStateWithLifecycle().value
 
             when {
                 isLoading -> LoadingScreen()
@@ -210,7 +210,7 @@ fun SetupNavHost(
             AddEditExpenseScreen(
                 onEvent = viewModel::onEvent,
                 uiEvent = viewModel.uiEvent,
-                state = viewModel.state.collectAsState().value,
+                state = viewModel.state.collectAsStateWithLifecycle().value,
                 onNavigate = { route -> navController.navigate(route) },
                 onPopBackStack = { navController.popBackStack() }
             )
@@ -226,7 +226,7 @@ fun SetupNavHost(
             AddEditBudgetScreen(
                 onEvent = viewModel::onEvent,
                 uiEvent = viewModel.uiEvent,
-                state = viewModel.state.collectAsState().value,
+                state = viewModel.state.collectAsStateWithLifecycle().value,
                 onNavigate = { route -> navController.navigate(route) },
                 onPopBackStack = { navController.popBackStack() }
             )
@@ -242,7 +242,7 @@ fun SetupNavHost(
             AddEditGoalScreen(
                 onEvent = viewModel::onEvent,
                 uiEvent = viewModel.uiEvent,
-                state = viewModel.state.collectAsState().value,
+                state = viewModel.state.collectAsStateWithLifecycle().value,
                 onNavigate = { route -> navController.navigate(route) },
                 onPopBackStack = { navController.popBackStack() }
             )

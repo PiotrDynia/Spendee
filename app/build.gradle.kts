@@ -17,7 +17,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.example.spendee.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -56,6 +56,7 @@ dependencies {
     // Room
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.lifecycle.runtime.compose.android)
     ksp(libs.androidx.room.compiler)
 
     // Navigation
