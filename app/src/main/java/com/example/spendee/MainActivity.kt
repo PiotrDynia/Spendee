@@ -42,7 +42,6 @@ import com.example.spendee.feature_current_balance.presentation.current_balance.
 import com.example.spendee.feature_expenses.presentation.add_edit_expense.AddEditExpenseScreen
 import com.example.spendee.feature_expenses.presentation.expenses.ExpensesScreen
 import com.example.spendee.feature_goals.presentation.add_edit_goal.AddEditGoalScreen
-import com.example.spendee.feature_goals.presentation.add_edit_goal.AddEditGoalViewModel
 import com.example.spendee.feature_goals.presentation.goals.GoalsScreen
 import com.example.spendee.feature_goals.presentation.goals.GoalsViewModel
 import com.example.spendee.feature_goals.presentation.goals.NoGoalsScreen

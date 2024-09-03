@@ -2,6 +2,7 @@ package com.example.spendee.feature_budget.presentation.budget
 
 import SpendeeTheme
 import androidx.compose.ui.test.SemanticsNodeInteractionCollection
+import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
@@ -49,20 +50,18 @@ class BudgetScreenTest {
 
         val mockUiEvent = mock(UiEvent::class.java)
 
+        val budgetFlow = MutableStateFlow<Budget?>(Budget(
+            totalAmount = 200.0,
+            leftToSpend = 180.0,
+            totalSpent = 20.0,
+            startDate = LocalDate.now().minusDays(5),
+            endDate = LocalDate.now().plusDays(5),
+            isExceeded = false,
+            isExceedNotificationEnabled = true
+        ))
+
         mockViewModel = mock(BudgetViewModel::class.java).apply {
-            whenever(budget).thenReturn(
-                MutableStateFlow(
-                    Budget(
-                        totalAmount = 200.0,
-                        leftToSpend = 180.0,
-                        totalSpent = 20.0,
-                        startDate = LocalDate.now().minusDays(5),
-                        endDate = LocalDate.now().plusDays(5),
-                        isExceeded = false,
-                        isExceedNotificationEnabled = true
-                        )
-                )
-            )
+            whenever(budget).thenReturn(budgetFlow)
             whenever(isLoading).thenReturn(MutableStateFlow(false))
             whenever(uiEvent).thenReturn(MutableStateFlow(mockUiEvent))
         }
@@ -103,55 +102,39 @@ class BudgetScreenTest {
 
     @Test
     fun showNoBudgetScreenWhenNoBudget() {
-        whenever(mockViewModel.budget).thenReturn(MutableStateFlow(null))
-        composeRule.setContent {
-            val navController = rememberNavController()
-            SpendeeTheme {
-                NavHost(
-                    navController = navController,
-                    startDestination = Routes.BUDGET
-                ) {
-                    composable(route = Routes.BUDGET) {
-                        val viewModel = mockViewModel
-                        val budget = viewModel.budget.collectAsStateWithLifecycle().value
-                        val isLoading = viewModel.isLoading.collectAsStateWithLifecycle().value
-
-                        when {
-                            isLoading -> LoadingScreen()
-                            budget == null -> NoBudgetScreen(
-                                onEvent = viewModel::onEvent,
-                                onNavigate = { navController.navigate(it) },
-                                uiEvent = viewModel.uiEvent
-                            )
-
-                            else -> BudgetScreen(
-                                budget = budget,
-                                onEvent = viewModel::onEvent,
-                                onNavigate = { navController.navigate(it) },
-                                uiEvent = viewModel.uiEvent
-                            )
-                        }
-                    }
-                }
-            }
-        }
-        composeRule.onNodeWithText(context.getString(R.string.you_have_no_budget_set))
+        (mockViewModel.budget as MutableStateFlow).value = null
+        composeRule
+            .onNodeWithText(context.getString(R.string.you_have_no_budget_set))
             .assertIsDisplayed()
-        composeRule.onNodeWithText(context.getString(R.string.set_budget)).assertIsDisplayed()
+        composeRule
+            .onNodeWithText(context.getString(R.string.set_budget))
+            .assertIsDisplayed()
+            .assertHasClickAction()
     }
 
     @Test
     fun showBudgetScreenWhenBudgetIsPresent() {
-        composeRule.onAllNodesWithText(context.getString(R.string.you_can_spend)).assertAreDisplayed()
-        composeRule.onAllNodesWithText(context.getString(R.string.spent)).assertAreDisplayed()
+        composeRule
+            .onAllNodesWithText(context.getString(R.string.you_can_spend))
+            .assertAreDisplayed()
+        composeRule
+            .onAllNodesWithText(context.getString(R.string.spent))
+            .assertAreDisplayed()
     }
 
-    @Test fun showOptionsMenuOnClick() {
+    @Test
+    fun showOptionsMenuOnClick() {
         composeRule
             .onNodeWithContentDescription(context.getString(R.string.more_options))
             .performClick()
-        composeRule.onNodeWithText(context.getString(R.string.edit)).assertIsDisplayed()
-        composeRule.onNodeWithText(context.getString(R.string.delete)).assertIsDisplayed()
+        composeRule
+            .onNodeWithText(context.getString(R.string.edit))
+            .assertIsDisplayed()
+            .assertHasClickAction()
+        composeRule
+            .onNodeWithText(context.getString(R.string.delete))
+            .assertIsDisplayed()
+            .assertHasClickAction()
     }
 
     private fun SemanticsNodeInteractionCollection.assertAreDisplayed(): SemanticsNodeInteractionCollection {
