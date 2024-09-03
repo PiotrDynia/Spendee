@@ -8,6 +8,12 @@
       <SelectionState runConfigName="showNoBudgetScreenWhenNoBudget()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
+      <SelectionState runConfigName="showBudgetScreenWhenBudgetIsPresent()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="showOptionsMenuOnClick()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>
