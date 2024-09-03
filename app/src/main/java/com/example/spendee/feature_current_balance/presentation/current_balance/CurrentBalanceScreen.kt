@@ -45,6 +45,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.spendee.R
 import com.example.spendee.feature_current_balance.presentation.current_balance.components.BalanceAlertDialog
 import com.example.spendee.feature_current_balance.presentation.current_balance.components.CurrentBalanceTexts
@@ -56,13 +58,12 @@ import kotlinx.coroutines.flow.flow
 
 @Composable
 fun CurrentBalanceScreen(
-    state: CurrentBalanceState,
-    onEvent: (CurrentBalanceEvent) -> Unit,
     onShowMoreClick: () -> Unit,
     onNavigate: (String) -> Unit,
-    uiEvent: Flow<UiEvent>,
-    modifier: Modifier = Modifier
-    ) {
+    modifier: Modifier = Modifier,
+    viewModel: CurrentBalanceViewModel = hiltViewModel()
+) {
+    val state = viewModel.viewState.collectAsStateWithLifecycle().value
     val infiniteTransition = rememberInfiniteTransition(label = "infinite transition")
     val animatedCircleColor by infiniteTransition.animateColor(
         initialValue = Color(0xFF60DDAD),
@@ -95,7 +96,7 @@ fun CurrentBalanceScreen(
     val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
-        uiEvent.collect { event ->
+        viewModel.uiEvent.collect { event ->
             when(event) {
                 is UiEvent.Navigate -> onNavigate(event.route)
                 is UiEvent.ShowSnackbar -> snackbarHostState.showSnackbar(context.getString(event.message))
@@ -145,13 +146,13 @@ fun CurrentBalanceScreen(
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                    onEvent(CurrentBalanceEvent.OnSetBalanceClick)
+                    viewModel.onEvent(CurrentBalanceEvent.OnSetBalanceClick)
                 }
             ) {
                 Text(text = stringResource(R.string.set_balance))
             }
             if (state.isDialogOpen) {
-                BalanceAlertDialog(onEvent = onEvent, currentAmount = state.currentAmount)
+                BalanceAlertDialog(onEvent = viewModel::onEvent, currentAmount = state.currentAmount)
             }
             Spacer(modifier = Modifier.height(16.dp))
             Box(
@@ -165,8 +166,8 @@ fun CurrentBalanceScreen(
                     latestExpenses = state.latestExpenses,
                     onShowMoreClick = {
                         onShowMoreClick()
-                        onEvent(CurrentBalanceEvent.OnShowMoreClick) },
-                    onExpenseClick = {expense -> onEvent(CurrentBalanceEvent.OnExpenseClick(expense))},
+                        viewModel.onEvent(CurrentBalanceEvent.OnShowMoreClick) },
+                    onExpenseClick = {expense -> viewModel.onEvent(CurrentBalanceEvent.OnExpenseClick(expense))},
                     modifier = modifier.padding(16.dp)
                 )
             }
@@ -178,10 +179,7 @@ fun CurrentBalanceScreen(
 @Composable
 private fun CurrentBalanceScreenPreview() {
     CurrentBalanceScreen(
-        state = CurrentBalanceState(),
-        onEvent = {},
         onNavigate = {},
-        onShowMoreClick = {},
-        uiEvent = flow{}
+        onShowMoreClick = {}
     )
 }

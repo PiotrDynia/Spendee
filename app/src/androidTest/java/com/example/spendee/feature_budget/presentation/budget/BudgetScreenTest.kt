@@ -35,7 +35,7 @@ class BudgetScreenTest {
                     startDestination = Routes.BUDGET
                 ) {
                     composable(route = Routes.BUDGET) {
-                        BudgetScreen(budget = , onEvent = , uiEvent = , onNavigate = )
+//                        BudgetScreen(budget = , onEvent = , uiEvent = , onNavigate = )
                     }
                 }
             }

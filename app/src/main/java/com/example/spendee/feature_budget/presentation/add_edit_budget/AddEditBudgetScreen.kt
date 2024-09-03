@@ -39,6 +39,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.chargemap.compose.numberpicker.NumberPicker
 import com.example.spendee.R
 import com.example.spendee.core.presentation.util.DatePickerInput
@@ -49,21 +51,20 @@ import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun AddEditBudgetScreen(
-    onEvent: (AddEditBudgetEvent) -> Unit,
-    state: AddEditBudgetState,
-    uiEvent: Flow<UiEvent>,
     onNavigate: (String) -> Unit,
     onPopBackStack: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: AddEditBudgetViewModel = hiltViewModel()
 ) {
     var isPickerOpened by remember {
         mutableStateOf(false)
     }
     val snackbarState = remember { SnackbarHostState() }
     val context = LocalContext.current
+    val state = viewModel.state.collectAsStateWithLifecycle().value
 
     LaunchedEffect(key1 = true) {
-        uiEvent.collect { event ->
+        viewModel.uiEvent.collect { event ->
             when (event) {
                 is UiEvent.PopBackStack -> onPopBackStack()
                 is UiEvent.Navigate -> onNavigate(event.route)
@@ -80,7 +81,7 @@ fun AddEditBudgetScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    onEvent(AddEditBudgetEvent.OnSaveBudgetClick)
+                    viewModel.onEvent(AddEditBudgetEvent.OnSaveBudgetClick)
                 },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
@@ -111,7 +112,7 @@ fun AddEditBudgetScreen(
                 value = state.amount,
                 onValueChange = { amount ->
                     if (isValidNumberInput(amount)) {
-                        onEvent(AddEditBudgetEvent.OnAmountChange(amount))
+                        viewModel.onEvent(AddEditBudgetEvent.OnAmountChange(amount))
                     }
                 },
                 placeholder = { Text(stringResource(R.string.enter_budget_amount)) },
@@ -132,7 +133,7 @@ fun AddEditBudgetScreen(
             if (isPickerOpened) {
                 Dialog(onDismissRequest = {
                     isPickerOpened = false
-                    onEvent(AddEditBudgetEvent.OnCancelStartingDay)
+                    viewModel.onEvent(AddEditBudgetEvent.OnCancelStartingDay)
                 }) {
                     Card(
                         shape = RoundedCornerShape(16.dp),
@@ -154,7 +155,7 @@ fun AddEditBudgetScreen(
                             NumberPicker(
                                 value = state.startingDay ?: 1,
                                 onValueChange = {
-                                    onEvent(AddEditBudgetEvent.OnChangeStartingDay(it))
+                                    viewModel.onEvent(AddEditBudgetEvent.OnChangeStartingDay(it))
                                 },
                                 range = 1..31,
                                 modifier = Modifier
@@ -171,7 +172,7 @@ fun AddEditBudgetScreen(
                                 Button(
                                     onClick = {
                                         isPickerOpened = false
-                                        onEvent(AddEditBudgetEvent.OnCancelStartingDay)
+                                        viewModel.onEvent(AddEditBudgetEvent.OnCancelStartingDay)
                                     },
                                     colors = ButtonDefaults.buttonColors(
                                         containerColor = MaterialTheme.colorScheme.secondary,
@@ -200,7 +201,7 @@ fun AddEditBudgetScreen(
                 text = R.string.notify_me_when_i_exceed_my_budget,
                 switchState = state.isExceedButtonPressed,
                 onCheckedChange = { pressed ->
-                    onEvent(
+                    viewModel.onEvent(
                         AddEditBudgetEvent.OnExceedButtonPress(
                             pressed
                         )

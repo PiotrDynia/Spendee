@@ -32,6 +32,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.spendee.R
 import com.example.spendee.core.presentation.util.DatePickerInput
 import com.example.spendee.core.presentation.util.SwitchButtonRow
@@ -43,12 +45,10 @@ import kotlinx.coroutines.flow.Flow
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditGoalScreen(
-    onEvent: (AddEditGoalEvent) -> Unit,
-    state: AddEditGoalState,
-    uiEvent: Flow<UiEvent>,
     onNavigate: (String) -> Unit,
     onPopBackStack: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: AddEditGoalViewModel = hiltViewModel()
 ) {
     val deadlineDateState = rememberDatePickerState()
     val deadlineDate = deadlineDateState.selectedDateMillis?.let {
@@ -56,8 +56,10 @@ fun AddEditGoalScreen(
     } ?: ""
     val snackbarState = remember { SnackbarHostState() }
     val context = LocalContext.current
+    val state = viewModel.state.collectAsStateWithLifecycle().value
+
     LaunchedEffect(key1 = true) {
-        uiEvent.collect { event ->
+        viewModel.uiEvent.collect { event ->
             when (event) {
                 is UiEvent.PopBackStack -> onPopBackStack()
                 is UiEvent.Navigate -> onNavigate(event.route)
@@ -73,7 +75,7 @@ fun AddEditGoalScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    onEvent(AddEditGoalEvent.OnSaveGoalClick)
+                    viewModel.onEvent(AddEditGoalEvent.OnSaveGoalClick)
                 },
                 containerColor = MaterialTheme.colorScheme.secondary
             ) {
@@ -100,7 +102,7 @@ fun AddEditGoalScreen(
             TextField(
                 value = state.description,
                 onValueChange = {
-                    onEvent(AddEditGoalEvent.OnDescriptionChange(it))
+                    viewModel.onEvent(AddEditGoalEvent.OnDescriptionChange(it))
                 },
                 placeholder = {
                     Text(text = stringResource(R.string.description))
@@ -117,7 +119,7 @@ fun AddEditGoalScreen(
                 value = state.targetAmount,
                 onValueChange = { amount ->
                     if (isValidNumberInput(amount)) {
-                        onEvent(AddEditGoalEvent.OnAmountChange(amount))
+                        viewModel.onEvent(AddEditGoalEvent.OnAmountChange(amount))
                     }
                 },
                 placeholder = { Text(text = stringResource(R.string.target_amount)) },
@@ -130,20 +132,20 @@ fun AddEditGoalScreen(
             DatePickerInput(
                 placeholder = R.string.set_a_deadline,
                 value = state.deadline,
-                onClick = { onEvent(AddEditGoalEvent.OnOpenDeadlineDatePicker) }
+                onClick = { viewModel.onEvent(AddEditGoalEvent.OnOpenDeadlineDatePicker) }
             )
             if (state.isDeadlineDatePickerOpened) {
                 DatePickerDialog(
-                    onDismissRequest = { onEvent(AddEditGoalEvent.OnCloseDeadlineDatePicker) },
+                    onDismissRequest = { viewModel.onEvent(AddEditGoalEvent.OnCloseDeadlineDatePicker) },
                     confirmButton = {
                         Button(onClick = {
-                            onEvent(AddEditGoalEvent.OnDeadlineChange(deadlineDate))
+                            viewModel.onEvent(AddEditGoalEvent.OnDeadlineChange(deadlineDate))
                         }) {
                             Text(text = stringResource(R.string.ok))
                         }
                     },
                     dismissButton = {
-                        Button(onClick = { onEvent(AddEditGoalEvent.OnCloseDeadlineDatePicker) }) {
+                        Button(onClick = { viewModel.onEvent(AddEditGoalEvent.OnCloseDeadlineDatePicker) }) {
                             Text(text = stringResource(R.string.cancel))
                         }
                     },
@@ -154,7 +156,7 @@ fun AddEditGoalScreen(
             SwitchButtonRow(
                 text = R.string.notify_me_when_i_reach_my_goal,
                 onCheckedChange = { pressed ->
-                    onEvent(AddEditGoalEvent.OnReachedButtonPress(pressed))
+                    viewModel.onEvent(AddEditGoalEvent.OnReachedButtonPress(pressed))
                 },
                 switchState = state.isReachedButtonPressed
             )

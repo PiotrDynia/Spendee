@@ -35,16 +35,12 @@ import com.example.spendee.core.presentation.util.HandleNotificationPermission
 import com.example.spendee.core.presentation.util.LoadingScreen
 import com.example.spendee.core.presentation.util.Routes
 import com.example.spendee.feature_budget.presentation.add_edit_budget.AddEditBudgetScreen
-import com.example.spendee.feature_budget.presentation.add_edit_budget.AddEditBudgetViewModel
 import com.example.spendee.feature_budget.presentation.budget.BudgetScreen
 import com.example.spendee.feature_budget.presentation.budget.BudgetViewModel
 import com.example.spendee.feature_budget.presentation.budget.NoBudgetScreen
 import com.example.spendee.feature_current_balance.presentation.current_balance.CurrentBalanceScreen
-import com.example.spendee.feature_current_balance.presentation.current_balance.CurrentBalanceViewModel
 import com.example.spendee.feature_expenses.presentation.add_edit_expense.AddEditExpenseScreen
-import com.example.spendee.feature_expenses.presentation.add_edit_expense.AddEditExpenseViewModel
 import com.example.spendee.feature_expenses.presentation.expenses.ExpensesScreen
-import com.example.spendee.feature_expenses.presentation.expenses.ExpensesViewModel
 import com.example.spendee.feature_goals.presentation.add_edit_goal.AddEditGoalScreen
 import com.example.spendee.feature_goals.presentation.add_edit_goal.AddEditGoalViewModel
 import com.example.spendee.feature_goals.presentation.goals.GoalsScreen
@@ -137,25 +133,17 @@ fun SetupNavHost(
 ) {
     NavHost(navController = navController, startDestination = Routes.CURRENT_BALANCE) {
         composable(Routes.CURRENT_BALANCE) {
-            val viewModel = hiltViewModel<CurrentBalanceViewModel>()
             CurrentBalanceScreen(
-                state = viewModel.viewState.collectAsStateWithLifecycle().value,
-                onEvent = viewModel::onEvent,
                 onNavigate = { route -> navController.navigate(route) },
                 onShowMoreClick = {
                     onItemSelected(Routes.EXPENSES)
                     navController.navigate(Routes.EXPENSES)
-                },
-                uiEvent = viewModel.uiEvent
+                }
             )
         }
         composable(Routes.EXPENSES) {
-            val viewModel = hiltViewModel<ExpensesViewModel>()
             ExpensesScreen(
-                onEvent = viewModel::onEvent,
-                expenses = viewModel.expenses.collectAsStateWithLifecycle(initialValue = emptyList()).value,
                 onNavigate = { navController.navigate(it) },
-                uiEvent = viewModel.uiEvent
             )
         }
         composable(Routes.BUDGET) {
@@ -206,11 +194,7 @@ fun SetupNavHost(
                 defaultValue = 0
             })
         ) {
-            val viewModel = hiltViewModel<AddEditExpenseViewModel>()
             AddEditExpenseScreen(
-                onEvent = viewModel::onEvent,
-                uiEvent = viewModel.uiEvent,
-                state = viewModel.state.collectAsStateWithLifecycle().value,
                 onNavigate = { route -> navController.navigate(route) },
                 onPopBackStack = { navController.popBackStack() }
             )
@@ -222,11 +206,7 @@ fun SetupNavHost(
                 defaultValue = false
             })
         ) {
-            val viewModel = hiltViewModel<AddEditBudgetViewModel>()
             AddEditBudgetScreen(
-                onEvent = viewModel::onEvent,
-                uiEvent = viewModel.uiEvent,
-                state = viewModel.state.collectAsStateWithLifecycle().value,
                 onNavigate = { route -> navController.navigate(route) },
                 onPopBackStack = { navController.popBackStack() }
             )
@@ -238,11 +218,7 @@ fun SetupNavHost(
                 defaultValue = 0
             })
         ) {
-            val viewModel = hiltViewModel<AddEditGoalViewModel>()
             AddEditGoalScreen(
-                onEvent = viewModel::onEvent,
-                uiEvent = viewModel.uiEvent,
-                state = viewModel.state.collectAsStateWithLifecycle().value,
                 onNavigate = { route -> navController.navigate(route) },
                 onPopBackStack = { navController.popBackStack() }
             )
