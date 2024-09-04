@@ -107,6 +107,24 @@ class BudgetScreenTest {
     }
 
     @Test
+    fun showBudgetExceededTextWhenBudgetExceeded() {
+        val exceededBudget = Budget(
+            totalAmount = 200.0,
+            leftToSpend = 0.0,
+            totalSpent = 220.0,
+            startDate = LocalDate.now().minusDays(5),
+            endDate = LocalDate.now().plusDays(5),
+            isExceeded = true,
+            isExceedNotificationEnabled = true
+        )
+        (mockViewModel.budget as MutableStateFlow).value = exceededBudget
+
+        composeRule
+            .onNodeWithText(context.getString(R.string.budget_exceeded) + " by ${(exceededBudget.totalSpent - exceededBudget.totalAmount)}$!")
+            .assertIsDisplayed()
+    }
+
+    @Test
     fun showBudgetScreenWhenBudgetIsPresent() {
         composeRule
             .onAllNodesWithText(context.getString(R.string.you_can_spend))
