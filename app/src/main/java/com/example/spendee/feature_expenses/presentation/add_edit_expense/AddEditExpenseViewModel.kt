@@ -3,7 +3,6 @@ package com.example.spendee.feature_expenses.presentation.add_edit_expense
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.spendee.core.presentation.util.Routes
 import com.example.spendee.core.presentation.util.UiEvent
 import com.example.spendee.feature_expenses.domain.model.Expense
 import com.example.spendee.feature_expenses.domain.model.InvalidExpenseException
@@ -83,7 +82,7 @@ class AddEditExpenseViewModel @Inject constructor(
             val amount = _state.value.amount.toDoubleOrNull() ?: 0.0
             try {
                 useCases.addExpense(originalAmount = originalAmount, isNewExpense = isNewExpense, expense = createExpenseFromState(amount))
-                sendUiEvent(UiEvent.Navigate(Routes.EXPENSES))
+                sendUiEvent(UiEvent.PopBackStack)
             } catch (e: InvalidExpenseException) {
                 sendUiEvent(UiEvent.ShowSnackbar(
                     message = e.messageResId

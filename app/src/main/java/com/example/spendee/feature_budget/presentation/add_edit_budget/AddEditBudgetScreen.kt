@@ -47,7 +47,6 @@ import com.example.spendee.core.presentation.util.DatePickerInput
 import com.example.spendee.core.presentation.util.SwitchButtonRow
 import com.example.spendee.core.presentation.util.UiEvent
 import com.example.spendee.core.domain.util.isValidNumberInput
-import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun AddEditBudgetScreen(
@@ -126,8 +125,10 @@ fun AddEditBudgetScreen(
             )
             DatePickerInput(
                 placeholder = R.string.select_a_starting_day_of_the_month,
-                value = state.startingDay?.toString() ?: "",
-                onClick = { isPickerOpened = true },
+                value = state.startingDayInput?.toString() ?: "",
+                onClick = {
+                    isPickerOpened = true
+                },
                 modifier = Modifier.fillMaxWidth()
             )
             if (isPickerOpened) {
@@ -153,7 +154,7 @@ fun AddEditBudgetScreen(
                             )
 
                             NumberPicker(
-                                value = state.startingDay ?: 1,
+                                value = state.startingDayPicker ?: 1,
                                 onValueChange = {
                                     viewModel.onEvent(AddEditBudgetEvent.OnChangeStartingDay(it))
                                 },
@@ -184,6 +185,7 @@ fun AddEditBudgetScreen(
                                 Button(
                                     onClick = {
                                         isPickerOpened = false
+                                        viewModel.onEvent(AddEditBudgetEvent.OnConfirmStartingDay)
                                     },
                                     colors = ButtonDefaults.buttonColors(
                                         containerColor = MaterialTheme.colorScheme.primary,

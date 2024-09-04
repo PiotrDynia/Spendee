@@ -18,7 +18,7 @@ class AddBudget(
     @Throws(InvalidBudgetException::class)
     suspend operator fun invoke(state: AddEditBudgetState) {
         val amount = state.amount
-        val startingDay = state.startingDay
+        val startingDay = state.startingDayInput
 
         if (amount.isBlank()) {
             throw InvalidBudgetException(R.string.amount_cant_be_empty)
