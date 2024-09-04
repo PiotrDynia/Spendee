@@ -8,6 +8,7 @@ import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isToggleable
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -22,6 +23,7 @@ import androidx.navigation.navArgument
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.spendee.MainActivity
 import com.example.spendee.R
+import com.example.spendee.core.domain.util.dateToString
 import com.example.spendee.core.presentation.util.Routes
 import com.example.spendee.di.AppModule
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -31,6 +33,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
+import java.time.LocalDate
 
 @HiltAndroidTest
 @UninstallModules(AppModule::class)
@@ -128,6 +131,28 @@ class AddEditGoalScreenTest {
             .performTextInput(exampleValue)
         composeRule
             .onNodeWithText(exampleValue)
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun calendarInputWorks() {
+        val deadline = LocalDate.now().plusDays(5)
+        val deadlineDayOfWeek = deadline.dayOfWeek.name
+        val deadlineMonth = deadline.month.name
+        val deadlineMonthDay = deadline.dayOfMonth
+        val deadlineYear = deadline.year
+        val dateString = "$deadlineDayOfWeek, $deadlineMonth $deadlineMonthDay, $deadlineYear"
+        composeRule
+            .onNodeWithText(context.getString(R.string.set_a_deadline))
+            .performClick()
+        composeRule
+            .onNode(hasText(dateString, ignoreCase = true))
+            .performClick()
+        composeRule
+            .onNodeWithText(context.getString(R.string.ok))
+            .performClick()
+        composeRule
+            .onNodeWithText(dateToString(deadline))
             .assertIsDisplayed()
     }
 
