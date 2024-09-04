@@ -1,10 +1,14 @@
 package com.example.spendee.feature_budget.presentation.budget
 
 import SpendeeTheme
+import android.Manifest
+import android.os.Build
+import androidx.activity.compose.setContent
 import androidx.compose.ui.test.SemanticsNodeInteractionCollection
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -14,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
+import com.example.spendee.MainActivity
 import com.example.spendee.R
 import com.example.spendee.core.presentation.util.LoadingScreen
 import com.example.spendee.core.presentation.util.Routes
@@ -39,7 +44,7 @@ class BudgetScreenTest {
     val hiltRule = HiltAndroidRule(this)
 
     @get:Rule(order = 1)
-    val composeRule = createComposeRule()
+    val composeRule = createAndroidComposeRule<MainActivity>()
 
     private lateinit var mockViewModel: BudgetViewModel
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
@@ -47,6 +52,11 @@ class BudgetScreenTest {
     @Before
     fun setUp() {
         hiltRule.inject()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val uiAutomation = InstrumentationRegistry.getInstrumentation().uiAutomation
+            uiAutomation.executeShellCommand("pm grant ${context.packageName} ${Manifest.permission.POST_NOTIFICATIONS}")
+        }
 
         val mockUiEvent = mock(UiEvent::class.java)
 
@@ -66,7 +76,7 @@ class BudgetScreenTest {
             whenever(uiEvent).thenReturn(MutableStateFlow(mockUiEvent))
         }
 
-        composeRule.setContent {
+        composeRule.activity.setContent {
             val navController = rememberNavController()
             SpendeeTheme {
                 NavHost(
@@ -124,6 +134,12 @@ class BudgetScreenTest {
 
     @Test
     fun showOptionsMenuOnClick() {
+        composeRule
+            .onNodeWithText(context.getString(R.string.edit))
+            .assertIsNotDisplayed()
+        composeRule
+            .onNodeWithText(context.getString(R.string.delete))
+            .assertIsNotDisplayed()
         composeRule
             .onNodeWithContentDescription(context.getString(R.string.more_options))
             .performClick()
