@@ -23,7 +23,6 @@ import dagger.hilt.android.testing.UninstallModules
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mockito.mock
 
 @HiltAndroidTest
 @UninstallModules(AppModule::class)
@@ -35,7 +34,6 @@ class CurrentBalanceScreenTest {
     @get:Rule(order = 1)
     val composeRule = createAndroidComposeRule<MainActivity>()
 
-    private lateinit var mockViewModel: CurrentBalanceViewModel
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Before
@@ -46,8 +44,6 @@ class CurrentBalanceScreenTest {
             val uiAutomation = InstrumentationRegistry.getInstrumentation().uiAutomation
             uiAutomation.executeShellCommand("pm grant ${context.packageName} ${Manifest.permission.POST_NOTIFICATIONS}")
         }
-
-        mockViewModel = mock(CurrentBalanceViewModel::class.java)
 
         composeRule.activity.setContent {
             val navController = rememberNavController()

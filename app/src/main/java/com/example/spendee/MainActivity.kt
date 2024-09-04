@@ -93,7 +93,11 @@ fun MainScreen(initialRoute: String? = null) {
     var selectedItem by remember { mutableStateOf(items.first().route) }
 
     val onNavigate: (String) -> Unit = { route ->
-        selectedItem = route
+        val itemExists = items.any { it.route == route }
+
+        if (itemExists) {
+            selectedItem = route
+        }
         navController.navigate(route)
     }
 

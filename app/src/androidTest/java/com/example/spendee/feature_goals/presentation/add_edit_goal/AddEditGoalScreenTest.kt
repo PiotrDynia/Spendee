@@ -32,7 +32,6 @@ import dagger.hilt.android.testing.UninstallModules
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mockito.mock
 import java.time.LocalDate
 
 @HiltAndroidTest
@@ -44,7 +43,6 @@ class AddEditGoalScreenTest {
     @get:Rule(order = 1)
     val composeRule = createAndroidComposeRule<MainActivity>()
 
-    private lateinit var mockViewModel: AddEditGoalViewModel
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Before
@@ -55,8 +53,6 @@ class AddEditGoalScreenTest {
             val uiAutomation = InstrumentationRegistry.getInstrumentation().uiAutomation
             uiAutomation.executeShellCommand("pm grant ${context.packageName} ${Manifest.permission.POST_NOTIFICATIONS}")
         }
-
-        mockViewModel = mock(AddEditGoalViewModel::class.java)
 
         composeRule.activity.setContent {
             val navController = rememberNavController()

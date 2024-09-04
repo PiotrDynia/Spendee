@@ -30,7 +30,6 @@ import dagger.hilt.android.testing.UninstallModules
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mockito.mock
 
 @HiltAndroidTest
 @UninstallModules(AppModule::class)
@@ -42,7 +41,6 @@ class AddEditBudgetScreenTest {
     @get:Rule(order = 1)
     val composeRule = createAndroidComposeRule<MainActivity>()
 
-    private lateinit var mockViewModel: AddEditBudgetViewModel
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Before
@@ -53,8 +51,6 @@ class AddEditBudgetScreenTest {
             val uiAutomation = InstrumentationRegistry.getInstrumentation().uiAutomation
             uiAutomation.executeShellCommand("pm grant ${context.packageName} ${Manifest.permission.POST_NOTIFICATIONS}")
         }
-
-        mockViewModel = mock(AddEditBudgetViewModel::class.java)
 
         composeRule.activity.setContent {
             val navController = rememberNavController()
