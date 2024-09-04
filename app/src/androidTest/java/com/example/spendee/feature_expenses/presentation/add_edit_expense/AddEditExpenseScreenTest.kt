@@ -1,4 +1,4 @@
-package com.example.spendee.feature_budget.presentation.add_edit_budget
+package com.example.spendee.feature_expenses.presentation.add_edit_expense
 
 import SpendeeTheme
 import android.Manifest
@@ -6,13 +6,9 @@ import android.os.Build
 import androidx.activity.compose.setContent
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsOff
-import androidx.compose.ui.test.assertIsOn
-import androidx.compose.ui.test.isToggleable
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -34,7 +30,7 @@ import org.mockito.Mockito.mock
 
 @HiltAndroidTest
 @UninstallModules(AppModule::class)
-class AddEditBudgetScreenTest {
+class AddEditExpenseScreenTest {
 
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
@@ -42,7 +38,7 @@ class AddEditBudgetScreenTest {
     @get:Rule(order = 1)
     val composeRule = createAndroidComposeRule<MainActivity>()
 
-    private lateinit var mockViewModel: AddEditBudgetViewModel
+    private lateinit var mockViewModel: AddEditExpenseViewModel
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Before
@@ -54,24 +50,24 @@ class AddEditBudgetScreenTest {
             uiAutomation.executeShellCommand("pm grant ${context.packageName} ${Manifest.permission.POST_NOTIFICATIONS}")
         }
 
-        mockViewModel = mock(AddEditBudgetViewModel::class.java)
+        mockViewModel = mock(AddEditExpenseViewModel::class.java)
 
         composeRule.activity.setContent {
             val navController = rememberNavController()
             SpendeeTheme {
                 NavHost(
                     navController = navController,
-                    startDestination = Routes.ADD_EDIT_BUDGET
+                    startDestination = Routes.ADD_EDIT_EXPENSE
                 ) {
                     composable(
-                        route = Routes.ADD_EDIT_BUDGET + "?isCreated={isCreated}",
-                        arguments = listOf(navArgument("isCreated") {
-                            type = NavType.BoolType
-                            defaultValue = false
+                        route = Routes.ADD_EDIT_EXPENSE + "?expenseId={expenseId}",
+                        arguments = listOf(navArgument("expenseId") {
+                            type = NavType.IntType
+                            defaultValue = 0
                         })
                     ) {
-                        AddEditBudgetScreen(
-                            onNavigate = { route -> navController.navigate(route) },
+                        AddEditExpenseScreen(
+                            onNavigate = { navController.navigate(it) },
                             onPopBackStack = { navController.popBackStack() }
                         )
                     }
@@ -83,34 +79,51 @@ class AddEditBudgetScreenTest {
     @Test
     fun showsAllInputs() {
         composeRule
-            .onNodeWithText(context.getString(R.string.enter_budget_amount))
+            .onNodeWithText(context.getString(R.string.amount))
             .assertIsDisplayed()
             .assertHasClickAction()
         composeRule
-            .onNodeWithText(context.getString(R.string.select_a_starting_day_of_the_month))
+            .onNodeWithText(context.getString(R.string.description))
             .assertIsDisplayed()
             .assertHasClickAction()
         composeRule
-            .onNodeWithText(context.getString(R.string.notify_me_when_i_exceed_my_budget))
+            .onNodeWithText(context.getString(R.string.select_a_category))
             .assertIsDisplayed()
     }
 
     @Test
-    fun canToggleSwitch() {
-        val switch = composeRule.onNode(isToggleable())
-
-        switch.assertIsOff()
-        switch.performClick()
-        switch.assertIsOn()
-        switch.performClick()
-        switch.assertIsOff()
+    fun allCategoriesAreClickable() {
+        composeRule
+            .onNodeWithText(context.getString(R.string.entertainment))
+            .assertHasClickAction()
+        composeRule
+            .onNodeWithText(context.getString(R.string.payments))
+            .assertHasClickAction()
+        composeRule
+            .onNodeWithText(context.getString(R.string.transport))
+            .assertHasClickAction()
+        composeRule
+            .onNodeWithText(context.getString(R.string.personal))
+            .assertHasClickAction()
+        composeRule
+            .onNodeWithText(context.getString(R.string.house))
+            .assertHasClickAction()
+        composeRule
+            .onNodeWithText(context.getString(R.string.everyday))
+            .assertHasClickAction()
+        composeRule
+            .onNodeWithText(context.getString(R.string.health))
+            .assertHasClickAction()
+        composeRule
+            .onNodeWithText(context.getString(R.string.uncategorized))
+            .assertHasClickAction()
     }
 
     @Test
     fun amountInputWorks() {
         val exampleValue = "30.0"
         composeRule
-            .onNodeWithText(context.getString(R.string.enter_budget_amount))
+            .onNodeWithText(context.getString(R.string.amount))
             .performTextInput(exampleValue)
         composeRule
             .onNodeWithText(exampleValue)
@@ -118,15 +131,13 @@ class AddEditBudgetScreenTest {
     }
 
     @Test
-    fun calendarInputWorks() {
+    fun amountDescriptionWorks() {
+        val exampleValue = "Example description"
         composeRule
-            .onNodeWithText(context.getString(R.string.select_a_starting_day_of_the_month))
-            .performClick()
+            .onNodeWithText(context.getString(R.string.description))
+            .performTextInput(exampleValue)
         composeRule
-            .onNodeWithText(context.getString(R.string.ok))
-            .performClick()
-        composeRule
-            .onNodeWithText("1")
+            .onNodeWithText(exampleValue)
             .assertIsDisplayed()
     }
 
