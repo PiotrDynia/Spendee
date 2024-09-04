@@ -20,8 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -32,19 +30,14 @@ import com.example.spendee.core.presentation.navigation.BottomNavItem
 import com.example.spendee.core.presentation.navigation.BottomNavigationBar
 import com.example.spendee.core.presentation.util.AnimatedVisibilityComposable
 import com.example.spendee.core.presentation.util.HandleNotificationPermission
-import com.example.spendee.core.presentation.util.LoadingScreen
 import com.example.spendee.core.presentation.util.Routes
 import com.example.spendee.feature_budget.presentation.add_edit_budget.AddEditBudgetScreen
 import com.example.spendee.feature_budget.presentation.budget.BudgetScreen
-import com.example.spendee.feature_budget.presentation.budget.BudgetViewModel
-import com.example.spendee.feature_budget.presentation.budget.NoBudgetScreen
 import com.example.spendee.feature_current_balance.presentation.current_balance.CurrentBalanceScreen
 import com.example.spendee.feature_expenses.presentation.add_edit_expense.AddEditExpenseScreen
 import com.example.spendee.feature_expenses.presentation.expenses.ExpensesScreen
 import com.example.spendee.feature_goals.presentation.add_edit_goal.AddEditGoalScreen
 import com.example.spendee.feature_goals.presentation.goals.GoalsScreen
-import com.example.spendee.feature_goals.presentation.goals.GoalsViewModel
-import com.example.spendee.feature_goals.presentation.goals.NoGoalsScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -147,45 +140,12 @@ fun SetupNavHost(
             )
         }
         composable(Routes.BUDGET) {
-            val viewModel = hiltViewModel<BudgetViewModel>()
-            val budget = viewModel.budget
-            val isLoading = viewModel.isLoading.collectAsStateWithLifecycle().value
-            when {
-                isLoading -> LoadingScreen()
-                budget.collectAsStateWithLifecycle().value == null -> NoBudgetScreen(
-                    onEvent = viewModel::onEvent,
-                    onNavigate = { onNavigate(it) },
-                    uiEvent = viewModel.uiEvent
-                )
-                else -> BudgetScreen(
-                    budget = budget.collectAsStateWithLifecycle().value!!,
-                    onEvent = viewModel::onEvent,
-                    onNavigate = { onNavigate(it) },
-                    uiEvent = viewModel.uiEvent
-                )
-            }
+            BudgetScreen(
+                onNavigate = { onNavigate(it) }
+            )
         }
         composable(Routes.GOALS) {
-            val viewModel = hiltViewModel<GoalsViewModel>()
-            val goals = viewModel.goalsState.collectAsStateWithLifecycle(initialValue = emptyList()).value
-            val balance = viewModel.balanceState.collectAsStateWithLifecycle().value
-            val isLoading = viewModel.isLoading.collectAsStateWithLifecycle().value
-
-            when {
-                isLoading -> LoadingScreen()
-                goals.isEmpty() -> NoGoalsScreen(
-                    onEvent = viewModel::onEvent,
-                    onNavigate = { onNavigate(it) },
-                    uiEvent = viewModel.uiEvent
-                )
-                else -> GoalsScreen(
-                    goals = goals,
-                    balance = balance!!,
-                    onEvent = viewModel::onEvent,
-                    onNavigate = { onNavigate(it) },
-                    uiEvent = viewModel.uiEvent
-                )
-            }
+            GoalsScreen(onNavigate = { onNavigate(it) })
         }
         composable(
             route = Routes.ADD_EDIT_EXPENSE + "?expenseId={expenseId}",
