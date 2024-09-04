@@ -4,22 +4,25 @@ import SpendeeTheme
 import android.Manifest
 import android.os.Build
 import androidx.activity.compose.setContent
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.navigation.NavType
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.spendee.MainActivity
+import com.example.spendee.R
 import com.example.spendee.core.presentation.util.Routes
 import com.example.spendee.di.AppModule
-import com.example.spendee.feature_budget.presentation.add_edit_budget.AddEditBudgetScreen
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
 import org.junit.Before
 import org.junit.Rule
+import org.junit.Test
 import org.mockito.Mockito.mock
 
 @HiltAndroidTest
@@ -51,7 +54,7 @@ class CurrentBalanceScreenTest {
             SpendeeTheme {
                 NavHost(
                     navController = navController,
-                    startDestination = Routes.ADD_EDIT_BUDGET
+                    startDestination = Routes.CURRENT_BALANCE
                 ) {
                     composable(Routes.CURRENT_BALANCE) {
                         CurrentBalanceScreen(
@@ -64,5 +67,44 @@ class CurrentBalanceScreenTest {
                 }
             }
         }
+    }
+
+    @Test
+    fun clickingButtonOpensDialog() {
+        composeRule
+            .onNodeWithText(context.getString(R.string.set_balance))
+            .performClick()
+        composeRule
+            .onNodeWithText(context.getString(R.string.ok))
+            .assertIsDisplayed()
+        composeRule
+            .onNodeWithText(context.getString(R.string.cancel))
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun clickingCancelClosesDialog() {
+        composeRule
+            .onNodeWithText(context.getString(R.string.set_balance))
+            .performClick()
+        composeRule
+            .onNodeWithText(context.getString(R.string.cancel))
+            .performClick()
+        composeRule
+            .onNodeWithText(context.getString(R.string.cancel))
+            .assertIsNotDisplayed()
+    }
+
+    @Test
+    fun clickingOkClosesDialog() {
+        composeRule
+            .onNodeWithText(context.getString(R.string.set_balance))
+            .performClick()
+        composeRule
+            .onNodeWithText(context.getString(R.string.ok))
+            .performClick()
+        composeRule
+            .onNodeWithText(context.getString(R.string.ok))
+            .assertIsNotDisplayed()
     }
 }
