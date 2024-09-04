@@ -99,16 +99,18 @@ fun MainScreen(initialRoute: String? = null) {
 
     var selectedItem by remember { mutableStateOf(items.first().route) }
 
+    val onNavigate: (String) -> Unit = { route ->
+        selectedItem = route
+        navController.navigate(route)
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             BottomNavigationBar(
                 items = items,
                 selectedItem = selectedItem,
-                onNavigate = { route ->
-                    selectedItem = route
-                    navController.navigate(route)
-                }
+                onNavigate = onNavigate
             )
         }
     ) { padding ->
@@ -117,7 +119,7 @@ fun MainScreen(initialRoute: String? = null) {
                 SetupNavHost(
                     navController = navController,
                     initialRoute = initialRoute,
-                    onItemSelected = { route -> selectedItem = route }
+                    onNavigate = onNavigate
                 )
             }
         }
@@ -128,21 +130,20 @@ fun MainScreen(initialRoute: String? = null) {
 fun SetupNavHost(
     navController: NavHostController,
     initialRoute: String?,
-    onItemSelected: (String) -> Unit
+    onNavigate: (String) -> Unit
 ) {
     NavHost(navController = navController, startDestination = Routes.CURRENT_BALANCE) {
         composable(Routes.CURRENT_BALANCE) {
             CurrentBalanceScreen(
-                onNavigate = { route -> navController.navigate(route) },
+                onNavigate = { onNavigate(it) },
                 onShowMoreClick = {
-                    onItemSelected(Routes.EXPENSES)
-                    navController.navigate(Routes.EXPENSES)
+                    onNavigate(Routes.EXPENSES)
                 }
             )
         }
         composable(Routes.EXPENSES) {
             ExpensesScreen(
-                onNavigate = { navController.navigate(it) },
+                onNavigate = { onNavigate(it) },
             )
         }
         composable(Routes.BUDGET) {
@@ -153,13 +154,13 @@ fun SetupNavHost(
                 isLoading -> LoadingScreen()
                 budget.collectAsStateWithLifecycle().value == null -> NoBudgetScreen(
                     onEvent = viewModel::onEvent,
-                    onNavigate = { navController.navigate(it) },
+                    onNavigate = { onNavigate(it) },
                     uiEvent = viewModel.uiEvent
                 )
                 else -> BudgetScreen(
                     budget = budget.collectAsStateWithLifecycle().value!!,
                     onEvent = viewModel::onEvent,
-                    onNavigate = { navController.navigate(it) },
+                    onNavigate = { onNavigate(it) },
                     uiEvent = viewModel.uiEvent
                 )
             }
@@ -174,14 +175,14 @@ fun SetupNavHost(
                 isLoading -> LoadingScreen()
                 goals.isEmpty() -> NoGoalsScreen(
                     onEvent = viewModel::onEvent,
-                    onNavigate = { navController.navigate(it) },
+                    onNavigate = { onNavigate(it) },
                     uiEvent = viewModel.uiEvent
                 )
                 else -> GoalsScreen(
                     goals = goals,
                     balance = balance!!,
                     onEvent = viewModel::onEvent,
-                    onNavigate = { navController.navigate(it) },
+                    onNavigate = { onNavigate(it) },
                     uiEvent = viewModel.uiEvent
                 )
             }
@@ -194,7 +195,7 @@ fun SetupNavHost(
             })
         ) {
             AddEditExpenseScreen(
-                onNavigate = { route -> navController.navigate(route) },
+                onNavigate = { onNavigate(it) },
                 onPopBackStack = { navController.popBackStack() }
             )
         }
@@ -206,7 +207,7 @@ fun SetupNavHost(
             })
         ) {
             AddEditBudgetScreen(
-                onNavigate = { route -> navController.navigate(route) },
+                onNavigate = { onNavigate(it) },
                 onPopBackStack = { navController.popBackStack() }
             )
         }
@@ -218,7 +219,7 @@ fun SetupNavHost(
             })
         ) {
             AddEditGoalScreen(
-                onNavigate = { route -> navController.navigate(route) },
+                onNavigate = { onNavigate(it) },
                 onPopBackStack = { navController.popBackStack() }
             )
         }
@@ -226,8 +227,7 @@ fun SetupNavHost(
 
     initialRoute?.let { route ->
         LaunchedEffect(route) {
-            onItemSelected(route)
-            navController.navigate(route)
+            onNavigate(route)
         }
     }
 }
