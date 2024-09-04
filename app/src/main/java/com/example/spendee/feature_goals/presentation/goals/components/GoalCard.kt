@@ -38,10 +38,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.spendee.R
+import com.example.spendee.core.domain.util.dateToString
+import com.example.spendee.core.presentation.util.EditDeleteDropdownMenu
 import com.example.spendee.feature_goals.domain.model.Goal
 import com.example.spendee.feature_goals.presentation.goals.GoalsEvent
-import com.example.spendee.core.presentation.util.EditDeleteDropdownMenu
-import com.example.spendee.core.domain.util.dateToString
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -81,7 +81,10 @@ fun GoalCard(
             ) {
                 Image(
                     painter = painterResource(id = if (isGoalReached) R.drawable.baseline_check_24 else R.drawable.goal_icon),
-                    contentDescription = stringResource(R.string.goal_image),
+                    contentDescription = if (isGoalReached)
+                        stringResource(R.string.goal_reached)
+                    else
+                        stringResource(R.string.goal_not_reached),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(64.dp)

@@ -1,4 +1,4 @@
-package com.example.spendee.feature_expenses.presentation.expenses
+package com.example.spendee.feature_goals.presentation.goals
 
 import SpendeeTheme
 import android.Manifest
@@ -19,11 +19,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.spendee.MainActivity
 import com.example.spendee.R
-import com.example.spendee.core.domain.util.dateToString
 import com.example.spendee.core.presentation.util.Routes
 import com.example.spendee.core.presentation.util.UiEvent
 import com.example.spendee.di.AppModule
-import com.example.spendee.feature_expenses.domain.model.Expense
+import com.example.spendee.feature_current_balance.domain.model.Balance
+import com.example.spendee.feature_goals.domain.model.Goal
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
@@ -37,15 +37,14 @@ import java.time.LocalDate
 
 @HiltAndroidTest
 @UninstallModules(AppModule::class)
-class ExpensesScreenTest {
-
+class GoalsScreenTest {
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
 
     @get:Rule(order = 1)
     val composeRule = createAndroidComposeRule<MainActivity>()
 
-    private lateinit var mockViewModel: ExpensesViewModel
+    private lateinit var mockViewModel: GoalsViewModel
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Before
@@ -59,41 +58,53 @@ class ExpensesScreenTest {
 
         val mockUiEvent = mock(UiEvent::class.java)
 
-        val expensesFlow = MutableStateFlow(
-            listOf(
-                Expense(
-                    id = 1,
-                    amount = 50.0,
-                    description = "Example expense 1",
-                    date = LocalDate.now(),
-                    categoryId = 5
-                ),
-                Expense(
-                    id = 2,
-                    amount = 30.0,
-                    description = "Example expense 2",
-                    date = LocalDate.now(),
-                    categoryId = 3
-                ),
-                Expense(
-                    id = 3,
-                    amount = 40.0,
-                    description = "Example expense 3",
-                    date = LocalDate.now(),
-                    categoryId = 4
-                ),
-                Expense(
-                    id = 4,
-                    amount = 70.0,
-                    description = "Example expense 4",
-                    date = LocalDate.now(),
-                    categoryId = 1
-                )
+        val mockedBalance = MutableStateFlow(
+            Balance(
+                amount = 60.0
             )
         )
 
-        mockViewModel = mock(ExpensesViewModel::class.java).apply {
-            whenever(expenses).thenReturn(expensesFlow)
+        val goalsFlow = MutableStateFlow(
+            listOf(
+                Goal(
+                    id = 1,
+                    targetAmount = 50.0,
+                    description = "Example goal 1",
+                    deadline = LocalDate.now().plusDays(5),
+                    isReached = true,
+                    isReachedNotificationEnabled = false
+                ),
+                Goal(
+                    id = 2,
+                    targetAmount = 70.0,
+                    description = "Example goal 2",
+                    deadline = LocalDate.now().plusDays(5),
+                    isReached = false,
+                    isReachedNotificationEnabled = false
+                ),
+                Goal(
+                    id = 3,
+                    targetAmount = 120.0,
+                    description = "Example goal 3",
+                    deadline = LocalDate.now().plusDays(5),
+                    isReached = false,
+                    isReachedNotificationEnabled = false
+                ),
+                Goal(
+                    id = 4,
+                    targetAmount = 500.0,
+                    description = "Example goal 4",
+                    deadline = LocalDate.now().plusDays(5),
+                    isReached = false,
+                    isReachedNotificationEnabled = false
+                ),
+            )
+        )
+
+        mockViewModel = mock(GoalsViewModel::class.java).apply {
+            whenever(goalsState).thenReturn(goalsFlow)
+            whenever(balanceState).thenReturn(mockedBalance)
+            whenever(isLoading).thenReturn(MutableStateFlow(false))
             whenever(uiEvent).thenReturn(MutableStateFlow(mockUiEvent))
         }
 
@@ -102,10 +113,10 @@ class ExpensesScreenTest {
             SpendeeTheme {
                 NavHost(
                     navController = navController,
-                    startDestination = Routes.EXPENSES
+                    startDestination = Routes.GOALS
                 ) {
-                    composable(Routes.EXPENSES) {
-                        ExpensesScreen(
+                    composable(Routes.GOALS) {
+                        GoalsScreen(
                             onNavigate = { navController.navigate(it) },
                             viewModel = mockViewModel
                         )
@@ -116,44 +127,78 @@ class ExpensesScreenTest {
     }
 
     @Test
-    fun showNoExpensesTextWhenNoExpenses() {
-        (mockViewModel.expenses as MutableStateFlow).value = emptyList()
+    fun showNoGoalsScreenWhenNoGoals() {
+        (mockViewModel.goalsState as MutableStateFlow).value = emptyList()
         composeRule
-            .onNodeWithText(context.getString(R.string.no_expenses_yet))
+            .onNodeWithText(context.getString(R.string.you_have_no_goals_set))
             .assertIsDisplayed()
+        composeRule
+            .onNodeWithText(context.getString(R.string.add_a_financial_goal))
+            .assertIsDisplayed()
+            .assertHasClickAction()
     }
 
     @Test
-    fun expensesArePresentAndClickable() {
+    fun goalsArePresentAndClickable() {
         composeRule
-            .onNodeWithText("Example expense 1 at ${dateToString(LocalDate.now())}")
+            .onNodeWithText("Example goal 1")
             .assertIsDisplayed()
             .assertHasClickAction()
         composeRule
-            .onNodeWithText("Example expense 2 at ${dateToString(LocalDate.now())}")
+            .onNodeWithText("Example goal 2")
             .assertIsDisplayed()
             .assertHasClickAction()
         composeRule
-            .onNodeWithText("Example expense 3 at ${dateToString(LocalDate.now())}")
+            .onNodeWithText("Example goal 3")
             .assertIsDisplayed()
             .assertHasClickAction()
         composeRule
-            .onNodeWithText("Example expense 4 at ${dateToString(LocalDate.now())}")
+            .onNodeWithText("Example goal 4")
             .assertIsDisplayed()
             .assertHasClickAction()
+    }
+
+    @Test
+    fun goalsHaveReachedAndNotReachedIcons() {
+        val goals = listOf(
+                Goal(
+                    id = 1,
+                    targetAmount = 50.0,
+                    description = "Example goal 1",
+                    deadline = LocalDate.now().plusDays(5),
+                    isReached = true,
+                    isReachedNotificationEnabled = false
+                ),
+                Goal(
+                    id = 2,
+                    targetAmount = 70.0,
+                    description = "Example goal 2",
+                    deadline = LocalDate.now().plusDays(5),
+                    isReached = false,
+                    isReachedNotificationEnabled = false
+                )
+            )
+
+        (mockViewModel.goalsState as MutableStateFlow).value = goals
+        composeRule
+            .onNodeWithContentDescription(context.getString(R.string.goal_reached))
+            .assertIsDisplayed()
+        composeRule
+            .onNodeWithContentDescription(context.getString(R.string.goal_not_reached))
+            .assertIsDisplayed()
     }
 
     @Test
     fun floatingActionButtonIsClickable() {
         composeRule
-            .onNodeWithContentDescription(context.getString(R.string.add_expense))
+            .onNodeWithContentDescription(context.getString(R.string.add_a_new_goal))
             .assertHasClickAction()
     }
 
     @Test
     fun optionsAppearAfterLongExpenseClick() {
         composeRule
-            .onNodeWithText("Example expense 1 at ${dateToString(LocalDate.now())}")
+            .onNodeWithText("Example goal 1")
             .performTouchInput { longClick() }
         composeRule
             .onNodeWithText(context.getString(R.string.edit))
@@ -166,12 +211,12 @@ class ExpensesScreenTest {
     }
 
     @Test
-    fun expenseDeletedAfterRightSwipe() {
+    fun goalDeletedAfterRightSwipe() {
         composeRule
-            .onNodeWithText("Example expense 1 at ${dateToString(LocalDate.now())}")
+            .onNodeWithText("Example goal 1")
             .performTouchInput { swipeRight() }
         composeRule
-            .onNodeWithText("Example expense 1 at ${dateToString(LocalDate.now())}")
+            .onNodeWithText("Example goal 1")
             .assertIsNotDisplayed()
     }
 }
