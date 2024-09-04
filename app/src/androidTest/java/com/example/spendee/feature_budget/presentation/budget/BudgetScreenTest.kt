@@ -13,14 +13,12 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.spendee.MainActivity
 import com.example.spendee.R
-import com.example.spendee.core.presentation.util.LoadingScreen
 import com.example.spendee.core.presentation.util.Routes
 import com.example.spendee.core.presentation.util.UiEvent
 import com.example.spendee.di.AppModule
@@ -60,15 +58,17 @@ class BudgetScreenTest {
 
         val mockUiEvent = mock(UiEvent::class.java)
 
-        val budgetFlow = MutableStateFlow<Budget?>(Budget(
-            totalAmount = 200.0,
-            leftToSpend = 180.0,
-            totalSpent = 20.0,
-            startDate = LocalDate.now().minusDays(5),
-            endDate = LocalDate.now().plusDays(5),
-            isExceeded = false,
-            isExceedNotificationEnabled = true
-        ))
+        val budgetFlow = MutableStateFlow<Budget?>(
+            Budget(
+                totalAmount = 200.0,
+                leftToSpend = 180.0,
+                totalSpent = 20.0,
+                startDate = LocalDate.now().minusDays(5),
+                endDate = LocalDate.now().plusDays(5),
+                isExceeded = false,
+                isExceedNotificationEnabled = true
+            )
+        )
 
         mockViewModel = mock(BudgetViewModel::class.java).apply {
             whenever(budget).thenReturn(budgetFlow)
@@ -84,26 +84,10 @@ class BudgetScreenTest {
                     startDestination = Routes.BUDGET
                 ) {
                     composable(route = Routes.BUDGET) {
-                        val viewModel = mockViewModel
-                        val budget = viewModel.budget.collectAsStateWithLifecycle().value
-                        val isLoading = viewModel.isLoading.collectAsStateWithLifecycle().value
-
-                        when {
-                            isLoading -> LoadingScreen()
-                            budget == null -> NoBudgetScreen(
-                                onEvent = viewModel::onEvent,
-                                onNavigate = { navController.navigate(it) },
-                                uiEvent = viewModel.uiEvent
-                            )
-
-                            else -> BudgetScreen(
-                                budget = budget,
-                                onEvent = viewModel::onEvent,
-                                onNavigate = { navController.navigate(it) },
-                                uiEvent = viewModel.uiEvent
-                            )
-                        }
-
+                        BudgetScreen(
+                            onNavigate = { navController.navigate(it) },
+                            viewModel = mockViewModel
+                        )
                     }
                 }
             }
