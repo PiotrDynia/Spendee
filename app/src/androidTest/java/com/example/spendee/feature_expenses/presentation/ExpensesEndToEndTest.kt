@@ -1,4 +1,4 @@
-package com.example.spendee.feature_current_balance.presentation.current_balance
+package com.example.spendee.feature_expenses.presentation
 
 import SpendeeTheme
 import android.Manifest
@@ -15,7 +15,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -36,6 +35,7 @@ import com.example.spendee.core.presentation.navigation.BottomNavigationBar
 import com.example.spendee.core.presentation.navigation.generateBottomNavItems
 import com.example.spendee.core.presentation.util.Routes
 import com.example.spendee.di.AppModule
+import com.example.spendee.feature_current_balance.presentation.current_balance.CurrentBalanceScreen
 import com.example.spendee.feature_expenses.presentation.add_edit_expense.AddEditExpenseScreen
 import com.example.spendee.feature_expenses.presentation.expenses.ExpensesScreen
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -48,7 +48,8 @@ import java.time.LocalDate
 
 @HiltAndroidTest
 @UninstallModules(AppModule::class)
-class CurrentBalanceEndToEndTest {
+class ExpensesEndToEndTest {
+
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
 
@@ -76,7 +77,6 @@ class CurrentBalanceEndToEndTest {
                 selectedItem = route
                 navController.navigate(route)
             }
-
             SpendeeTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
@@ -103,7 +103,7 @@ class CurrentBalanceEndToEndTest {
                             }
                             composable(Routes.EXPENSES) {
                                 ExpensesScreen(
-                                    onNavigate = { navController.navigate(it) },
+                                    onNavigate = { navController.navigate(it) }
                                 )
                             }
                             composable(
@@ -127,11 +127,11 @@ class CurrentBalanceEndToEndTest {
 
     @OptIn(ExperimentalTestApi::class)
     @Test
-    fun addingExpensesUpdatesBalanceCorrectly() {
-        val balanceAmount = "5000.0"
-        var balanceAmountDouble = balanceAmount.toDouble()
+    fun addExpenseEditAfterwards() {
+        val expenseAmount = "50.0"
+        val expenseDescription = "Example description"
 
-        // 1. Set balance
+        // 1. Set balance so we can add an expense
         composeRule
             .onNodeWithText(context.getString(R.string.set_balance))
             .performClick()
@@ -140,59 +140,85 @@ class CurrentBalanceEndToEndTest {
             .performTextClearance()
         composeRule
             .onNodeWithText(context.getString(R.string.balance))
-            .performTextInput(balanceAmount)
+            .performTextInput("5000.0")
         composeRule
             .onNodeWithText(context.getString(R.string.ok))
             .performClick()
-        composeRule
-            .onNodeWithText("$balanceAmount$")
-            .assertIsDisplayed()
 
-        // 2. Add expenses
+        // 2. Add expense
         composeRule
             .onNodeWithText(context.getString(R.string.expenses))
             .performClick()
-        for (i in 1..5) {
-            balanceAmountDouble -= i
-            composeRule.waitUntilAtLeastOneExists(
-                hasContentDescription(context.getString(R.string.add_expense)),
-                timeoutMillis = 3000
-            )
-            composeRule
-                .onNodeWithContentDescription(context.getString(R.string.add_expense))
-                .performClick()
-            composeRule
-                .onNodeWithText(context.getString(R.string.amount))
-                .performTextInput(i.toString())
-            composeRule
-                .onNodeWithText(context.getString(R.string.description))
-                .performTextInput(i.toString())
-            composeRule
-                .onNodeWithText(context.getString(R.string.entertainment))
-                .performClick()
-            composeRule
-                .onNodeWithContentDescription(context.getString(R.string.save))
-                .performClick()
-        }
-
-        // 3. Go back to balance and check it's updated
         composeRule
-            .onNodeWithText(context.getString(R.string.home))
+            .onNodeWithContentDescription(context.getString(R.string.add_expense))
             .performClick()
         composeRule
-            .onNodeWithText("$balanceAmountDouble$")
+            .onNodeWithText(context.getString(R.string.amount))
+            .performTextInput(expenseAmount)
+        composeRule
+            .onNodeWithText(context.getString(R.string.description))
+            .performTextInput(expenseDescription)
+        composeRule
+            .onNodeWithText(context.getString(R.string.entertainment))
+            .performClick()
+        composeRule
+            .onNodeWithContentDescription(context.getString(R.string.save))
+            .performClick()
+
+        // 3. Assert expense is present
+        composeRule.waitUntilAtLeastOneExists(
+            hasContentDescription(context.getString(R.string.add_expense)),
+            timeoutMillis = 3000
+        )
+        composeRule
+            .onNodeWithText("$expenseDescription at ${dateToString(LocalDate.now())}")
+            .assertIsDisplayed()
+        composeRule
+            .onNodeWithText("$expenseAmount$")
             .assertIsDisplayed()
 
-        // 4. Check that three latest expenses appear
-        for (i in 1 .. 3) {
-            composeRule
-                .onNodeWithText("$i at ${dateToString(LocalDate.now())}")
-                .assertIsDisplayed()
-        }
-        for (i in 4 .. 5) {
-            composeRule
-                .onNodeWithText("$i at ${dateToString(LocalDate.now())}")
-                .assertIsNotDisplayed()
-        }
+        // 4. Edit expense
+        composeRule
+            .onNodeWithText("$expenseAmount$")
+            .performClick()
+        composeRule
+            .onNodeWithText(expenseAmount)
+            .assertIsDisplayed()
+        composeRule
+            .onNodeWithText(expenseDescription)
+            .assertIsDisplayed()
+
+        val newAmount = "100.0"
+        val newDescription = "New description"
+        composeRule
+            .onNodeWithText(expenseAmount)
+            .performTextClearance()
+        composeRule
+            .onNodeWithText(context.getString(R.string.amount))
+            .performTextInput(newAmount)
+        composeRule
+            .onNodeWithText(expenseDescription)
+            .performTextClearance()
+        composeRule
+            .onNodeWithText(context.getString(R.string.description))
+            .performTextInput(newDescription)
+        composeRule
+            .onNodeWithText(context.getString(R.string.everyday))
+            .performClick()
+        composeRule
+            .onNodeWithContentDescription(context.getString(R.string.save))
+            .performClick()
+
+        // 5. Check expense is present
+        composeRule.waitUntilAtLeastOneExists(
+            hasContentDescription(context.getString(R.string.add_expense)),
+            timeoutMillis = 3000
+        )
+        composeRule
+            .onNodeWithText("$newDescription at ${dateToString(LocalDate.now())}")
+            .assertIsDisplayed()
+        composeRule
+            .onNodeWithText("$newAmount$")
+            .assertIsDisplayed()
     }
 }

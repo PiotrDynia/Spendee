@@ -17,8 +17,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -26,8 +24,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.spendee.core.presentation.navigation.BottomNavItem
 import com.example.spendee.core.presentation.navigation.BottomNavigationBar
+import com.example.spendee.core.presentation.navigation.generateBottomNavItems
 import com.example.spendee.core.presentation.util.AnimatedVisibilityComposable
 import com.example.spendee.core.presentation.util.HandleNotificationPermission
 import com.example.spendee.core.presentation.util.Routes
@@ -67,28 +65,7 @@ fun MainScreen(initialRoute: String? = null) {
     })
 
     val navController = rememberNavController()
-    val items = listOf(
-        BottomNavItem(
-            stringResource(R.string.home),
-            painterResource(R.drawable.ic_home),
-            Routes.CURRENT_BALANCE
-        ),
-        BottomNavItem(
-            stringResource(R.string.expenses),
-            painterResource(R.drawable.ic_money),
-            Routes.EXPENSES
-        ),
-        BottomNavItem(
-            stringResource(R.string.budget),
-            painterResource(R.drawable.ic_budget),
-            Routes.BUDGET
-        ),
-        BottomNavItem(
-            stringResource(R.string.goals),
-            painterResource(R.drawable.ic_goals),
-            Routes.GOALS
-        )
-    )
+    val items = generateBottomNavItems()
 
     var selectedItem by remember { mutableStateOf(items.first().route) }
 

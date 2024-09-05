@@ -1,4 +1,4 @@
-package com.example.spendee.feature_current_balance.presentation.current_balance
+package com.example.spendee.feature_goals.presentation
 
 import SpendeeTheme
 import android.Manifest
@@ -15,8 +15,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -36,8 +36,9 @@ import com.example.spendee.core.presentation.navigation.BottomNavigationBar
 import com.example.spendee.core.presentation.navigation.generateBottomNavItems
 import com.example.spendee.core.presentation.util.Routes
 import com.example.spendee.di.AppModule
-import com.example.spendee.feature_expenses.presentation.add_edit_expense.AddEditExpenseScreen
-import com.example.spendee.feature_expenses.presentation.expenses.ExpensesScreen
+import com.example.spendee.feature_current_balance.presentation.current_balance.CurrentBalanceScreen
+import com.example.spendee.feature_goals.presentation.add_edit_goal.AddEditGoalScreen
+import com.example.spendee.feature_goals.presentation.goals.GoalsScreen
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
@@ -48,7 +49,8 @@ import java.time.LocalDate
 
 @HiltAndroidTest
 @UninstallModules(AppModule::class)
-class CurrentBalanceEndToEndTest {
+class GoalsEndToEndTest {
+
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
 
@@ -76,7 +78,6 @@ class CurrentBalanceEndToEndTest {
                 selectedItem = route
                 navController.navigate(route)
             }
-
             SpendeeTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
@@ -101,20 +102,20 @@ class CurrentBalanceEndToEndTest {
                                     }
                                 )
                             }
-                            composable(Routes.EXPENSES) {
-                                ExpensesScreen(
-                                    onNavigate = { navController.navigate(it) },
+                            composable(Routes.GOALS) {
+                                GoalsScreen(
+                                    onNavigate = { navController.navigate(it) }
                                 )
                             }
                             composable(
-                                route = Routes.ADD_EDIT_EXPENSE + "?expenseId={expenseId}",
-                                arguments = listOf(navArgument("expenseId") {
+                                route = Routes.ADD_EDIT_GOAL + "?goalId={goalId}",
+                                arguments = listOf(navArgument("goalId") {
                                     type = NavType.IntType
                                     defaultValue = 0
                                 })
                             ) {
-                                AddEditExpenseScreen(
-                                    onNavigate = { navController.navigate(it) },
+                                AddEditGoalScreen(
+                                    onNavigate = { onNavigate(it) },
                                     onPopBackStack = { navController.popBackStack() }
                                 )
                             }
@@ -127,72 +128,117 @@ class CurrentBalanceEndToEndTest {
 
     @OptIn(ExperimentalTestApi::class)
     @Test
-    fun addingExpensesUpdatesBalanceCorrectly() {
-        val balanceAmount = "5000.0"
-        var balanceAmountDouble = balanceAmount.toDouble()
+    fun addGoalEditAfterwards() {
+        val goalTargetAmount = "50.0"
+        val goalDescription = "Example description"
+        val goalDeadline = LocalDate.now().plusDays(10)
+        val deadlineDayOfWeek = goalDeadline.dayOfWeek.name
+        val deadlineMonth = goalDeadline.month.name
+        val deadlineMonthDay = goalDeadline.dayOfMonth
+        val deadlineYear = goalDeadline.year
+        val dateString = "$deadlineDayOfWeek, $deadlineMonth $deadlineMonthDay, $deadlineYear"
 
-        // 1. Set balance
+        // 1. Add goal
         composeRule
-            .onNodeWithText(context.getString(R.string.set_balance))
+            .onNodeWithText(context.getString(R.string.goals))
             .performClick()
         composeRule
-            .onNodeWithText(context.getString(R.string.balance))
-            .performTextClearance()
+            .onNodeWithText(context.getString(R.string.add_a_financial_goal))
+            .performClick()
         composeRule
-            .onNodeWithText(context.getString(R.string.balance))
-            .performTextInput(balanceAmount)
+            .onNodeWithText(context.getString(R.string.target_amount))
+            .performTextInput(goalTargetAmount)
+        composeRule
+            .onNodeWithText(context.getString(R.string.description))
+            .performTextInput(goalDescription)
+        composeRule
+            .onNodeWithText(context.getString(R.string.set_a_deadline))
+            .performClick()
+        composeRule
+            .onNode(hasText(dateString, ignoreCase = true))
+            .performClick()
         composeRule
             .onNodeWithText(context.getString(R.string.ok))
             .performClick()
         composeRule
-            .onNodeWithText("$balanceAmount$")
+            .onNodeWithContentDescription(context.getString(R.string.save))
+            .performClick()
+
+        // 2. Assert goal is present
+        composeRule.waitUntilAtLeastOneExists(
+            hasContentDescription(context.getString(R.string.add_a_new_goal)),
+            timeoutMillis = 3000
+        )
+        composeRule
+            .onNodeWithText(context.getString(R.string.target, goalTargetAmount))
+            .assertIsDisplayed()
+        composeRule
+            .onNodeWithText(goalDescription)
+            .assertIsDisplayed()
+        composeRule
+            .onNodeWithText(dateToString(goalDeadline))
             .assertIsDisplayed()
 
-        // 2. Add expenses
+        // 3. Edit goal
         composeRule
-            .onNodeWithText(context.getString(R.string.expenses))
-            .performClick()
-        for (i in 1..5) {
-            balanceAmountDouble -= i
-            composeRule.waitUntilAtLeastOneExists(
-                hasContentDescription(context.getString(R.string.add_expense)),
-                timeoutMillis = 3000
-            )
-            composeRule
-                .onNodeWithContentDescription(context.getString(R.string.add_expense))
-                .performClick()
-            composeRule
-                .onNodeWithText(context.getString(R.string.amount))
-                .performTextInput(i.toString())
-            composeRule
-                .onNodeWithText(context.getString(R.string.description))
-                .performTextInput(i.toString())
-            composeRule
-                .onNodeWithText(context.getString(R.string.entertainment))
-                .performClick()
-            composeRule
-                .onNodeWithContentDescription(context.getString(R.string.save))
-                .performClick()
-        }
-
-        // 3. Go back to balance and check it's updated
-        composeRule
-            .onNodeWithText(context.getString(R.string.home))
+            .onNodeWithText(goalDescription)
             .performClick()
         composeRule
-            .onNodeWithText("$balanceAmountDouble$")
+            .onNodeWithText(goalTargetAmount)
+            .assertIsDisplayed()
+        composeRule
+            .onNodeWithText(goalDescription)
+            .assertIsDisplayed()
+        composeRule
+            .onNodeWithText(dateToString(goalDeadline))
             .assertIsDisplayed()
 
-        // 4. Check that three latest expenses appear
-        for (i in 1 .. 3) {
-            composeRule
-                .onNodeWithText("$i at ${dateToString(LocalDate.now())}")
-                .assertIsDisplayed()
-        }
-        for (i in 4 .. 5) {
-            composeRule
-                .onNodeWithText("$i at ${dateToString(LocalDate.now())}")
-                .assertIsNotDisplayed()
-        }
+        val newAmount = "100.0"
+        val newDescription = "New description"
+        val newDeadline = LocalDate.now().plusDays(20)
+        val newDeadlineDayOfWeek = newDeadline.dayOfWeek.name
+        val newDeadlineMonth = newDeadline.month.name
+        val newDeadlineMonthDay = newDeadline.dayOfMonth
+        val newDeadlineYear = newDeadline.year
+        val newDateString = "$newDeadlineDayOfWeek, $newDeadlineMonth $newDeadlineMonthDay, $newDeadlineYear"
+        composeRule
+            .onNodeWithText(goalTargetAmount)
+            .performTextClearance()
+        composeRule
+            .onNodeWithText(context.getString(R.string.target_amount))
+            .performTextInput(newAmount)
+        composeRule
+            .onNodeWithText(goalDescription)
+            .performTextClearance()
+        composeRule
+            .onNodeWithText(context.getString(R.string.description))
+            .performTextInput(newDescription)
+        composeRule
+            .onNodeWithText(dateToString(goalDeadline))
+            .performClick()
+        composeRule
+            .onNode(hasText(newDateString, ignoreCase = true))
+            .performClick()
+        composeRule
+            .onNodeWithText(context.getString(R.string.ok))
+            .performClick()
+        composeRule
+            .onNodeWithContentDescription(context.getString(R.string.save))
+            .performClick()
+
+        // 4. Check goal is present
+        composeRule.waitUntilAtLeastOneExists(
+            hasContentDescription(context.getString(R.string.add_a_new_goal)),
+            timeoutMillis = 3000
+        )
+        composeRule
+            .onNodeWithText(context.getString(R.string.target, newAmount))
+            .assertIsDisplayed()
+        composeRule
+            .onNodeWithText(newDescription)
+            .assertIsDisplayed()
+        composeRule
+            .onNodeWithText(dateToString(newDeadline))
+            .assertIsDisplayed()
     }
 }

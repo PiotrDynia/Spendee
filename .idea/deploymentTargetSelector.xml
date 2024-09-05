@@ -5,16 +5,19 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="showNoBudgetScreenWhenNoBudget()">
+      <SelectionState runConfigName="calendarInputWorks()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="showBudgetScreenWhenBudgetIsPresent()">
+      <SelectionState runConfigName="clickingButtonOpensDialog()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="showOptionsMenuOnClick()">
+      <SelectionState runConfigName="Tests in 'com'">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="showNoBudgetScreenAfterDeletingTheBudget()">
+      <SelectionState runConfigName="addingExpensesUpdatesBalanceCorrectly()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="addExpenseEditAfterwards()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

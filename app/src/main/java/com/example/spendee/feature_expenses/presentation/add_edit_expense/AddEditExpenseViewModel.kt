@@ -47,7 +47,8 @@ class AddEditExpenseViewModel @Inject constructor(
                             originalAmount = expense.amount.toString(),
                             description = expense.description,
                             categoryId = expense.categoryId,
-                            expense = expense
+                            expense = expense,
+                            date = expense.date
                         )
                     }
                 }
@@ -96,7 +97,7 @@ class AddEditExpenseViewModel @Inject constructor(
         amount = amount,
         description = _state.value.description,
         categoryId = _state.value.categoryId.takeIf { it != 0 } ?: 8,
-        date = LocalDate.now()
+        date = _state.value.date ?: LocalDate.now()
     )
 
     private fun sendUiEvent(event: UiEvent) {
