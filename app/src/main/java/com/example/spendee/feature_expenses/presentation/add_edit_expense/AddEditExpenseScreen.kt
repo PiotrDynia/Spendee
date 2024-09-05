@@ -54,7 +54,7 @@ fun AddEditExpenseScreen(
     val context = LocalContext.current
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
-            when(event) {
+            when (event) {
                 UiEvent.PopBackStack -> onPopBackStack()
                 is UiEvent.Navigate -> onNavigate(event.route)
                 is UiEvent.ShowSnackbar -> snackbarHostState.showSnackbar(context.getString(event.message))
@@ -111,10 +111,8 @@ fun AddEditExpenseScreen(
             Spacer(modifier = Modifier.height(8.dp))
             TextField(
                 value = state.description,
-                onValueChange = {description ->
-                    if (description.isNotBlank()) {
-                        viewModel.onEvent(AddEditExpenseEvent.OnDescriptionChange(description))
-                    }
+                onValueChange = { description ->
+                    viewModel.onEvent(AddEditExpenseEvent.OnDescriptionChange(description))
                 },
                 placeholder = {
                     Text(text = stringResource(R.string.description))

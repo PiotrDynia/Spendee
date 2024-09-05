@@ -56,7 +56,7 @@ class AddBudgetTest {
     @Test
     fun `Add budget with starting day in current month, correctly set dates`() = runBlocking {
         val today = LocalDate.now()
-        val state = AddEditBudgetState(amount = "100", startingDay = today.dayOfMonth - 1)
+        val state = AddEditBudgetState(amount = "100", startingDayInput = today.dayOfMonth - 1)
         addBudget(state)
 
 
@@ -69,7 +69,7 @@ class AddBudgetTest {
     @Test
     fun `Add budget with starting day in previous month, correctly set dates`() = runBlocking {
         val today = LocalDate.now()
-        val state = AddEditBudgetState(amount = "100", startingDay = today.dayOfMonth + 1)
+        val state = AddEditBudgetState(amount = "100", startingDayInput = today.dayOfMonth + 1)
         addBudget(state)
 
         val previousMonth = YearMonth.of(today.year, today.month).minusMonths(1)
@@ -88,7 +88,7 @@ class AddBudgetTest {
         } else {
             YearMonth.of(today.year, today.month)
         }
-        val state = AddEditBudgetState(amount = "100", startingDay = lastDayOfMonth)
+        val state = AddEditBudgetState(amount = "100", startingDayInput = lastDayOfMonth)
         addBudget(state)
 
         val budget = budgetRepository.getBudget().firstOrNull()
@@ -124,7 +124,7 @@ class AddBudgetTest {
         expensesRepository.upsertExpense(exampleExpenses.elementAt(1))
 
         val budgetAmount = "100"
-        val state = AddEditBudgetState(amount = budgetAmount, startingDay = startingDay)
+        val state = AddEditBudgetState(amount = budgetAmount, startingDayInput = startingDay)
         addBudget(state)
 
         val budget = budgetRepository.getBudget().firstOrNull()
@@ -159,7 +159,7 @@ class AddBudgetTest {
 
         val budgetAmount = "50"
         val expectedLeftToSpend = 0.0
-        val state = AddEditBudgetState(amount = budgetAmount, startingDay = startingDay)
+        val state = AddEditBudgetState(amount = budgetAmount, startingDayInput = startingDay)
         addBudget(state)
 
         val budget = budgetRepository.getBudget().firstOrNull()
@@ -193,7 +193,7 @@ class AddBudgetTest {
         }
 
         val budgetAmount = "100"
-        val state = AddEditBudgetState(amount = budgetAmount, startingDay = today.dayOfMonth)
+        val state = AddEditBudgetState(amount = budgetAmount, startingDayInput = today.dayOfMonth)
         try {
             addBudget(state)
         } catch (e: Exception) {

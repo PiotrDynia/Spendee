@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.spendee.R
 import com.example.spendee.core.domain.util.calculateDailySpending
 import com.example.spendee.feature_budget.domain.model.Budget
 import com.example.spendee.feature_budget.domain.util.BudgetInfoCardType
@@ -85,8 +86,11 @@ fun BudgetInfoCard(
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = when(cardType) {
-                        BudgetInfoCardType.SpentCard -> "From ${budget.totalAmount}$"
-                        BudgetInfoCardType.YouCanSpendCard -> "${calculateDailySpending(budget.endDate, budget.leftToSpend)}$/day"
+                        BudgetInfoCardType.SpentCard -> stringResource(R.string.from, budget.totalAmount)
+                        BudgetInfoCardType.YouCanSpendCard -> stringResource(
+                            R.string.day,
+                            calculateDailySpending(budget.endDate, budget.leftToSpend)
+                        )
                     },
                     fontStyle = FontStyle.Italic,
                     fontWeight = FontWeight.Medium,

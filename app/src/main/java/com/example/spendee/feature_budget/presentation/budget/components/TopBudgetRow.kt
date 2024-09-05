@@ -48,7 +48,10 @@ fun TopBudgetRow(budget: Budget, onEvent: (BudgetEvent) -> Unit, modifier: Modif
         Spacer(modifier = Modifier.weight(2f))
         if (budget.isExceeded) {
             Text(
-                text = stringResource(R.string.budget_exceeded) + " by ${(budget.totalSpent - budget.totalAmount)}$!",
+                text = stringResource(R.string.budget_exceeded) + stringResource(
+                    R.string.by,
+                    (budget.totalSpent - budget.totalAmount)
+                ),
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.error,
                 fontSize = 14.sp,

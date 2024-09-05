@@ -16,7 +16,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.spendee.R
+import com.example.spendee.core.presentation.util.Routes
 
 @Composable
 fun BottomNavigationBar(
@@ -80,4 +84,30 @@ fun BottomNavigationItem(
             maxLines = 1
         )
     }
+}
+
+@Composable
+fun generateBottomNavItems() : List<BottomNavItem> {
+    return listOf(
+        BottomNavItem(
+            stringResource(R.string.home),
+            painterResource(R.drawable.ic_home),
+            Routes.CURRENT_BALANCE
+        ),
+        BottomNavItem(
+            stringResource(R.string.expenses),
+            painterResource(R.drawable.ic_money),
+            Routes.EXPENSES
+        ),
+        BottomNavItem(
+            stringResource(R.string.budget),
+            painterResource(R.drawable.ic_budget),
+            Routes.BUDGET
+        ),
+        BottomNavItem(
+            stringResource(R.string.goals),
+            painterResource(R.drawable.ic_goals),
+            Routes.GOALS
+        )
+    )
 }

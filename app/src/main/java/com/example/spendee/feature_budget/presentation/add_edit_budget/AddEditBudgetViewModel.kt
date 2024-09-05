@@ -40,7 +40,7 @@ class AddEditBudgetViewModel @Inject constructor(
             budgetUseCases.getBudget().collect { budget ->
                 _state.value = _state.value.copy(
                     amount = budget.totalAmount.toString(),
-                    startingDay = budget.startDate.dayOfMonth,
+                    startingDayInput = budget.startDate.dayOfMonth,
                     isExceedButtonPressed = budget.isExceedNotificationEnabled
                 )
             }
@@ -54,7 +54,12 @@ class AddEditBudgetViewModel @Inject constructor(
             is AddEditBudgetEvent.OnExceedButtonPress -> updateExceedButtonState(event.isPressed)
             AddEditBudgetEvent.OnCancelStartingDay -> cancelStartingDay()
             is AddEditBudgetEvent.OnChangeStartingDay -> changeStartingDay(event.newDay)
+            is AddEditBudgetEvent.OnConfirmStartingDay -> confirmStartingDay()
         }
+    }
+
+    private fun confirmStartingDay() {
+        _state.value = _state.value.copy(startingDayInput = _state.value.startingDayPicker ?: 1)
     }
 
     private fun updateAmount(amount: String) {
@@ -80,11 +85,19 @@ class AddEditBudgetViewModel @Inject constructor(
     }
 
     private fun cancelStartingDay() {
-        _state.value = _state.value.copy(startingDay = null)
+        if (_state.value.startingDayInput != null) {
+            _state.value = _state.value.copy(
+                startingDayPicker = _state.value.startingDayInput
+            )
+        } else {
+            _state.value = _state.value.copy(
+                startingDayPicker = null
+            )
+        }
     }
 
     private fun changeStartingDay(newDay: Int) {
-        _state.value = _state.value.copy(startingDay = newDay)
+        _state.value = _state.value.copy(startingDayPicker = newDay)
     }
 
     private fun sendUiEvent(event: UiEvent) {

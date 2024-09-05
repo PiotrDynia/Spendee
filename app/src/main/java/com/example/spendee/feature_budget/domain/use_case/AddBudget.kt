@@ -18,7 +18,7 @@ class AddBudget(
     @Throws(InvalidBudgetException::class)
     suspend operator fun invoke(state: AddEditBudgetState) {
         val amount = state.amount
-        val startingDay = state.startingDay
+        val startingDay = state.startingDayInput
 
         if (amount.isBlank()) {
             throw InvalidBudgetException(R.string.amount_cant_be_empty)
@@ -52,7 +52,7 @@ class AddBudget(
         val currentYearMonth = YearMonth.of(today.year, today.month)
         val validStartingDay = minOf(startingDay, currentYearMonth.lengthOfMonth())
 
-        return if (startingDay < today.dayOfMonth) {
+        return if (startingDay <= today.dayOfMonth) {
             LocalDate.of(today.year, today.month, validStartingDay)
         } else {
             val previousMonth = currentYearMonth.minusMonths(1)
