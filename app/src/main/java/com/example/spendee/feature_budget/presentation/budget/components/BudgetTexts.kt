@@ -10,15 +10,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.spendee.R
-import com.example.spendee.feature_budget.domain.model.Budget
 import com.example.spendee.core.domain.util.dateToString
 import com.example.spendee.core.domain.util.getDaysFromNow
+import com.example.spendee.feature_budget.domain.model.Budget
 
 @Composable
 fun BudgetTexts(budget: Budget, modifier: Modifier = Modifier) {
@@ -48,7 +49,8 @@ fun BudgetTexts(budget: Budget, modifier: Modifier = Modifier) {
             fontStyle = FontStyle.Italic,
             fontSize = 16.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.testTag("BudgetTextsTotalAmount")
         )
         Text(
             text = stringResource(R.string.days_left, getDaysFromNow(budget.endDate)),

@@ -52,7 +52,7 @@ class AddBudget(
         val currentYearMonth = YearMonth.of(today.year, today.month)
         val validStartingDay = minOf(startingDay, currentYearMonth.lengthOfMonth())
 
-        return if (startingDay < today.dayOfMonth) {
+        return if (startingDay <= today.dayOfMonth) {
             LocalDate.of(today.year, today.month, validStartingDay)
         } else {
             val previousMonth = currentYearMonth.minusMonths(1)
