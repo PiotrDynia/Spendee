@@ -1,5 +1,6 @@
 package com.example.spendee.feature_expenses.presentation.expenses
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spendee.R
@@ -27,6 +28,7 @@ class ExpensesViewModel @Inject constructor(
     private val _deletedExpense = MutableStateFlow<Expense?>(null)
 
     fun onEvent(event: ExpensesEvent) {
+        Log.d("onEvent", "Event received: $event")
         when (event) {
             ExpensesEvent.OnAddExpenseClick -> navigateToAddExpense()
             is ExpensesEvent.OnExpenseClick -> navigateToEditExpense(event.expense.id)
@@ -70,6 +72,7 @@ class ExpensesViewModel @Inject constructor(
     }
 
     private fun sendUiEvent(event: UiEvent) {
+        Log.d("sendUiEvent", "UI Event sent: $event")
         viewModelScope.launch {
             _uiEvent.send(event)
         }

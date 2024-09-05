@@ -43,7 +43,7 @@ import com.example.spendee.core.presentation.util.DismissBackground
 import com.example.spendee.core.presentation.util.LoadingScreen
 import com.example.spendee.core.presentation.util.UiEvent
 import com.example.spendee.feature_goals.presentation.goals.components.GoalCard
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -123,20 +123,22 @@ fun GoalsScreen(onNavigate: (String) -> Unit,
                     }
                     items(items = goals, key = { it.id }) { goal ->
                         val dismissState = rememberSwipeToDismissBoxState(
-                            confirmValueChange = {
-                                when(it) {
-                                    SwipeToDismissBoxValue.StartToEnd -> {
-                                        viewModel.onEvent(GoalsEvent.OnDeleteGoal(goal))
-                                    }
-                                    SwipeToDismissBoxValue.EndToStart -> {
-                                        viewModel.onEvent(GoalsEvent.OnGoalClick(goal))
-                                    }
-                                    SwipeToDismissBoxValue.Settled -> return@rememberSwipeToDismissBoxState false
-                                }
-                                return@rememberSwipeToDismissBoxState true
-                            },
                             positionalThreshold = { it * .25f }
                         )
+                        LaunchedEffect(dismissState.currentValue) {
+                            when (dismissState.currentValue) {
+                                SwipeToDismissBoxValue.StartToEnd -> {
+                                    viewModel.onEvent(GoalsEvent.OnDeleteGoal(goal))
+                                }
+                                SwipeToDismissBoxValue.EndToStart -> {
+                                    viewModel.onEvent(GoalsEvent.OnGoalClick(goal))
+                                    // Necessary for correct animation
+                                    delay(1000)
+                                    dismissState.snapTo(SwipeToDismissBoxValue.Settled)
+                                }
+                                SwipeToDismissBoxValue.Settled -> {}
+                            }
+                        }
                         SwipeToDismissBox(
                             state = dismissState,
                             backgroundContent = { DismissBackground(dismissState = dismissState) },

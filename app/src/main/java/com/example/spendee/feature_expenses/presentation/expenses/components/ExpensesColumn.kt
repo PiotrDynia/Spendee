@@ -15,6 +15,7 @@ import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,13 +27,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.spendee.R
+import com.example.spendee.core.presentation.util.DismissBackground
 import com.example.spendee.feature_expenses.domain.model.Expense
 import com.example.spendee.feature_expenses.presentation.expenses.ExpensesEvent
-import com.example.spendee.core.presentation.util.DismissBackground
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun ExpensesColumn(expenses: List<Expense>, onEvent: (ExpensesEvent) -> Unit, modifier: Modifier = Modifier) {
+fun ExpensesColumn(
+    expenses: List<Expense>,
+    onEvent: (ExpensesEvent) -> Unit,
+    modifier: Modifier = Modifier
+) {
     LazyColumn(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -50,22 +56,24 @@ fun ExpensesColumn(expenses: List<Expense>, onEvent: (ExpensesEvent) -> Unit, mo
             )
         }
         if (expenses.isNotEmpty()) {
-            items(items = expenses, key = {it.id}) { item ->
+            items(items = expenses, key = { it.id }) { item ->
                 val dismissState = rememberSwipeToDismissBoxState(
-                    confirmValueChange = {
-                        when(it) {
-                            SwipeToDismissBoxValue.StartToEnd -> {
-                                onEvent(ExpensesEvent.OnDeleteExpense(item))
-                            }
-                            SwipeToDismissBoxValue.EndToStart -> {
-                                onEvent(ExpensesEvent.OnExpenseClick(item))
-                            }
-                            SwipeToDismissBoxValue.Settled -> return@rememberSwipeToDismissBoxState false
-                        }
-                        return@rememberSwipeToDismissBoxState true
-                    },
                     positionalThreshold = { it * .25f }
                 )
+                LaunchedEffect(dismissState.currentValue) {
+                    when (dismissState.currentValue) {
+                        SwipeToDismissBoxValue.StartToEnd -> {
+                            onEvent(ExpensesEvent.OnDeleteExpense(item))
+                        }
+                        SwipeToDismissBoxValue.EndToStart -> {
+                            onEvent(ExpensesEvent.OnExpenseClick(item))
+                            // Necessary for correct animation
+                            delay(1000)
+                            dismissState.snapTo(SwipeToDismissBoxValue.Settled)
+                        }
+                        SwipeToDismissBoxValue.Settled -> {}
+                    }
+                }
                 SwipeToDismissBox(
                     state = dismissState,
                     backgroundContent = {
@@ -84,8 +92,7 @@ fun ExpensesColumn(expenses: List<Expense>, onEvent: (ExpensesEvent) -> Unit, mo
                     )
                 }
             }
-        }
-        else {
+        } else {
             item {
                 Text(
                     text = stringResource(R.string.no_expenses_yet),
