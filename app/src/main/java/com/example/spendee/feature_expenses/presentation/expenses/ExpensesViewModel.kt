@@ -28,7 +28,6 @@ class ExpensesViewModel @Inject constructor(
     private val _deletedExpense = MutableStateFlow<Expense?>(null)
 
     fun onEvent(event: ExpensesEvent) {
-        Log.d("onEvent", "Event received: $event")
         when (event) {
             ExpensesEvent.OnAddExpenseClick -> navigateToAddExpense()
             is ExpensesEvent.OnExpenseClick -> navigateToEditExpense(event.expense.id)
@@ -72,7 +71,6 @@ class ExpensesViewModel @Inject constructor(
     }
 
     private fun sendUiEvent(event: UiEvent) {
-        Log.d("sendUiEvent", "UI Event sent: $event")
         viewModelScope.launch {
             _uiEvent.send(event)
         }
