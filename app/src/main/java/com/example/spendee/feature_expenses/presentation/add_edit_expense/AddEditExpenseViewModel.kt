@@ -95,7 +95,7 @@ class AddEditExpenseViewModel @Inject constructor(
     private fun createExpenseFromState(amount: Double) = Expense(
         id = _state.value.expense?.id ?: 0,
         amount = amount,
-        description = _state.value.description,
+        description = _state.value.description.trim(),
         categoryId = _state.value.categoryId.takeIf { it != 0 } ?: 8,
         date = _state.value.date ?: LocalDate.now()
     )

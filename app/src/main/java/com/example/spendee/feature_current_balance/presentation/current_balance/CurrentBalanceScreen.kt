@@ -114,12 +114,13 @@ fun CurrentBalanceScreen(
             modifier = Modifier
                 .padding(16.dp)
         ) {
+            Spacer(modifier = Modifier.height(16.dp))
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .padding(12.dp)
+                    .padding(24.dp)
                     .aspectRatio(1f)
                     .drawBehind {
                         val strokeWidth = 8.dp.toPx()
@@ -141,20 +142,24 @@ fun CurrentBalanceScreen(
                         )
                     }
             ) {
-                CurrentBalanceTexts(currentBalance = state.balance.amount.toString())
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = {
-                    viewModel.onEvent(CurrentBalanceEvent.OnSetBalanceClick)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    CurrentBalanceTexts(currentBalance = state.balance.amount.toString())
+                    Button(
+                        onClick = {
+                            viewModel.onEvent(CurrentBalanceEvent.OnSetBalanceClick)
+                        }
+                    ) {
+                        Text(text = stringResource(R.string.set_balance))
+                    }
                 }
-            ) {
-                Text(text = stringResource(R.string.set_balance))
             }
             if (state.isDialogOpen) {
                 BalanceAlertDialog(onEvent = viewModel::onEvent, currentAmount = state.currentAmount)
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(32.dp))
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

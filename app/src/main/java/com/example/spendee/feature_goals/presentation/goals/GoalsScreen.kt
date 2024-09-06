@@ -129,6 +129,7 @@ fun GoalsScreen(onNavigate: (String) -> Unit,
                             when (dismissState.currentValue) {
                                 SwipeToDismissBoxValue.StartToEnd -> {
                                     viewModel.onEvent(GoalsEvent.OnDeleteGoal(goal))
+                                    dismissState.snapTo(SwipeToDismissBoxValue.Settled)
                                 }
                                 SwipeToDismissBoxValue.EndToStart -> {
                                     viewModel.onEvent(GoalsEvent.OnGoalClick(goal))

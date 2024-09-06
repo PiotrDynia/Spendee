@@ -36,11 +36,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.spendee.R
+import com.example.spendee.core.domain.util.isValidNumberInput
+import com.example.spendee.core.presentation.util.UiEvent
 import com.example.spendee.feature_expenses.domain.util.ExpenseCategory
 import com.example.spendee.feature_expenses.presentation.add_edit_expense.components.CategoryCard
-import com.example.spendee.core.presentation.util.UiEvent
-import com.example.spendee.core.domain.util.isValidNumberInput
-import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun AddEditExpenseScreen(
@@ -64,7 +63,7 @@ fun AddEditExpenseScreen(
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .padding(12.dp),
+            .padding(4.dp),
         snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             FloatingActionButton(
@@ -83,10 +82,10 @@ fun AddEditExpenseScreen(
         }
     ) { _ ->
         Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = stringResource(R.string.your_expense),
                 style = MaterialTheme.typography.headlineMedium.copy(
@@ -108,7 +107,7 @@ fun AddEditExpenseScreen(
                     unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                 )
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
             TextField(
                 value = state.description,
                 onValueChange = { description ->
@@ -125,7 +124,7 @@ fun AddEditExpenseScreen(
                     unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                 )
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = stringResource(R.string.select_a_category),
                 fontWeight = FontWeight.Bold,
@@ -137,9 +136,9 @@ fun AddEditExpenseScreen(
             )
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(horizontal = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 items(ExpenseCategory.getAllCategories()) { category ->
                     CategoryCard(

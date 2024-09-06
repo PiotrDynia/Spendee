@@ -43,23 +43,23 @@ fun BudgetInfoCard(
             .fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
+            defaultElevation = 4.dp
         ),
     ) {
         Column(
             modifier = Modifier
-                .padding(12.dp)
+                .padding(8.dp)
         ) {
             Row(
                 modifier = Modifier
-                    .padding(bottom = 8.dp)
+                    .padding(bottom = 4.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(text),
                     fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
+                    fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.primary
                 )
             }
@@ -70,17 +70,17 @@ fun BudgetInfoCard(
             ) {
                 Box(
                     modifier = Modifier
-                        .size(8.dp, 16.dp)
+                        .size(6.dp, 12.dp)
                         .background(color, RectangleShape)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(6.dp))
                 Text(
                     text = when(cardType) {
                         BudgetInfoCardType.SpentCard -> "${budget.totalSpent}$"
                         BudgetInfoCardType.YouCanSpendCard -> "${budget.leftToSpend}$"
                     },
                     fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
+                    fontSize = 18.sp,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.weight(1f))
@@ -94,7 +94,7 @@ fun BudgetInfoCard(
                     },
                     fontStyle = FontStyle.Italic,
                     fontWeight = FontWeight.Medium,
-                    fontSize = 14.sp,
+                    fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }

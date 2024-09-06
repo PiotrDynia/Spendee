@@ -64,6 +64,7 @@ fun ExpensesColumn(
                     when (dismissState.currentValue) {
                         SwipeToDismissBoxValue.StartToEnd -> {
                             onEvent(ExpensesEvent.OnDeleteExpense(item))
+                            dismissState.snapTo(SwipeToDismissBoxValue.Settled)
                         }
                         SwipeToDismissBoxValue.EndToStart -> {
                             onEvent(ExpensesEvent.OnExpenseClick(item))

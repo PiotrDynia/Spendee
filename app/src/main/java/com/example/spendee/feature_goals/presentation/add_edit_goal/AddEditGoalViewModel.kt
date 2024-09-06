@@ -52,7 +52,7 @@ class AddEditGoalViewModel @Inject constructor(
             it.copy(
                 targetAmount = goal.targetAmount.toString(),
                 deadline = dateToString(goal.deadline),
-                description = goal.description,
+                description = goal.description.trim(),
                 isReachedButtonPressed = goal.isReachedNotificationEnabled,
                 goal = goal
             )

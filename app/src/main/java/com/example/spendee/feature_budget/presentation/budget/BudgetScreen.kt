@@ -85,7 +85,7 @@ fun BudgetScreen(
                     budget = budget
                 )
                 BudgetMapKey()
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 UpdateBudgetButton(
                     onClick = { viewModel.onEvent(BudgetEvent.OnSetBudgetClick) }
                 )
